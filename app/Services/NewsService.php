@@ -22,14 +22,14 @@ class NewsService
     public function all(): ?array
     {
         try {
-            // return Cache::remember('news.all', config('news.cache_ttl'), function (): array {
+            return Cache::remember('news.all', config('news.cache_ttl'), function (): array {
                 $response = Http::timeout(config('news.timeout'))
                     ->acceptJson()
                     ->get(config('news.api_url').'/news')
                     ->throw();
 
                 return $response->json('data') ?? [];
-            // });
+            });
         } catch (ConnectionException|RequestException $e) {
             Log::warning('News API unreachable', ['error' => $e->getMessage()]);
 
