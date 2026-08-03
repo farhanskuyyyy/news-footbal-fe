@@ -99,6 +99,48 @@ class NewsTest extends TestCase
         $this->get('/berita/1')->assertServiceUnavailable();
     }
 
+    public function test_refresh_triggers_backend_and_clears_cache(): void
+    {
+        Http::fake([
+            '*/news/refresh' => Http::response(['status' => 'refreshed', 'count' => 42]),
+            '*/news' => Http::response(['source' => 'cache', 'data' => [$this->fakeItem()]]),
+        ]);
+
+        $this->get('/'); // warm the list cache
+
+        $this->post('/refresh')
+            ->assertRedirect(route('news.index'))
+            ->assertSessionHas('status');
+
+        Http::assertSent(fn ($request) => $request->method() === 'POST'
+            && str_ends_with($request->url(), '/news/refresh'));
+
+        $this->get('/'); // cache was cleared, so this hits the API again
+        Http::assertSentCount(3);
+    }
+
+    public function test_refresh_sends_token_header_when_configured(): void
+    {
+        config(['news.refresh_token' => 'secret-123']);
+
+        Http::fake([
+            '*/news/refresh' => Http::response(['status' => 'refreshed', 'count' => 1]),
+        ]);
+
+        $this->post('/refresh')->assertSessionHas('status');
+
+        Http::assertSent(fn ($request) => $request->hasHeader('X-Refresh-Token', 'secret-123'));
+    }
+
+    public function test_refresh_reports_failure_when_api_is_down(): void
+    {
+        Http::fake(fn () => throw new ConnectionException('Connection refused'));
+
+        $this->post('/refresh')
+            ->assertRedirect(route('news.index'))
+            ->assertSessionHas('error');
+    }
+
     public function test_news_list_is_cached(): void
     {
         Http::fake([

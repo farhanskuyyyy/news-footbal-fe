@@ -13,6 +13,7 @@ Frontend Laravel (Blade murni) yang menampilkan berita dari backend Go (Echo) ya
 |---|---|
 | `/` | Daftar berita (title, source, tanggal, deskripsi terpotong) + pagination |
 | `/berita/{id}` | Detail berita + link ke sumber asli |
+| `POST /refresh` | Tombol "Refresh Berita" — trigger backend fetch ulang dari NewsAPI, lalu clear cache FE |
 
 Kalau API mati, halaman menampilkan pesan ramah dengan status 503 (bukan error 500).
 
@@ -37,6 +38,8 @@ Buka http://localhost:8000.
 | `NEWS_API_TIMEOUT` | `5` | Timeout HTTP client (detik) |
 | `NEWS_CACHE_TTL` | `300` | TTL cache response (detik) |
 | `NEWS_PER_PAGE` | `12` | Item per halaman |
+| `NEWS_REFRESH_TIMEOUT` | `20` | Timeout trigger refresh (backend manggil NewsAPI, bisa lama) |
+| `NEWS_REFRESH_TOKEN` | *(kosong)* | Harus sama dengan `REFRESH_TOKEN` di backend; kosong = tanpa auth |
 
 ## Test & lint
 

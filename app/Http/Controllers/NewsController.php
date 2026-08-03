@@ -32,6 +32,17 @@ class NewsController extends Controller
         return view('news.index', ['news' => $paginated]);
     }
 
+    public function refresh()
+    {
+        $ok = $this->news->refresh();
+
+        return redirect()
+            ->route('news.index')
+            ->with($ok ? 'status' : 'error', $ok
+                ? 'Berita berhasil di-refresh dari sumber.'
+                : 'Gagal refresh berita — backend tidak merespons.');
+    }
+
     public function show(int $id)
     {
         $item = $this->news->find($id);

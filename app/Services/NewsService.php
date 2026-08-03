@@ -38,6 +38,31 @@ class NewsService
     }
 
     /**
+     * Ask the Go backend to re-fetch news from its upstream source,
+     * then drop the local list cache so the next page load is fresh.
+     */
+    public function refresh(): bool
+    {
+        try {
+            $request = Http::timeout(config('news.refresh_timeout'))->acceptJson();
+
+            if ($token = config('news.refresh_token')) {
+                $request = $request->withHeader('X-Refresh-Token', $token);
+            }
+
+            $request->post(config('news.api_url').'/news/refresh')->throw();
+
+            Cache::forget('news.all');
+
+            return true;
+        } catch (ConnectionException|RequestException $e) {
+            Log::warning('News refresh failed', ['error' => $e->getMessage()]);
+
+            return false;
+        }
+    }
+
+    /**
      * Fetch a single news item by id.
      *
      * Returns the item array, null when not found, or false when the

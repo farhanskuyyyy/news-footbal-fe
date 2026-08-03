@@ -21,6 +21,14 @@ return [
     // How long /news responses are cached, in seconds.
     'cache_ttl' => (int) env('NEWS_CACHE_TTL', 300),
 
+    // Timeout for POST /news/refresh — the backend calls NewsAPI upstream
+    // (up to 15s), so this must be longer than the regular timeout.
+    'refresh_timeout' => (int) env('NEWS_REFRESH_TIMEOUT', 20),
+
+    // Shared secret sent as X-Refresh-Token; must match the backend's
+    // REFRESH_TOKEN env. Leave empty if the backend has none set.
+    'refresh_token' => env('NEWS_REFRESH_TOKEN', ''),
+
     // Items per page on the index page (API returns the full list).
     'per_page' => (int) env('NEWS_PER_PAGE', 12),
 

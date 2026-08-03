@@ -3,7 +3,28 @@
 @section('title', 'Berita Terkini')
 
 @section('content')
-    <h1 class="mb-6 text-2xl font-bold">Berita Terkini</h1>
+    <div class="mb-6 flex items-center justify-between">
+        <h1 class="text-2xl font-bold">Berita Terkini</h1>
+        <form method="POST" action="{{ route('news.refresh') }}" onsubmit="this.querySelector('button').disabled = true">
+            @csrf
+            <button type="submit"
+                    class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50">
+                🔄 Refresh Berita
+            </button>
+        </form>
+    </div>
+
+    @if (session('status'))
+        <p class="mb-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
+            {{ session('status') }}
+        </p>
+    @endif
+
+    @if (session('error'))
+        <p class="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+            {{ session('error') }}
+        </p>
+    @endif
 
     @if ($news->isEmpty())
         <p class="rounded-lg border border-dashed bg-white p-8 text-center text-gray-500">
