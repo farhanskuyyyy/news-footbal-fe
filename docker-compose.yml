@@ -1,0 +1,11 @@
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    ports:
+      # Bound to loopback only — nginx on the host reverse-proxies to it.
+      - "127.0.0.1:3000:8080"
+    env_file: .env
+    environment:
+      APP_ENV: production
+      APP_DEBUG: "false"

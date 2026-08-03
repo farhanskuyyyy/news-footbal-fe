@@ -1,0 +1,13 @@
+# Production override for the VPS.
+# Copy to docker-compose.override.yml on the server (compose picks it up automatically):
+#
+#   cp docker-compose.override.yml.example docker-compose.override.yml
+#
+# The FE container cannot reach the host's 127.0.0.1:8082 directly, so we map
+# the Docker host gateway and point NEWS_API_URL at it.
+services:
+  app:
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      NEWS_API_URL: http://host.docker.internal:8082
