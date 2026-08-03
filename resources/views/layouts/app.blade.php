@@ -9,7 +9,7 @@
 <body class="min-h-screen bg-gray-50 text-gray-900 antialiased">
     <header class="border-b bg-white">
         <div class="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
-            <a href="{{ route('news.index') }}" class="text-xl font-bold tracking-tight">📰 Portal Berita</a>
+            <a href="{{ route('news.index') }}" class="text-xl font-bold tracking-tight">📰 News Portal</a>
             <span class="text-sm text-gray-500">RnD CI/CD</span>
         </div>
     </header>
