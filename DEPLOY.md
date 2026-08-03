@@ -32,21 +32,21 @@ Host github.com-laravel-fe
     IdentityFile ~/.ssh/laravel-fe_deploy
 EOF
 
-git clone github.com-laravel-fe:USERNAME/laravel-fe.git ~/laravel-fe
-cd ~/laravel-fe
+git clone github.com-laravel-fe:USERNAME/news-footbal-fe.git ~/news-footbal-fe
+cd ~/news-footbal-fe
 ```
 
-> Ganti `USERNAME/laravel-fe` sesuai repo kamu.
+> Ganti `USERNAME/news-footbal-fe` sesuai repo kamu.
 
 ### Env & compose override
 
 ```bash
-cd ~/laravel-fe
+cd ~/news-footbal-fe
 cp .env.example .env
 # generate APP_KEY tanpa PHP di host:
 docker run --rm -v $(pwd):/app -w /app serversideup/php:8.3-cli php artisan key:generate
 
-# edit .env: APP_ENV=production, APP_DEBUG=false, APP_URL=https://domainmu
+# edit .env: APP_ENV=production, APP_DEBUG=false, APP_URL=https://farhanapi.duckdns.org
 
 cp docker-compose.override.yml.example docker-compose.override.yml
 ```
@@ -64,7 +64,43 @@ Container bind ke `127.0.0.1:3000` saja (lihat `docker-compose.yml`) — tidak t
 
 ## 2. Update config nginx host
 
-Config lama (semua request → 8082) diubah jadi dua location block:
+Config lama (semua request → 8082) diubah jadi dua location block.
+
+### Cari file confignya
+
+```bash
+# Lihat config aktif + file mana yang dipakai
+sudo nginx -T | grep -E 'configuration file|server_name|proxy_pass'
+
+# Biasanya ada di salah satu dari sini:
+ls /etc/nginx/sites-enabled/
+ls /etc/nginx/conf.d/
+```
+
+File yang dipakai = yang isinya `proxy_pass http://127.0.0.1:8082` sekarang. Di VPS ini: `/etc/nginx/sites-available/apigo`.
+
+### Backup dulu
+
+```bash
+sudo cp /etc/nginx/sites-available/apigo /etc/nginx/sites-available/apigo.bak
+```
+
+### Edit
+
+```bash
+sudo nano /etc/nginx/sites-available/apigo
+```
+
+Cari location block lama yang seperti ini:
+
+```nginx
+    location / {
+        proxy_pass http://127.0.0.1:8082;
+        ...
+    }
+```
+
+Hapus / ganti dengan dua block ini (bagian `listen`, `ssl`, `server_name` yang sudah ada **jangan diubah**):
 
 ```nginx
 server {
@@ -90,11 +126,28 @@ server {
 }
 ```
 
+Simpan di nano: `Ctrl+O` → `Enter` → `Ctrl+X`.
+
+### Test & reload
+
 ```bash
+sudo nginx -t                    # validasi syntax — harus "test is successful"
+sudo systemctl reload nginx      # apply tanpa downtime
+```
+
+Kalau `nginx -t` gagal, jangan reload — perbaiki dulu, atau balikin backup:
+
+```bash
+sudo cp /etc/nginx/sites-available/apigo.bak /etc/nginx/sites-available/apigo
 sudo nginx -t && sudo systemctl reload nginx
 ```
 
-Cek: `https://domain/` tampil daftar berita, `https://domain/api/health` balas `{"status":"ok"}`.
+### Cek hasil
+
+```bash
+curl -s https://farhanapi.duckdns.org/api/health        # → {"status":"ok"}
+curl -s https://farhanapi.duckdns.org/ | head -20       # → HTML daftar berita
+```
 
 ## 3. GitHub Actions secrets
 
@@ -116,7 +169,7 @@ Workflow: `.github/workflows/ci.yml`
 - **push ke `main` saja** → job `deploy`: SSH ke VPS (`appleboy/ssh-action`), lalu:
 
 ```bash
-cd ~/laravel-fe
+cd ~/news-footbal-fe
 git pull origin main
 docker compose up -d --build
 ```

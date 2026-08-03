@@ -53,6 +53,6 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd ~/laravel-fe
+            cd ~/news-footbal-fe
             git pull origin main
             docker compose up -d --build
