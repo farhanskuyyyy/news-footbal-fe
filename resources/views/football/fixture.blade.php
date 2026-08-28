@@ -7,12 +7,15 @@
 
     {{-- Breadcrumb & Back --}}
     <div class="flex items-center justify-between">
-        <a href="{{ url()->previous() ?? route('football.index') }}" class="text-xs font-bold text-slate-400 hover:text-emerald-400 transition-colors flex items-center gap-1.5 bg-slate-900 border border-slate-800 px-3.5 py-2 rounded-xl">
-            &larr; Kembali ke Jadwal & Klasemen
+        <a href="{{ url()->previous() ?? route('football.index') }}" class="group text-xs font-bold text-slate-400 hover:text-emerald-400 transition-colors flex items-center gap-2 bg-slate-900 border border-slate-800 hover:border-slate-700 px-3.5 py-2 rounded-xl">
+            <svg viewBox="0 0 24 24" fill="none" class="w-4 h-4 -ml-0.5 transition-transform group-hover:-translate-x-0.5">
+                <path d="M14 7l-5 5 5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Kembali ke Jadwal &amp; Klasemen
         </a>
         <div class="flex items-center gap-2 text-xs text-slate-400 font-semibold">
             <span>{{ $league['name'] ?? 'Liga' }}</span>
-            <span>•</span>
+            <span class="w-1 h-1 rounded-full bg-slate-700"></span>
             <span class="text-emerald-400">{{ $season['name'] ?? 'Musim' }}</span>
         </div>
     </div>
@@ -145,12 +148,16 @@
                             @if(!empty($homeTeam['image_path']))
                                 <img src="{{ $homeTeam['image_path'] }}" alt="{{ $homeName }}" class="w-20 h-20 sm:w-24 sm:h-24 object-contain filter drop-shadow-xl group-hover:scale-110 transition-transform mx-auto">
                             @else
-                                <div class="w-20 h-20 rounded-2xl bg-slate-800 flex items-center justify-center text-4xl mx-auto shadow-inner">🛡️</div>
+                                <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-slate-800 flex items-center justify-center text-emerald-400 mx-auto shadow-inner">
+                                    <svg viewBox="0 0 24 24" fill="none" class="w-10 h-10"><path d="M12 3l7 2.4v5.4c0 4.5-3 8.2-7 9.5-4-1.3-7-5-7-9.5V5.4L12 3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                                </div>
                             @endif
                             <h2 class="text-xl sm:text-2xl font-black tracking-tight mt-3 text-white group-hover:text-emerald-400 transition-colors">{{ $homeName }}</h2>
                         </a>
                     @else
-                        <div class="w-20 h-20 rounded-2xl bg-slate-800 flex items-center justify-center text-4xl mx-auto">🛡️</div>
+                        <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-slate-800 flex items-center justify-center text-emerald-400 mx-auto shadow-inner">
+                            <svg viewBox="0 0 24 24" fill="none" class="w-10 h-10"><path d="M12 3l7 2.4v5.4c0 4.5-3 8.2-7 9.5-4-1.3-7-5-7-9.5V5.4L12 3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                        </div>
                         <h2 class="text-xl sm:text-2xl font-black tracking-tight mt-3 text-white">{{ $homeName }}</h2>
                     @endif
                     <span class="text-[11px] text-emerald-400 font-bold uppercase tracking-wider bg-emerald-950/60 px-3 py-0.5 rounded-full border border-emerald-800/40">Tuan Rumah</span>
@@ -170,26 +177,102 @@
                             @if(!empty($awayTeam['image_path']))
                                 <img src="{{ $awayTeam['image_path'] }}" alt="{{ $awayName }}" class="w-20 h-20 sm:w-24 sm:h-24 object-contain filter drop-shadow-xl group-hover:scale-110 transition-transform mx-auto">
                             @else
-                                <div class="w-20 h-20 rounded-2xl bg-slate-800 flex items-center justify-center text-4xl mx-auto shadow-inner">🛡️</div>
+                                <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-slate-800 flex items-center justify-center text-blue-400 mx-auto shadow-inner">
+                                    <svg viewBox="0 0 24 24" fill="none" class="w-10 h-10"><path d="M12 3l7 2.4v5.4c0 4.5-3 8.2-7 9.5-4-1.3-7-5-7-9.5V5.4L12 3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                                </div>
                             @endif
                             <h2 class="text-xl sm:text-2xl font-black tracking-tight mt-3 text-white group-hover:text-emerald-400 transition-colors">{{ $awayName }}</h2>
                         </a>
                     @else
-                        <div class="w-20 h-20 rounded-2xl bg-slate-800 flex items-center justify-center text-4xl mx-auto">🛡️</div>
+                        <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-slate-800 flex items-center justify-center text-blue-400 mx-auto shadow-inner">
+                            <svg viewBox="0 0 24 24" fill="none" class="w-10 h-10"><path d="M12 3l7 2.4v5.4c0 4.5-3 8.2-7 9.5-4-1.3-7-5-7-9.5V5.4L12 3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                        </div>
                         <h2 class="text-xl sm:text-2xl font-black tracking-tight mt-3 text-white">{{ $awayName }}</h2>
                     @endif
                     <span class="text-[11px] text-blue-400 font-bold uppercase tracking-wider bg-blue-950/60 px-3 py-0.5 rounded-full border border-blue-800/40">Tim Tamu</span>
                 </div>
             </div>
 
+            {{-- Goal scorers / red cards / missed penalties per side --}}
+            @php
+                $fmtMin = function ($ev) {
+                    $m = $ev['minute'] ?? null;
+                    if ($m === null || $m === '') return '';
+                    $ex = $ev['extra_minute'] ?? null;
+                    return $m . ($ex ? '+' . $ex : '') . "'";
+                };
+                $homeScorers = [];
+                $awayScorers = [];
+                foreach ($events as $ev) {
+                    $tn   = strtolower($ev['event_type_name'] ?? '');
+                    $tid  = $ev['type_id'] ?? 0;
+                    $nm   = $ev['player_name'] ?? 'Pemain';
+                    $isHome = !empty($ev['is_home']);
+                    $extra = strtolower(($ev['info'] ?? '') . ' ' . ($ev['addition'] ?? '') . ' ' . $tn);
+
+                    $isMissed = $tid == 17 || str_contains($tn, 'missed');
+                    $isRed    = in_array($tid, [20, 21]) || str_contains($tn, 'red') || str_contains($tn, 'merah');
+                    $isOwn    = str_contains($extra, 'own');
+                    $isPen    = str_contains($extra, 'penalt');
+                    $isGoal   = in_array($tid, [14, 15, 16]) || (str_contains($tn, 'goal') && !$isMissed);
+
+                    $line = null;
+                    $side = $isHome;
+                    if ($isMissed) {
+                        $line = ['icon' => '❌', 'name' => $nm, 'min' => $fmtMin($ev), 'note' => 'Penalti gagal', 'cls' => 'text-red-400', 'sort' => (int)($ev['minute'] ?? 0)];
+                    } elseif ($isGoal) {
+                        $tag = $isOwn ? 'OG' : ($isPen ? 'P' : '');
+                        $line = ['icon' => '⚽', 'name' => $nm, 'min' => $fmtMin($ev), 'note' => $tag, 'cls' => 'text-white', 'sort' => (int)($ev['minute'] ?? 0)];
+                        $side = $isOwn ? !$isHome : $isHome; // own goals credited to the opponent
+                    } elseif ($isRed) {
+                        $line = ['icon' => '🟥', 'name' => $nm, 'min' => $fmtMin($ev), 'note' => '', 'cls' => 'text-red-400', 'sort' => (int)($ev['minute'] ?? 0)];
+                    }
+                    if ($line) {
+                        if ($side) $homeScorers[] = $line; else $awayScorers[] = $line;
+                    }
+                }
+                usort($homeScorers, fn ($a, $b) => $a['sort'] <=> $b['sort']);
+                usort($awayScorers, fn ($a, $b) => $a['sort'] <=> $b['sort']);
+            @endphp
+            @if(count($homeScorers) || count($awayScorers))
+                <div class="mt-8 grid grid-cols-2 gap-4 sm:gap-10 max-w-2xl mx-auto">
+                    <div class="space-y-1.5">
+                        @foreach($homeScorers as $g)
+                            <div class="flex items-center justify-end gap-2 text-xs sm:text-sm">
+                                <span class="{{ $g['cls'] }} font-semibold truncate">{{ $g['name'] }}</span>
+                                @if($g['note'])<span class="text-[10px] text-slate-500 font-bold">({{ $g['note'] }})</span>@endif
+                                <span class="font-mono text-slate-400 shrink-0">{{ $g['min'] }}</span>
+                                <span class="shrink-0">{{ $g['icon'] }}</span>
+                            </div>
+                        @endforeach
+                    </div>
+                    <div class="space-y-1.5">
+                        @foreach($awayScorers as $g)
+                            <div class="flex items-center gap-2 text-xs sm:text-sm">
+                                <span class="shrink-0">{{ $g['icon'] }}</span>
+                                <span class="font-mono text-slate-400 shrink-0">{{ $g['min'] }}</span>
+                                @if($g['note'])<span class="text-[10px] text-slate-500 font-bold">({{ $g['note'] }})</span>@endif
+                                <span class="{{ $g['cls'] }} font-semibold truncate">{{ $g['name'] }}</span>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
             {{-- Match Meta (Venue & Referee) --}}
             @if($venue || count($referees) > 0)
-                <div class="mt-10 pt-5 border-t border-slate-800/80 flex flex-wrap items-center justify-center gap-8 text-xs text-slate-400 font-medium">
+                <div class="mt-10 pt-5 border-t border-slate-800/80 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-xs text-slate-400 font-medium">
                     @if($venue)
-                        <span class="flex items-center gap-1.5">📍 <strong class="text-slate-200">Stadion:</strong> {{ $venue['name'] }} ({{ $venue['city_name'] ?? '' }})</span>
+                        <span class="flex items-center gap-2">
+                            <svg viewBox="0 0 24 24" fill="none" class="w-4 h-4 text-emerald-400 shrink-0"><path d="M12 21s6-5.3 6-10a6 6 0 10-12 0c0 4.7 6 10 6 10z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="11" r="2.2" stroke="currentColor" stroke-width="1.6"/></svg>
+                            <span><strong class="text-slate-200">Stadion:</strong> {{ $venue['name'] }} ({{ $venue['city_name'] ?? '' }})</span>
+                        </span>
                     @endif
                     @if(count($referees) > 0)
-                        <span class="flex items-center gap-1.5">⚖️ <strong class="text-slate-200">Wasit:</strong> {{ $referees[0]['name'] ?? 'Wasit Pertandingan' }}</span>
+                        <span class="flex items-center gap-2">
+                            <svg viewBox="0 0 24 24" fill="none" class="w-4 h-4 text-emerald-400 shrink-0"><circle cx="10" cy="13.5" r="4.5" stroke="currentColor" stroke-width="1.6"/><path d="M14.2 11.4H21v2.3a1 1 0 01-1 1h-3.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 9V6.2h3.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            <span><strong class="text-slate-200">Wasit:</strong> {{ $referees[0]['name'] ?? 'Wasit Pertandingan' }}</span>
+                        </span>
                     @endif
                 </div>
             @endif
@@ -205,21 +288,26 @@
             {{-- SECTION 1: FULL 22-PLAYER 2D FOOTBALL PITCH --}}
             <div class="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-6">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
-                    <div>
-                        <h3 class="text-lg font-black text-white flex items-center gap-2">
-                            🏟️ Formasi 22 Pemain di Lapangan
-                        </h3>
-                        <p class="text-xs text-slate-400 mt-0.5">Avatar pemain menampilkan badge insiden (⚽ Gol, 👟 Assist, 🟨/🟥 Kartu, 🔄 Sub). Klik pemain untuk statistik match.</p>
+                    <div class="flex items-center gap-3">
+                        <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+                            <svg viewBox="0 0 24 24" fill="none" class="w-5 h-5"><rect x="3.5" y="4.5" width="17" height="15" rx="1.5" stroke="currentColor" stroke-width="1.6"/><path d="M12 4.5v15M3.5 9.5H6M3.5 14.5H6M20.5 9.5H18M20.5 14.5H18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="12" r="2.4" stroke="currentColor" stroke-width="1.6"/></svg>
+                        </span>
+                        <div>
+                            <span class="kicker block text-[10px] font-bold uppercase text-emerald-400">Susunan Pemain</span>
+                            <h3 class="text-lg font-black text-white leading-tight">Formasi 22 Pemain di Lapangan</h3>
+                        </div>
                     </div>
 
                     {{-- Formations Indicator --}}
                     <div class="flex items-center gap-3 text-xs font-bold">
-                        <span class="px-3 py-1 rounded-xl bg-emerald-950 text-emerald-300 border border-emerald-800 flex items-center gap-1.5">
-                            <span>🛡️ {{ $homeName }}:</span>
+                        <span class="px-3 py-1.5 rounded-xl bg-emerald-950 text-emerald-300 border border-emerald-800 flex items-center gap-1.5">
+                            <svg viewBox="0 0 24 24" fill="none" class="w-3.5 h-3.5 shrink-0"><path d="M12 3l7 2.4v5.4c0 4.5-3 8.2-7 9.5-4-1.3-7-5-7-9.5V5.4L12 3z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+                            <span class="truncate max-w-[110px]">{{ $homeName }}</span>
                             <span class="font-mono font-black">{{ $homeFormation }}</span>
                         </span>
-                        <span class="px-3 py-1 rounded-xl bg-blue-950 text-blue-300 border border-blue-800 flex items-center gap-1.5">
-                            <span>🛡️ {{ $awayName }}:</span>
+                        <span class="px-3 py-1.5 rounded-xl bg-blue-950 text-blue-300 border border-blue-800 flex items-center gap-1.5">
+                            <svg viewBox="0 0 24 24" fill="none" class="w-3.5 h-3.5 shrink-0"><path d="M12 3l7 2.4v5.4c0 4.5-3 8.2-7 9.5-4-1.3-7-5-7-9.5V5.4L12 3z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+                            <span class="truncate max-w-[110px]">{{ $awayName }}</span>
                             <span class="font-mono font-black">{{ $awayFormation }}</span>
                         </span>
                     </div>
@@ -245,8 +333,9 @@
                     {{-- TOP HALF: HOME TEAM STARTING XI --}}
                     <div class="relative z-10 space-y-6 pb-6 border-b border-white/10">
                         <div class="text-center">
-                            <span class="text-[10px] font-mono font-black uppercase tracking-widest text-emerald-300 bg-slate-950/80 px-3 py-1 rounded-full border border-emerald-500/30 shadow-md">
-                                🟢 {{ $homeName }} ({{ $homeFormation }})
+                            <span class="inline-flex items-center gap-2 text-[10px] font-mono font-black uppercase tracking-widest text-emerald-300 bg-slate-950/80 px-3 py-1 rounded-full border border-emerald-500/30 shadow-md">
+                                <span class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px] shadow-emerald-400/60"></span>
+                                {{ $homeName }} ({{ $homeFormation }})
                             </span>
                         </div>
 
@@ -277,6 +366,17 @@
                                                     <span class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-slate-950 text-emerald-400 font-mono font-black text-[10px] flex items-center justify-center border border-emerald-500 shadow-md">
                                                         {{ $p['jersey_number'] ?? '•' }}
                                                     </span>
+
+                                                    {{-- Rating Badge (FixtureLineupDetail type_id 118) --}}
+                                                    @if(!empty($p['rating']))
+                                                        @php
+                                                            $rt = (float) $p['rating'];
+                                                            $rtCls = $rt >= 7 ? 'bg-emerald-500 text-slate-950' : ($rt >= 6 ? 'bg-amber-400 text-slate-950' : 'bg-red-500 text-white');
+                                                        @endphp
+                                                        <span class="absolute -bottom-1 -left-1 h-5 min-w-[22px] px-1 rounded-md {{ $rtCls }} font-mono font-black text-[10px] flex items-center justify-center border border-slate-950 shadow-md z-20" title="Rating {{ number_format($rt, 2) }}">
+                                                            {{ number_format($rt, 1) }}
+                                                        </span>
+                                                    @endif
 
                                                     {{-- EVENT BADGES OVERLAY (GOAL, ASSIST, CARD, SUB) --}}
                                                     @if($evStats)
@@ -361,6 +461,17 @@
                                                         {{ $p['jersey_number'] ?? '•' }}
                                                     </span>
 
+                                                    {{-- Rating Badge (FixtureLineupDetail type_id 118) --}}
+                                                    @if(!empty($p['rating']))
+                                                        @php
+                                                            $rt = (float) $p['rating'];
+                                                            $rtCls = $rt >= 7 ? 'bg-emerald-500 text-slate-950' : ($rt >= 6 ? 'bg-amber-400 text-slate-950' : 'bg-red-500 text-white');
+                                                        @endphp
+                                                        <span class="absolute -bottom-1 -left-1 h-5 min-w-[22px] px-1 rounded-md {{ $rtCls }} font-mono font-black text-[10px] flex items-center justify-center border border-slate-950 shadow-md z-20" title="Rating {{ number_format($rt, 2) }}">
+                                                            {{ number_format($rt, 1) }}
+                                                        </span>
+                                                    @endif
+
                                                     {{-- EVENT BADGES OVERLAY (GOAL, ASSIST, CARD, SUB) --}}
                                                     @if($evStats)
                                                         {{-- Top-Right: Goal & Assist Badges --}}
@@ -414,8 +525,9 @@
                         @endif
 
                         <div class="text-center pt-2">
-                            <span class="text-[10px] font-mono font-black uppercase tracking-widest text-blue-300 bg-slate-950/80 px-3 py-1 rounded-full border border-blue-500/30 shadow-md">
-                                🔵 {{ $awayName }} ({{ $awayFormation }})
+                            <span class="inline-flex items-center gap-2 text-[10px] font-mono font-black uppercase tracking-widest text-blue-300 bg-slate-950/80 px-3 py-1 rounded-full border border-blue-500/30 shadow-md">
+                                <span class="w-2 h-2 rounded-full bg-blue-400 shadow-[0_0_8px] shadow-blue-400/60"></span>
+                                {{ $awayName }} ({{ $awayFormation }})
                             </span>
                         </div>
                     </div>
@@ -426,8 +538,9 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
                     {{-- Home Bench --}}
                     <div class="bg-slate-950/80 border border-slate-800 rounded-2xl p-4 space-y-3">
-                        <span class="text-xs font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
-                            <span>🛡️</span> Cadangan {{ $homeName }}
+                        <span class="text-xs font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-2">
+                            <svg viewBox="0 0 24 24" fill="none" class="w-4 h-4 shrink-0"><path d="M4 8.5h13l-3-3M20 15.5H7l3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            Cadangan {{ $homeName }}
                         </span>
                         <div class="grid grid-cols-2 gap-2">
                             @forelse($homeBench as $p)
@@ -450,6 +563,13 @@
                                         <span class="text-[11px] font-bold text-slate-200 block truncate hover:text-emerald-400">{{ $p['player_name'] }}</span>
                                         <div class="flex items-center gap-1">
                                             <span class="text-[9px] text-slate-500 font-mono">No. {{ $p['jersey_number'] ?? '-' }}</span>
+                                            @if(!empty($p['rating']))
+                                                @php
+                                                    $rt = (float) $p['rating'];
+                                                    $rtCls = $rt >= 7 ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' : ($rt >= 6 ? 'bg-amber-400/20 text-amber-300 border-amber-400/30' : 'bg-red-500/20 text-red-300 border-red-500/30');
+                                                @endphp
+                                                <span class="text-[9px] font-mono font-black px-1 rounded border {{ $rtCls }}" title="Rating {{ number_format($rt, 2) }}">{{ number_format($rt, 1) }}</span>
+                                            @endif
                                             @if($evStats)
                                                 @if(!empty($evStats['goals']))
                                                     <span class="text-[10px]">⚽</span>
@@ -472,8 +592,9 @@
 
                     {{-- Away Bench --}}
                     <div class="bg-slate-950/80 border border-slate-800 rounded-2xl p-4 space-y-3">
-                        <span class="text-xs font-bold uppercase tracking-wider text-blue-400 flex items-center gap-1.5">
-                            <span>🛡️</span> Cadangan {{ $awayName }}
+                        <span class="text-xs font-bold uppercase tracking-wider text-blue-400 flex items-center gap-2">
+                            <svg viewBox="0 0 24 24" fill="none" class="w-4 h-4 shrink-0"><path d="M4 8.5h13l-3-3M20 15.5H7l3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            Cadangan {{ $awayName }}
                         </span>
                         <div class="grid grid-cols-2 gap-2">
                             @forelse($awayBench as $p)
@@ -496,6 +617,13 @@
                                         <span class="text-[11px] font-bold text-slate-200 block truncate hover:text-blue-400">{{ $p['player_name'] }}</span>
                                         <div class="flex items-center gap-1">
                                             <span class="text-[9px] text-slate-500 font-mono">No. {{ $p['jersey_number'] ?? '-' }}</span>
+                                            @if(!empty($p['rating']))
+                                                @php
+                                                    $rt = (float) $p['rating'];
+                                                    $rtCls = $rt >= 7 ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' : ($rt >= 6 ? 'bg-amber-400/20 text-amber-300 border-amber-400/30' : 'bg-red-500/20 text-red-300 border-red-500/30');
+                                                @endphp
+                                                <span class="text-[9px] font-mono font-black px-1 rounded border {{ $rtCls }}" title="Rating {{ number_format($rt, 2) }}">{{ number_format($rt, 1) }}</span>
+                                            @endif
                                             @if($evStats)
                                                 @if(!empty($evStats['goals']))
                                                     <span class="text-[10px]">⚽</span>
@@ -521,14 +649,24 @@
 
             {{-- SECTION 2: MATCH TIMELINE EVENTS (HOME VS AWAY) --}}
             <div class="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-6">
-                <div class="flex items-center justify-between pb-4 border-b border-slate-800">
-                    <h3 class="text-lg font-black text-white flex items-center gap-2">
-                        ⏱️ Garis Waktu Pertandingan (Timeline)
-                    </h3>
-                    <div class="flex items-center gap-4 text-xs font-bold">
-                        <span class="text-emerald-400">👈 {{ $homeName }}</span>
-                        <span class="text-slate-600">|</span>
-                        <span class="text-blue-400">{{ $awayName }} 👉</span>
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+                    <div class="flex items-center gap-3">
+                        <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+                            <svg viewBox="0 0 24 24" fill="none" class="w-5 h-5"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.6"/><path d="M12 7.5V12l3 1.7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </span>
+                        <div>
+                            <span class="kicker block text-[10px] font-bold uppercase text-emerald-400">Timeline</span>
+                            <h3 class="text-lg font-black text-white leading-tight">Garis Waktu Pertandingan</h3>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 text-xs font-bold">
+                        <span class="inline-flex items-center gap-1.5 text-emerald-400">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>{{ $homeName }}
+                        </span>
+                        <span class="text-slate-700">/</span>
+                        <span class="inline-flex items-center gap-1.5 text-blue-400">
+                            {{ $awayName }}<span class="w-2 h-2 rounded-full bg-blue-400"></span>
+                        </span>
                     </div>
                 </div>
 
@@ -612,8 +750,9 @@
                                                     @endif
 
                                                     @if(!empty($ev['info']))
-                                                        <span class="inline-block text-[10px] font-bold bg-slate-900 text-slate-300 px-2.5 py-0.5 rounded-full border border-slate-800 mt-1">
-                                                            ℹ️ {{ $ev['info'] }}
+                                                        <span class="inline-flex items-center gap-1 text-[10px] font-bold bg-slate-900 text-slate-300 px-2.5 py-0.5 rounded-full border border-slate-800 mt-1">
+                                                            <svg viewBox="0 0 24 24" fill="none" class="w-3 h-3 text-slate-400 shrink-0"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.6"/><path d="M12 11v5M12 8h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                                                            {{ $ev['info'] }}
                                                         </span>
                                                     @endif
                                                 </div>
@@ -699,8 +838,9 @@
                                                     @endif
 
                                                     @if(!empty($ev['info']))
-                                                        <span class="inline-block text-[10px] font-bold bg-slate-900 text-slate-300 px-2.5 py-0.5 rounded-full border border-slate-800 mt-1">
-                                                            ℹ️ {{ $ev['info'] }}
+                                                        <span class="inline-flex items-center gap-1 text-[10px] font-bold bg-slate-900 text-slate-300 px-2.5 py-0.5 rounded-full border border-slate-800 mt-1">
+                                                            <svg viewBox="0 0 24 24" fill="none" class="w-3 h-3 text-slate-400 shrink-0"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.6"/><path d="M12 11v5M12 8h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                                                            {{ $ev['info'] }}
                                                         </span>
                                                     @endif
                                                 </div>
@@ -730,9 +870,15 @@
 
             {{-- PERIOD SCORES BREAKDOWN (1ST_HALF, 2ND_HALF, CURRENT) --}}
             <div class="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 shadow-xl">
-                <h3 class="text-base font-black text-white mb-4 flex items-center gap-2">
-                    📊 Rincian Skor Babak
-                </h3>
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+                        <svg viewBox="0 0 24 24" fill="none" class="w-5 h-5"><rect x="4" y="5" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M4 9.5h16M12 9.5V19" stroke="currentColor" stroke-width="1.6"/></svg>
+                    </span>
+                    <div>
+                        <span class="kicker block text-[10px] font-bold uppercase text-emerald-400">Skor Per Babak</span>
+                        <h3 class="text-base font-black text-white leading-tight">Rincian Skor</h3>
+                    </div>
+                </div>
 
                 @if(count($scores) > 0)
                     <div class="overflow-hidden rounded-2xl border border-slate-800 bg-slate-950/60">
@@ -768,10 +914,14 @@
 
             {{-- MATCH STATISTICS COMPARISON --}}
             <div class="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 shadow-xl">
-                <div class="flex items-center justify-between mb-6 pb-3 border-b border-slate-800">
-                    <h3 class="text-base font-black text-white flex items-center gap-2">
-                        📈 Statistik Pertandingan
-                    </h3>
+                <div class="flex items-center gap-3 mb-6 pb-3 border-b border-slate-800">
+                    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+                        <svg viewBox="0 0 24 24" fill="none" class="w-5 h-5"><path d="M5 19V11M12 19V6M19 19v-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                    </span>
+                    <div>
+                        <span class="kicker block text-[10px] font-bold uppercase text-emerald-400">Perbandingan Tim</span>
+                        <h3 class="text-base font-black text-white leading-tight">Statistik Pertandingan</h3>
+                    </div>
                 </div>
 
                 @if(count($statistics) > 0)
@@ -830,8 +980,8 @@
                         <img :src="selectedPlayer.player_image" :alt="selectedPlayer.player_name" class="w-16 h-16 rounded-2xl object-cover border-2 border-emerald-500 shadow-xl bg-slate-950 flex-shrink-0">
                     </template>
                     <template x-if="!selectedPlayer.player_image">
-                        <div class="w-16 h-16 rounded-2xl bg-slate-950 border-2 border-emerald-500 flex items-center justify-center text-2xl shadow-xl flex-shrink-0">
-                            👤
+                        <div class="w-16 h-16 rounded-2xl bg-slate-950 border-2 border-emerald-500 flex items-center justify-center text-emerald-400 shadow-xl flex-shrink-0">
+                            <svg viewBox="0 0 24 24" fill="none" class="w-8 h-8"><circle cx="12" cy="8.5" r="3.8" stroke="currentColor" stroke-width="1.6"/><path d="M5 19.5c0-3.6 3.1-5.5 7-5.5s7 1.9 7 5.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
                         </div>
                     </template>
                     <div>
@@ -844,8 +994,8 @@
                     </div>
                 </div>
 
-                <button @click="showModal = false" class="text-slate-500 hover:text-white p-2 rounded-xl bg-slate-950 border border-slate-800 text-lg transition-colors">
-                    ✕
+                <button @click="showModal = false" class="text-slate-500 hover:text-white p-2 rounded-xl bg-slate-950 border border-slate-800 hover:border-slate-700 transition-colors">
+                    <svg viewBox="0 0 24 24" fill="none" class="w-5 h-5"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
                 </button>
             </div>
 
@@ -866,8 +1016,9 @@
                 <div class="flex items-center justify-between">
                     <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">Statistik Pertandingan Ini:</h4>
                     <template x-if="selectedPlayer.rating">
-                        <span class="px-2.5 py-1 rounded-xl bg-amber-500/20 text-amber-300 font-mono font-black text-xs border border-amber-500/30 flex items-center gap-1">
-                            ⭐️ Rating: <span x-text="selectedPlayer.rating"></span>
+                        <span class="px-2.5 py-1 rounded-xl bg-amber-500/20 text-amber-300 font-mono font-black text-xs border border-amber-500/30 flex items-center gap-1.5">
+                            <svg viewBox="0 0 24 24" fill="currentColor" class="w-3.5 h-3.5"><path d="M12 3.5l2.5 5.1 5.6.8-4.05 3.95.96 5.6L12 16.9l-5.01 2.65.96-5.6L3.9 9.4l5.6-.8L12 3.5z"/></svg>
+                            Rating: <span x-text="selectedPlayer.rating"></span>
                         </span>
                     </template>
                 </div>
@@ -903,6 +1054,117 @@
 
         </div>
     </div>
+
+    {{-- PREDIKSI HASIL (1X2) — dari proxy live, tidak dipersist --}}
+    @php
+        $ftPred = collect($predictions ?? [])->first(function ($p) {
+            $dev = strtoupper($p['type']['developer_name'] ?? $p['type']['code'] ?? '');
+            return str_contains($dev, 'FULLTIME_RESULT');
+        });
+        $pr = $ftPred['predictions'] ?? null;
+        $pHome = isset($pr['home']) ? (float) $pr['home'] : null;
+        $pDraw = isset($pr['draw']) ? (float) $pr['draw'] : null;
+        $pAway = isset($pr['away']) ? (float) $pr['away'] : null;
+    @endphp
+    @if($pHome !== null && $pAway !== null)
+        <div class="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 shadow-xl">
+            <div class="flex items-center gap-3 mb-4">
+                <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+                    <svg viewBox="0 0 24 24" fill="none" class="w-5 h-5"><path d="M4 15l5-5 3.5 3.5L20 6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 6h5v5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+                <div>
+                    <span class="kicker block text-[10px] font-bold uppercase text-emerald-400">Prediksi Model</span>
+                    <h3 class="text-base font-black text-white leading-tight">Prediksi Hasil</h3>
+                    <p class="text-[11px] text-slate-400 mt-0.5">Probabilitas menang / seri / kalah &mdash; model Sportmonks.</p>
+                </div>
+            </div>
+            <div class="flex h-4 w-full overflow-hidden rounded-full border border-slate-800 bg-slate-950">
+                <div class="bg-emerald-500 h-full" style="width: {{ $pHome }}%" title="Menang {{ $home_team['name'] ?? 'Home' }}"></div>
+                <div class="bg-slate-600 h-full" style="width: {{ $pDraw ?? 0 }}%" title="Seri"></div>
+                <div class="bg-red-500 h-full" style="width: {{ $pAway }}%" title="Menang {{ $away_team['name'] ?? 'Away' }}"></div>
+            </div>
+            <div class="mt-3 flex items-center justify-between text-xs font-bold">
+                <span class="text-emerald-400">{{ $home_team['name'] ?? 'Home' }} <span class="font-mono">{{ round($pHome) }}%</span></span>
+                <span class="text-slate-400">Seri <span class="font-mono">{{ round($pDraw ?? 0) }}%</span></span>
+                <span class="text-red-400"><span class="font-mono">{{ round($pAway) }}%</span> {{ $away_team['name'] ?? 'Away' }}</span>
+            </div>
+        </div>
+    @endif
+
+    {{-- ODDS PRA-LAGA (1X2) — dari proxy live --}}
+    @php
+        $oddsList = collect($odds ?? []);
+        $mw = $oddsList->filter(function ($o) {
+            $dev = strtoupper($o['market']['developer_name'] ?? $o['market']['name'] ?? '');
+            return str_contains($dev, 'FULLTIME_RESULT') || str_contains($dev, 'MATCH_WINNER') || str_contains($dev, '3WAY') || str_contains($dev, '1X2');
+        });
+        // Take one bookmaker's line
+        $bm = $mw->groupBy(fn ($o) => $o['bookmaker']['name'] ?? ($o['bookmaker_id'] ?? 'Bandar'))->first();
+        $oHome = $oDraw = $oAway = null;
+        $bookName = null;
+        if ($bm) {
+            $bookName = $bm[0]['bookmaker']['name'] ?? null;
+            foreach ($bm as $o) {
+                $lbl = strtolower($o['label'] ?? '');
+                if (in_array($lbl, ['home', '1'])) $oHome = $o['value'] ?? null;
+                elseif (in_array($lbl, ['draw', 'x'])) $oDraw = $o['value'] ?? null;
+                elseif (in_array($lbl, ['away', '2'])) $oAway = $o['value'] ?? null;
+            }
+        }
+    @endphp
+    @if($oHome || $oAway)
+        <div class="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 shadow-xl">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-3">
+                    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+                        <svg viewBox="0 0 24 24" fill="none" class="w-5 h-5"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.6"/><path d="M12 7v10M14.5 9.3c0-1.2-1.1-1.9-2.5-1.9s-2.5.7-2.5 1.8c0 2.5 5 1.3 5 3.9 0 1.2-1.1 2-2.5 2s-2.5-.8-2.5-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                    </span>
+                    <div>
+                        <span class="kicker block text-[10px] font-bold uppercase text-emerald-400">Pasar 1X2</span>
+                        <h3 class="text-base font-black text-white leading-tight">Odds Pra-Laga</h3>
+                    </div>
+                </div>
+                @if($bookName)
+                    <span class="text-[11px] font-bold text-slate-500 font-mono self-start">{{ $bookName }}</span>
+                @endif
+            </div>
+            <div class="grid grid-cols-3 gap-3">
+                <div class="rounded-2xl border border-slate-800 bg-slate-950 p-4 text-center">
+                    <span class="block text-[10px] uppercase font-bold text-slate-500 truncate">{{ $home_team['name'] ?? '1' }}</span>
+                    <span class="mt-1 block text-xl font-black font-mono text-emerald-400">{{ $oHome ?? '-' }}</span>
+                </div>
+                <div class="rounded-2xl border border-slate-800 bg-slate-950 p-4 text-center">
+                    <span class="block text-[10px] uppercase font-bold text-slate-500">Seri</span>
+                    <span class="mt-1 block text-xl font-black font-mono text-slate-200">{{ $oDraw ?? '-' }}</span>
+                </div>
+                <div class="rounded-2xl border border-slate-800 bg-slate-950 p-4 text-center">
+                    <span class="block text-[10px] uppercase font-bold text-slate-500 truncate">{{ $away_team['name'] ?? '2' }}</span>
+                    <span class="mt-1 block text-xl font-black font-mono text-red-400">{{ $oAway ?? '-' }}</span>
+                </div>
+            </div>
+            <p class="mt-3 text-[10px] text-slate-600">Odds hanya untuk informasi. Bukan ajakan bertaruh.</p>
+        </div>
+    @endif
+
+    {{-- HEAD-TO-HEAD — riwayat pertemuan (proxy live) --}}
+    @if(!empty($h2h))
+        <div class="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-4">
+            <div class="flex items-center gap-3">
+                <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+                    <svg viewBox="0 0 24 24" fill="none" class="w-5 h-5"><path d="M14.5 4H20v5.5M20 4l-8.5 8.5M9.5 20H4v-5.5M4 20l8.5-8.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 14l5 5M9 14l-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                </span>
+                <div>
+                    <span class="kicker block text-[10px] font-bold uppercase text-emerald-400">Riwayat Pertemuan</span>
+                    <h3 class="text-base font-black text-white leading-tight">Head-to-Head</h3>
+                </div>
+            </div>
+            <div class="grid gap-3 md:grid-cols-2">
+                @foreach(array_slice($h2h, 0, 6) as $f)
+                    @include('football.partials.live-card', ['f' => $f])
+                @endforeach
+            </div>
+        </div>
+    @endif
 
 </div>
 

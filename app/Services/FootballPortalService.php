@@ -128,4 +128,116 @@ class FootballPortalService
         $res = $this->get("players/{$playerId}", [], 120);
         return $res['data'] ?? null;
     }
+
+    // ─────────────────────────────────────────────────────────────────────
+    // Live Sportmonks proxy (backend /sportmonks/* passthrough).
+    // Used for real-time data that is NOT persisted in the portal DB:
+    // livescores, head-to-head, predictions, fixtures-by-date, search.
+    // ─────────────────────────────────────────────────────────────────────
+
+    /**
+     * GET the backend Sportmonks proxy. Returns the raw decoded JSON (Sportmonks
+     * envelope, i.e. ['data' => ...]) or null on failure.
+     */
+    protected function getProxy(string $path, array $queryParams = [], int $cacheSeconds = 15): ?array
+    {
+        $cacheKey = 'sm.'.md5($path.serialize($queryParams));
+
+        try {
+            return Cache::remember($cacheKey, $cacheSeconds, function () use ($path, $queryParams) {
+                $response = Http::timeout($this->timeout)
+                    ->acceptJson()
+                    ->get("{$this->baseUrl}/sportmonks/{$path}", $queryParams);
+
+                if ($response->notFound()) {
+                    return null;
+                }
+
+                return $response->throw()->json();
+            });
+        } catch (ConnectionException|RequestException $e) {
+            Log::warning("Sportmonks proxy error on /sportmonks/{$path}", ['error' => $e->getMessage()]);
+            return null;
+        }
+    }
+
+    /** Currently in-play matches with score/event/participant context. */
+    public function getLiveInplay(): array
+    {
+        $res = $this->getProxy('livescores/inplay', [
+            'include' => 'participants;scores;state;league;events.type',
+        ], 15);
+        return $res['data'] ?? [];
+    }
+
+    /** Head-to-head history between two teams. */
+    public function getHeadToHead(int $teamA, int $teamB): array
+    {
+        $res = $this->getProxy("fixtures/head-to-head/{$teamA}/{$teamB}", [
+            'include' => 'participants;scores;league;state',
+        ], 3600);
+        return $res['data'] ?? [];
+    }
+
+    /** Win/draw/loss & market probabilities for a fixture. */
+    public function getFixturePredictions(int $fixtureId): array
+    {
+        $res = $this->getProxy("predictions/probabilities/fixtures/{$fixtureId}", [
+            'include' => 'type',
+        ], 600);
+        return $res['data'] ?? [];
+    }
+
+    /** All fixtures kicking off on a given Y-m-d date. */
+    public function getFixturesByDate(string $date): array
+    {
+        $res = $this->getProxy("fixtures/date/{$date}", [
+            'include' => 'participants;scores;state;league',
+        ], 60);
+        return $res['data'] ?? [];
+    }
+
+    /**
+     * Upcoming fixtures for a team, fetched LIVE from the Sportmonks proxy
+     * (not persisted). Returns up to $limit not-yet-finished fixtures sorted by
+     * kickoff. Raw Sportmonks fixture shape (participants/state/league) — render
+     * with the football.partials.live-card partial.
+     */
+    public function getTeamUpcoming(int $teamId, int $limit = 5): array
+    {
+        $start = date('Y-m-d');
+        $end = date('Y-m-d', strtotime('+150 days'));
+
+        $res = $this->getProxy("fixtures/between/{$start}/{$end}/{$teamId}", [
+            'include' => 'participants;league;state',
+        ], 600);
+        $data = $res['data'] ?? [];
+
+        // Drop already-finished fixtures, sort by kickoff ascending
+        $finished = ['FT', 'AET', 'FT_PEN'];
+        $data = array_values(array_filter($data, function ($f) use ($finished) {
+            $code = $f['state']['short_name'] ?? $f['state']['state'] ?? '';
+            return ! in_array($code, $finished, true);
+        }));
+        usort($data, fn ($a, $b) => strcmp($a['starting_at'] ?? '', $b['starting_at'] ?? ''));
+
+        return array_slice($data, 0, $limit);
+    }
+
+    /** Pre-match odds for a fixture (grouped by market/bookmaker downstream). */
+    public function getFixtureOdds(int $fixtureId): array
+    {
+        $res = $this->getProxy("odds/pre-match/fixtures/{$fixtureId}", [
+            'include' => 'market;bookmaker',
+        ], 600);
+        return $res['data'] ?? [];
+    }
+
+    /** Search teams / players / leagues by name via the proxy. */
+    public function search(string $type, string $name): array
+    {
+        $type = in_array($type, ['teams', 'players', 'leagues'], true) ? $type : 'teams';
+        $res = $this->getProxy("{$type}/search/".rawurlencode($name), [], 120);
+        return $res['data'] ?? [];
+    }
 }

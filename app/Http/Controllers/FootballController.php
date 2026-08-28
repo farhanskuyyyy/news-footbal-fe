@@ -104,6 +104,13 @@ class FootballController extends Controller
             abort(404, 'Pertandingan tidak ditemukan.');
         }
 
+        // Head-to-head + predictions from the live Sportmonks proxy (not persisted).
+        $homeId = $data['home_team']['id'] ?? null;
+        $awayId = $data['away_team']['id'] ?? null;
+        $h2h = ($homeId && $awayId) ? $this->footballService->getHeadToHead($homeId, $awayId) : [];
+        $predictions = $this->footballService->getFixturePredictions($id);
+        $odds = $this->footballService->getFixtureOdds($id);
+
         return view('football.fixture', [
             'fixture' => $data['fixture'] ?? [],
             'league' => $data['league'] ?? null,
@@ -118,6 +125,48 @@ class FootballController extends Controller
             'statistics' => $data['statistics'] ?? [],
             'scores' => $data['scores'] ?? [],
             'referees' => $data['referees'] ?? [],
+            'h2h' => $h2h,
+            'predictions' => $predictions,
+            'odds' => $odds,
+        ]);
+    }
+
+    public function live(): View
+    {
+        $matches = $this->footballService->getLiveInplay();
+
+        return view('football.live', [
+            'matches' => $matches,
+        ]);
+    }
+
+    public function matchday(Request $request): View
+    {
+        $date = $request->query('date', date('Y-m-d'));
+        // Guard the date format; fall back to today on anything unexpected.
+        $d = \DateTime::createFromFormat('Y-m-d', $date);
+        if (! $d || $d->format('Y-m-d') !== $date) {
+            $date = date('Y-m-d');
+        }
+
+        $fixtures = $this->footballService->getFixturesByDate($date);
+
+        return view('football.matchday', [
+            'date' => $date,
+            'fixtures' => $fixtures,
+        ]);
+    }
+
+    public function search(Request $request): View
+    {
+        $q = trim((string) $request->query('q', ''));
+        $type = $request->query('type', 'teams');
+        $results = strlen($q) >= 2 ? $this->footballService->search($type, $q) : [];
+
+        return view('football.search', [
+            'q' => $q,
+            'type' => in_array($type, ['teams', 'players', 'leagues'], true) ? $type : 'teams',
+            'results' => $results,
         ]);
     }
 
@@ -130,12 +179,18 @@ class FootballController extends Controller
             abort(404, 'Klub tidak ditemukan.');
         }
 
+        // Upcoming fixtures fetched live from the Sportmonks proxy (not persisted).
+        $upcoming = $this->footballService->getTeamUpcoming($id, 5);
+
         return view('football.team', [
             'team' => $data['team'] ?? [],
             'venue' => $data['venue'] ?? null,
+            'coach' => $data['coach'] ?? null,
             'squads' => $data['squads'] ?? [],
             'players' => $data['players'] ?? [],
+            'positions' => $data['positions'] ?? [],
             'rivals' => $data['rivals'] ?? [],
+            'upcoming' => $upcoming,
             'seasonId' => $seasonId,
         ]);
     }
@@ -152,10 +207,14 @@ class FootballController extends Controller
             'player' => $data['player'] ?? [],
             'country' => $data['country'] ?? null,
             'nationality' => $data['nationality'] ?? null,
+            'position' => $data['position'] ?? null,
+            'detailedPosition' => $data['detailed_position'] ?? null,
             'squads' => $data['squads'] ?? [],
             'teams' => $data['teams'] ?? [],
+            'clubHistory' => $data['club_history'] ?? [],
             'transfers' => $data['transfers'] ?? [],
             'topscorers' => $data['topscorers'] ?? [],
+            'statistics' => $data['statistics'] ?? [],
         ]);
     }
 }

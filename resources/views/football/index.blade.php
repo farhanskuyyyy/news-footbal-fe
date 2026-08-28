@@ -6,14 +6,14 @@
 <div class="space-y-8">
 
     {{-- HEADER & LEAGUE SELECTOR --}}
-    <div class="bg-gradient-to-r from-slate-900 via-slate-900/90 to-slate-950 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+    <div class="pitch-stripes bg-gradient-to-r from-slate-900 via-slate-900/90 to-slate-950 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
         {{-- Background Glow --}}
         <div class="absolute -right-20 -top-20 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
             <div>
                 <div class="flex items-center gap-2 mb-2">
-                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    <span class="kicker inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> MATCHDAY PORTAL
                     </span>
                     <span class="text-xs text-slate-400">Database Real-time Football</span>
@@ -288,6 +288,7 @@
                                 <th class="py-3.5 px-3 text-center" title="Gol Memasukkan - Gol Kemasukan">GM-GK</th>
                                 <th class="py-3.5 px-3 text-center" title="Selisih Gol (Goal Difference)">SG</th>
                                 <th class="py-3.5 px-4 text-center font-black text-emerald-400" title="Poin (Points)">Poin</th>
+                                <th class="py-3.5 px-3 text-center" title="5 Laga Terakhir">Form</th>
                                 <th class="py-3.5 px-3 text-center">Detail</th>
                             </tr>
                         </thead>
@@ -370,6 +371,30 @@
                                     {{-- Points --}}
                                     <td class="py-3.5 px-4 text-center font-mono font-black text-base text-emerald-400 bg-slate-950/40">
                                         {{ $st['points'] ?? 0 }}
+                                    </td>
+
+                                    {{-- Recent Form (last 5: W/D/L pills) --}}
+                                    <td class="py-3.5 px-3">
+                                        @php $formArr = $st['form'] ?? []; @endphp
+                                        @if(!empty($formArr))
+                                            <div class="flex items-center justify-center gap-1">
+                                                @foreach($formArr as $r)
+                                                    @php
+                                                        $r = strtoupper($r);
+                                                        $cls = match($r) {
+                                                            'W' => 'bg-emerald-500/90 text-slate-950',
+                                                            'D' => 'bg-slate-600 text-white',
+                                                            'L' => 'bg-red-500/90 text-white',
+                                                            default => 'bg-slate-800 text-slate-400',
+                                                        };
+                                                        $label = match($r) { 'W' => 'Menang', 'D' => 'Seri', 'L' => 'Kalah', default => '' };
+                                                    @endphp
+                                                    <span title="{{ $label }}" class="flex h-5 w-5 items-center justify-center rounded text-[10px] font-black font-mono {{ $cls }}">{{ $r }}</span>
+                                                @endforeach
+                                            </div>
+                                        @else
+                                            <span class="text-slate-600 text-xs">—</span>
+                                        @endif
                                     </td>
 
                                     {{-- Detail Squad Button --}}
