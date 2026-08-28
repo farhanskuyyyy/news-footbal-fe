@@ -18,6 +18,11 @@
     $isFinished = in_array($stateCode, ['FT', 'AET', 'FT_PEN']);
     $leagueName = $f['league']['name'] ?? null;
     $leagueLogo = $f['league']['image_path'] ?? null;
+
+    // Sportmonks starting_at is UTC — convert to WIB (Asia/Jakarta).
+    $kick = !empty($f['starting_at'])
+        ? \Illuminate\Support\Carbon::parse($f['starting_at'], 'UTC')->setTimezone('Asia/Jakarta')
+        : null;
 @endphp
 
 <a href="{{ route('football.fixture', $f['id']) }}"
@@ -51,7 +56,7 @@
             @if($hasScore)
                 <span class="text-lg font-black {{ $isLive ? 'text-emerald-400' : 'text-white' }}">{{ $homeGoals }} - {{ $awayGoals }}</span>
             @else
-                <span class="text-xs font-bold text-slate-400">{{ $f['starting_at'] ? date('H:i', strtotime($f['starting_at'])) : 'VS' }}</span>
+                <span class="text-xs font-bold text-slate-400">{{ $kick ? $kick->format('H:i') : 'VS' }}</span>
             @endif
         </div>
 
@@ -64,4 +69,12 @@
             @endif
         </div>
     </div>
+
+    {{-- Kickoff date/time in WIB (only when not finished) --}}
+    @if($kick && !$isFinished)
+        <div class="mt-2.5 flex items-center justify-center gap-1.5 border-t border-slate-800/70 pt-2 text-[11px] text-slate-500">
+            <svg viewBox="0 0 24 24" fill="none" class="h-3.5 w-3.5"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span class="font-mono">{{ $kick->locale('id')->translatedFormat('D, d M Y • H:i') }} WIB</span>
+        </div>
+    @endif
 </a>

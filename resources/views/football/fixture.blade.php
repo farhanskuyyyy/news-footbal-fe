@@ -135,7 +135,7 @@
                     @endif
                 </div>
                 <p class="text-xs text-slate-400 mt-2.5 font-medium">
-                    {{ $fixture['starting_at'] ? date('l, d F Y • H:i', strtotime($fixture['starting_at'])) : 'Jadwal Ditentukan' }}
+                    {{ $fixture['starting_at'] ? \Illuminate\Support\Carbon::parse($fixture['starting_at'], 'UTC')->setTimezone('Asia/Jakarta')->locale('id')->translatedFormat('l, d F Y • H:i') . ' WIB' : 'Jadwal Ditentukan' }}
                 </p>
             </div>
 

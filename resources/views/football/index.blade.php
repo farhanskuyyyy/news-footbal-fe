@@ -187,7 +187,7 @@
                                         </span>
                                     @endif
                                     <span class="text-slate-400 font-medium">
-                                        {{ $f['starting_at'] ? date('d M Y • H:i', strtotime($f['starting_at'])) : 'TBD' }}
+                                        {{ $f['starting_at'] ? \Illuminate\Support\Carbon::parse($f['starting_at'], 'UTC')->setTimezone('Asia/Jakarta')->locale('id')->translatedFormat('d M Y • H:i') . ' WIB' : 'TBD' }}
                                     </span>
                                 </div>
 
@@ -220,7 +220,7 @@
                                         </span>
                                     @else
                                         <span class="text-xs font-bold text-slate-400">
-                                            {{ $f['starting_at'] ? date('H:i', strtotime($f['starting_at'])) : 'VS' }}
+                                            {{ $f['starting_at'] ? \Illuminate\Support\Carbon::parse($f['starting_at'], 'UTC')->setTimezone('Asia/Jakarta')->format('H:i') : 'VS' }}
                                         </span>
                                     @endif
                                 </div>
