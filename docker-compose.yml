@@ -3,41 +3,13 @@ services:
     build: .
     restart: unless-stopped
     ports:
-      # Bound to loopback only — nginx on the host reverse-proxies to it.
-      - "127.0.0.1:3000:8080"
+      - "3000:8080"
     env_file: .env
     environment:
       APP_ENV: production
       APP_DEBUG: "false"
-      RABBITMQ_HOST: rabbitmq
-    depends_on:
-      - rabbitmq
-
-  rabbitmq:
-    image: rabbitmq:3-management-alpine
-    container_name: rabbitmq
-    restart: unless-stopped
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
-    volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
-
-  grafana:
-    image: grafana/grafana:latest
-    container_name: grafana
-    restart: unless-stopped
-    ports:
-      - "3001:3000"
-    environment:
-      - GF_SECURITY_ADMIN_PASSWORD=admin
-    volumes:
-      - grafana_data:/var/lib/grafana
-
-volumes:
-  rabbitmq_data:
-  grafana_data:
+      NEWS_API_URL: ${NEWS_API_URL:-http://host.docker.internal:8082}
+      RABBITMQ_HOST: ${RABBITMQ_HOST:-host.docker.internal}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
