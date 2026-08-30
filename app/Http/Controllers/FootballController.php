@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\FootballPortalService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -101,7 +102,9 @@ class FootballController extends Controller
         $data = $this->footballService->getFixtureDetail($id);
 
         if (! $data) {
-            abort(404, 'Pertandingan tidak ditemukan.');
+            // Fixture not in DB yet — show a loading page that triggers an
+            // on-demand scrape (see prepareFixture), then reloads.
+            return view('football.fixture_loading', ['fixtureId' => $id]);
         }
 
         // Head-to-head + predictions from the live Sportmonks proxy (not persisted).
@@ -129,6 +132,18 @@ class FootballController extends Controller
             'predictions' => $predictions,
             'odds' => $odds,
         ]);
+    }
+
+    /**
+     * Triggered by the loading page (AJAX): scrape the fixture on demand, then
+     * report whether it's now available so the client can redirect.
+     */
+    public function prepareFixture(int $id): JsonResponse
+    {
+        $this->footballService->scrapeFixture($id);
+        $ready = $this->footballService->getFixtureDetail($id) !== null;
+
+        return response()->json(['ready' => $ready]);
     }
 
     public function live(): View

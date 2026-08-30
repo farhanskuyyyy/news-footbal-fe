@@ -255,6 +255,30 @@ class FootballPortalService
         return $res['data'] ?? [];
     }
 
+    /**
+     * On-demand: ask the backend to scrape a single fixture (with all match
+     * data) and save it. Returns true on success. Busts the cached fixture
+     * detail so the next read reflects the freshly scraped data.
+     */
+    public function scrapeFixture(int $fixtureId): bool
+    {
+        try {
+            $response = Http::timeout(90)
+                ->acceptJson()
+                ->post("{$this->baseUrl}/sportmonks/scrape/fixture/{$fixtureId}");
+
+            if ($response->successful()) {
+                Cache::forget('football.'.md5("fixtures/{$fixtureId}".serialize([])));
+
+                return true;
+            }
+        } catch (ConnectionException|RequestException $e) {
+            Log::warning("On-demand fixture scrape failed for {$fixtureId}", ['error' => $e->getMessage()]);
+        }
+
+        return false;
+    }
+
     /** Search teams / players / leagues by name via the proxy. */
     public function search(string $type, string $name): array
     {

@@ -18,6 +18,7 @@ Route::prefix('football')->name('football.')->group(function () {
     Route::get('/matches', [FootballController::class, 'matchday'])->name('matchday');
     Route::get('/search', [FootballController::class, 'search'])->name('search');
     Route::get('/fixtures/{id}', [FootballController::class, 'fixtureDetail'])->whereNumber('id')->name('fixture');
+    Route::post('/fixtures/{id}/prepare', [FootballController::class, 'prepareFixture'])->whereNumber('id')->name('fixture.prepare');
     Route::get('/teams/{id}', [FootballController::class, 'teamDetail'])->whereNumber('id')->name('team');
     Route::get('/players/{id}', [FootballController::class, 'playerDetail'])->whereNumber('id')->name('player');
 });
