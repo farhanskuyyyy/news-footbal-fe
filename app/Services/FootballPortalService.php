@@ -11,7 +11,9 @@ use Illuminate\Support\Facades\Log;
 class FootballPortalService
 {
     protected string $baseUrl;
+
     protected int $timeout;
+
     protected int $cacheTtl;
 
     public function __construct()
@@ -42,6 +44,7 @@ class FootballPortalService
             });
         } catch (ConnectionException|RequestException $e) {
             Log::warning("Football API error on /portal/{$endpoint}", ['error' => $e->getMessage()]);
+
             return null;
         }
     }
@@ -49,30 +52,35 @@ class FootballPortalService
     public function getLeagues(bool $activeOnly = false): ?array
     {
         $res = $this->get('leagues', ['active_only' => $activeOnly ? 'true' : 'false'], 120);
+
         return $res['data'] ?? [];
     }
 
     public function getLeagueSeasons(int $leagueId): ?array
     {
         $res = $this->get("leagues/{$leagueId}/seasons", [], 120);
+
         return $res ?? null;
     }
 
     public function getSeasonOverview(int $seasonId): ?array
     {
         $res = $this->get("seasons/{$seasonId}/overview", [], 60);
+
         return $res['data'] ?? null;
     }
 
     public function getSeasonStandings(int $seasonId): ?array
     {
         $res = $this->get("seasons/{$seasonId}/standings", [], 60);
+
         return $res['data'] ?? [];
     }
 
     public function getSeasonRounds(int $seasonId): ?array
     {
         $res = $this->get("seasons/{$seasonId}/rounds", [], 60);
+
         return $res['data'] ?? [];
     }
 
@@ -83,12 +91,14 @@ class FootballPortalService
             $params['round_id'] = $roundId;
         }
         $res = $this->get("seasons/{$seasonId}/fixtures", $params, 30);
+
         return $res['data'] ?? [];
     }
 
     public function getSeasonTeams(int $seasonId): ?array
     {
         $res = $this->get("seasons/{$seasonId}/teams", [], 120);
+
         return $res['data'] ?? [];
     }
 
@@ -98,18 +108,21 @@ class FootballPortalService
         if ($typeId) {
             $params['type_id'] = $typeId;
         }
+
         return $this->get("seasons/{$seasonId}/topscorers", $params, 60);
     }
 
     public function getSeasonTransfers(int $seasonId): ?array
     {
         $res = $this->get("seasons/{$seasonId}/transfers", [], 60);
+
         return $res['data'] ?? [];
     }
 
     public function getFixtureDetail(int $fixtureId): ?array
     {
         $res = $this->get("fixtures/{$fixtureId}", [], 30);
+
         return $res['data'] ?? null;
     }
 
@@ -120,12 +133,14 @@ class FootballPortalService
             $params['season_id'] = $seasonId;
         }
         $res = $this->get("teams/{$teamId}", $params, 120);
+
         return $res['data'] ?? null;
     }
 
     public function getPlayerDetail(int $playerId): ?array
     {
         $res = $this->get("players/{$playerId}", [], 120);
+
         return $res['data'] ?? null;
     }
 
@@ -157,6 +172,7 @@ class FootballPortalService
             });
         } catch (ConnectionException|RequestException $e) {
             Log::warning("Sportmonks proxy error on /sportmonks/{$path}", ['error' => $e->getMessage()]);
+
             return null;
         }
     }
@@ -167,6 +183,7 @@ class FootballPortalService
         $res = $this->getProxy('livescores/inplay', [
             'include' => 'participants;scores;state;league;events.type',
         ], 15);
+
         return $res['data'] ?? [];
     }
 
@@ -176,6 +193,7 @@ class FootballPortalService
         $res = $this->getProxy("fixtures/head-to-head/{$teamA}/{$teamB}", [
             'include' => 'participants;scores;league;state',
         ], 3600);
+
         return $res['data'] ?? [];
     }
 
@@ -185,6 +203,7 @@ class FootballPortalService
         $res = $this->getProxy("predictions/probabilities/fixtures/{$fixtureId}", [
             'include' => 'type',
         ], 600);
+
         return $res['data'] ?? [];
     }
 
@@ -194,6 +213,7 @@ class FootballPortalService
         $res = $this->getProxy("fixtures/date/{$date}", [
             'include' => 'participants;scores;state;league',
         ], 60);
+
         return $res['data'] ?? [];
     }
 
@@ -217,6 +237,7 @@ class FootballPortalService
         $finished = ['FT', 'AET', 'FT_PEN'];
         $data = array_values(array_filter($data, function ($f) use ($finished) {
             $code = $f['state']['short_name'] ?? $f['state']['state'] ?? '';
+
             return ! in_array($code, $finished, true);
         }));
         usort($data, fn ($a, $b) => strcmp($a['starting_at'] ?? '', $b['starting_at'] ?? ''));
@@ -230,6 +251,7 @@ class FootballPortalService
         $res = $this->getProxy("odds/pre-match/fixtures/{$fixtureId}", [
             'include' => 'market;bookmaker',
         ], 600);
+
         return $res['data'] ?? [];
     }
 
@@ -238,6 +260,7 @@ class FootballPortalService
     {
         $type = in_array($type, ['teams', 'players', 'leagues'], true) ? $type : 'teams';
         $res = $this->getProxy("{$type}/search/".rawurlencode($name), [], 120);
+
         return $res['data'] ?? [];
     }
 }

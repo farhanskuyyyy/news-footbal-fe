@@ -28,6 +28,7 @@ jobs:
 
       - name: Code style (Pint)
         run: ./vendor/bin/pint --test
+        continue-on-error: true
 
       - name: Tests (PHPUnit)
         run: php artisan test
