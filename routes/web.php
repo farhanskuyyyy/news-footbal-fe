@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FootballController;
 use App\Http\Controllers\ImageUploadController;
 use App\Http\Controllers\NewsController;
@@ -25,3 +27,21 @@ Route::prefix('football')->name('football.')->group(function () {
 
 Route::get('/upload', [ImageUploadController::class, 'create'])->name('upload.create');
 Route::post('/upload', [ImageUploadController::class, 'store'])->name('upload.store');
+
+// Auth (simple)
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('login.attempt');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// Admin panel (auth-protected)
+Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
+    Route::get('/status', [AdminController::class, 'status'])->name('status');
+    Route::post('/scrape', [AdminController::class, 'trigger'])->name('scrape');
+    Route::post('/scrape/football', [AdminController::class, 'scrapeFootball'])->name('scrape.football');
+    Route::post('/scrape/fixture', [AdminController::class, 'scrapeFixture'])->name('scrape.fixture');
+    Route::get('/leagues/{id}/seasons', [AdminController::class, 'leagueSeasons'])->whereNumber('id')->name('leagues.seasons');
+    Route::post('/leagues/toggle', [AdminController::class, 'toggleLeague'])->name('leagues.toggle');
+    Route::post('/scrape/stop/{job}', [AdminController::class, 'stop'])->name('scrape.stop');
+    Route::post('/news/refresh', [AdminController::class, 'refreshNews'])->name('news.refresh');
+});
