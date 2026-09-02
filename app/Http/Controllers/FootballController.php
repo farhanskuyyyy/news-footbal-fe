@@ -18,7 +18,8 @@ class FootballController extends Controller
 
     public function index(Request $request): View
     {
-        $leagues = $this->footballService->getLeagues() ?? [];
+        // Public portal only lists enabled (status) + Sportmonks-active leagues.
+        $leagues = $this->footballService->getLeagues(true) ?? [];
 
         // Select league: from query or default to first available league
         $selectedLeagueId = $request->integer('league_id');

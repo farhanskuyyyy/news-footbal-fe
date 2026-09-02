@@ -62,6 +62,10 @@ class AdminController extends Controller
         $seasonId = $request->integer('season_id') ?: null;
         $res = $this->admin->triggerFootball($force, $leagueId, $seasonId);
 
+        if (($res['status'] ?? 0) === 409) {
+            return back()->with('error', 'Job football masih berjalan — hentikan dulu sebelum menjalankan ulang.');
+        }
+
         return back()->with(
             $res['ok'] ? 'status' : 'error',
             $res['ok'] ? 'Scrape football dijalankan (background).' : 'Gagal menjalankan scrape football.'
@@ -82,6 +86,10 @@ class AdminController extends Controller
         $job = (string) $request->input('job');
         $force = $request->boolean('force');
         $res = $this->admin->trigger($job, $force);
+
+        if (($res['status'] ?? 0) === 409) {
+            return back()->with('error', "Job '{$job}' masih berjalan — hentikan dulu sebelum menjalankan ulang.");
+        }
 
         return back()->with(
             $res['ok'] ? 'status' : 'error',

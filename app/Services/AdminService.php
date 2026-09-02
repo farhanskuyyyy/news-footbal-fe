@@ -109,9 +109,16 @@ class AdminService
     protected function post(string $path, array $params): array
     {
         try {
+            // Backend scrape handlers read these via query params (c.QueryParam),
+            // so send them in the query string, not the JSON body.
+            $url = "{$this->baseUrl}/sportmonks/{$path}";
+            if (! empty($params)) {
+                $url .= '?'.http_build_query($params);
+            }
+
             $response = Http::timeout($this->timeout)
                 ->acceptJson()
-                ->post("{$this->baseUrl}/sportmonks/{$path}", $params);
+                ->post($url);
 
             return [
                 'ok' => $response->successful() || $response->status() === 409,
