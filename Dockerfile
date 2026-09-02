@@ -11,8 +11,10 @@ ENV SESSION_DRIVER=file \
 USER root
 WORKDIR /var/www/html
 
-# Install required PHP extensions (sockets is required by php-amqplib for RabbitMQ)
-RUN install-php-extensions sockets
+# Install required PHP extensions:
+# - sockets: php-amqplib (RabbitMQ)
+# - pdo_pgsql: connect to the shared Postgres DB (users/auth), instead of sqlite
+RUN install-php-extensions sockets pdo_pgsql
 
 # Install dependencies first for better layer caching.
 COPY --chown=www-data:www-data composer.json composer.lock ./
