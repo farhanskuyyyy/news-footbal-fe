@@ -211,6 +211,19 @@ class FootballController extends Controller
         ]);
     }
 
+    public function compare(Request $request): View
+    {
+        $p1 = $request->integer('p1') ?: null;
+        $p2 = $request->integer('p2') ?: null;
+
+        return view('football.compare', [
+            'p1id' => $p1,
+            'p2id' => $p2,
+            'player1' => $p1 ? $this->footballService->getPlayerDetail($p1) : null,
+            'player2' => $p2 ? $this->footballService->getPlayerDetail($p2) : null,
+        ]);
+    }
+
     public function playerDetail(int $id): View
     {
         $data = $this->footballService->getPlayerDetail($id);

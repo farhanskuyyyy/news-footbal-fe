@@ -83,7 +83,7 @@
         <div class="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 py-3.5">
             <div class="flex items-center gap-8">
                 {{-- Logo / Crest --}}
-                <a href="{{ route('football.index') }}" class="flex items-center gap-2.5 group">
+                <a href="{{ route('home') }}" class="flex items-center gap-2.5 group">
                     <div class="relative w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/25 group-hover:scale-105 transition-transform ring-1 ring-emerald-300/30">
                         <svg viewBox="0 0 24 24" fill="none" class="w-5 h-5 text-slate-950">
                             <circle cx="12" cy="12" r="9" fill="currentColor" opacity="0.15"/>
@@ -102,6 +102,8 @@
                 <nav class="hidden md:flex items-center gap-1 text-sm font-semibold">
                     @php
                         $navItems = [
+                            ['route' => 'home', 'match' => ['home'], 'label' => 'Home',
+                             'icon' => '<path d="M4 11.5L12 4l8 7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 10v9h12v-9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>'],
                             ['route' => 'football.index', 'match' => ['football.index', 'football.team', 'football.fixture', 'football.player'], 'label' => 'Portal Bola',
                              'icon' => '<circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.6"/><path d="M12 6.5l3.5 2.6-1.3 4.1h-4.4L8 9.1 12 6.5z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>'],
                             ['route' => 'football.live', 'match' => ['football.live'], 'label' => 'Live', 'live' => true,

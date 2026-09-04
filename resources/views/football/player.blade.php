@@ -10,7 +10,14 @@
         <a href="{{ url()->previous() ?? route('football.index') }}" class="text-xs font-bold text-slate-400 hover:text-emerald-400 transition-colors flex items-center gap-1.5 bg-slate-900 border border-slate-800 px-3.5 py-2 rounded-xl">
             &larr; Kembali
         </a>
-        <span class="text-xs text-slate-500 font-mono font-bold">ID: #{{ $player['id'] ?? '-' }}</span>
+        <div class="flex items-center gap-3">
+            <a href="{{ route('football.compare', ['p1' => $player['id'] ?? 0]) }}"
+               class="inline-flex items-center gap-1.5 rounded-xl border border-slate-800 bg-slate-900 px-3 py-2 text-xs font-bold text-slate-300 hover:text-emerald-400 hover:border-slate-700 transition-colors">
+                <svg viewBox="0 0 24 24" fill="none" class="w-3.5 h-3.5"><path d="M8 3v4M16 17v4M4 5h8M12 19h8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                Bandingkan
+            </a>
+            <span class="text-xs text-slate-500 font-mono font-bold">ID: #{{ $player['id'] ?? '-' }}</span>
+        </div>
     </div>
 
     {{-- PLAYER HERO BANNER --}}
