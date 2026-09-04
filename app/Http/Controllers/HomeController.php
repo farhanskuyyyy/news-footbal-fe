@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\FootballPortalService;
 use App\Services\NewsService;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 
 class HomeController extends Controller
@@ -15,12 +16,27 @@ class HomeController extends Controller
 
     public function index(): View
     {
-        // Live + today's matches (live proxy).
+        // Live is fetched fresh each load (own short cache) — the rest of the
+        // dashboard (heavier, slower chain of API calls) is cached as one blob
+        // so most page loads are a single cache hit instead of ~6 backend calls.
         $live = collect($this->football->getLiveInplay())->take(8)->values()->all();
-        $today = $this->football->getFixturesByDate(date('Y-m-d'));
 
-        // Featured league snapshot: first active league → current season →
-        // top standings + top scorers.
+        $rest = Cache::remember('home:dashboard', 120, fn () => $this->buildRest());
+
+        return view('home.index', [
+            'live' => $live,
+            'today' => $rest['today'],
+            'featured' => $rest['featured'],
+            'news' => $rest['news'],
+        ]);
+    }
+
+    /** Builds the cacheable part of the dashboard (today, featured, news). */
+    private function buildRest(): array
+    {
+        $today = $this->football->getFixturesByDate(date('Y-m-d'));
+        $news = collect($this->news->all() ?? [])->take(6)->values()->all();
+
         $leagues = $this->football->getLeagues(true) ?? [];
         $featured = null;
         if (! empty($leagues)) {
@@ -42,14 +58,6 @@ class HomeController extends Controller
             }
         }
 
-        // Latest news (few).
-        $newsItems = collect($this->news->all() ?? [])->take(6)->values()->all();
-
-        return view('home.index', [
-            'live' => $live,
-            'today' => $today,
-            'featured' => $featured,
-            'news' => $newsItems,
-        ]);
+        return ['today' => $today, 'featured' => $featured, 'news' => $news];
     }
 }
