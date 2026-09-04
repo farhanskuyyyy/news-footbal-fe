@@ -245,6 +245,32 @@ class FootballPortalService
         return array_slice($data, 0, $limit);
     }
 
+    /**
+     * Recent FINISHED fixtures for a team (live proxy), newest first. Raw
+     * Sportmonks fixtures — render with the live-card partial (shows scores).
+     */
+    public function getTeamRecent(int $teamId, int $limit = 6): array
+    {
+        $start = date('Y-m-d', strtotime('-160 days'));
+        $end = date('Y-m-d');
+
+        $res = $this->getProxy("fixtures/between/{$start}/{$end}/{$teamId}", [
+            'include' => 'participants;league;state;scores',
+        ], 600);
+        $data = $res['data'] ?? [];
+
+        $finished = ['FT', 'AET', 'FT_PEN'];
+        $data = array_values(array_filter($data, function ($f) use ($finished) {
+            $code = $f['state']['short_name'] ?? $f['state']['state'] ?? '';
+
+            return in_array($code, $finished, true);
+        }));
+        // Newest first
+        usort($data, fn ($a, $b) => strcmp($b['starting_at'] ?? '', $a['starting_at'] ?? ''));
+
+        return array_slice($data, 0, $limit);
+    }
+
     /** Pre-match odds for a fixture (grouped by market/bookmaker downstream). */
     public function getFixtureOdds(int $fixtureId): array
     {
@@ -277,6 +303,19 @@ class FootballPortalService
         }
 
         return false;
+    }
+
+    /** Latest transfers across leagues (live proxy), newest first. */
+    public function getLatestTransfers(int $limit = 40): array
+    {
+        $res = $this->getProxy('transfers/latest', [
+            'include' => 'player;fromteam;toteam;type',
+        ], 600);
+        $data = $res['data'] ?? [];
+
+        usort($data, fn ($a, $b) => strcmp($b['date'] ?? '', $a['date'] ?? ''));
+
+        return array_slice($data, 0, $limit);
     }
 
     /** Search teams / players / leagues by name via the proxy. */

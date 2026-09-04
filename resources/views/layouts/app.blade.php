@@ -110,6 +110,8 @@
                              'icon' => '<circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.6"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>'],
                             ['route' => 'football.matchday', 'match' => ['football.matchday'], 'label' => 'Jadwal',
                              'icon' => '<rect x="4" y="5.5" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M4 9.5h16M8 3.5v4M16 3.5v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>'],
+                            ['route' => 'football.transfers', 'match' => ['football.transfers'], 'label' => 'Transfer',
+                             'icon' => '<path d="M4 8h13m0 0l-3-3m3 3l-3 3M20 16H7m0 0l3-3m-3 3l3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>'],
                             ['route' => 'news.index', 'match' => ['news.*'], 'label' => 'Berita',
                              'icon' => '<rect x="4" y="5" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M7.5 9h6M7.5 12h6M7.5 15h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>'],
                             ['route' => 'upload.create', 'match' => ['upload.*'], 'label' => 'Upload',

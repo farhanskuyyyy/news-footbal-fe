@@ -124,6 +124,59 @@
         </div>
     @endif
 
+    {{-- Recent results + form (live from Sportmonks proxy) --}}
+    @if(!empty($recent))
+        @php
+            $tid = $team['id'] ?? 0;
+            $formArr = [];
+            foreach ($recent as $f) {
+                $loc = null;
+                foreach (($f['participants'] ?? []) as $p) {
+                    if (($p['id'] ?? 0) == $tid) { $loc = $p['meta']['location'] ?? null; break; }
+                }
+                if (! $loc) continue;
+                $mine = null; $opp = null;
+                foreach (($f['scores'] ?? []) as $s) {
+                    if (($s['description'] ?? '') === 'CURRENT') {
+                        $pp = $s['score']['participant'] ?? '';
+                        $g = $s['score']['goals'] ?? null;
+                        if ($pp === $loc) $mine = $g; else $opp = $g;
+                    }
+                }
+                if ($mine === null || $opp === null) continue;
+                $formArr[] = $mine > $opp ? 'W' : ($mine < $opp ? 'L' : 'D');
+            }
+            $formStrip = array_reverse($formArr); // oldest → newest
+        @endphp
+
+        <div class="space-y-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+                        <svg viewBox="0 0 24 24" fill="none" class="h-5 w-5"><path d="M4 7h16M4 12h10M4 17h7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                    </span>
+                    <div>
+                        <span class="kicker block text-[10px] font-bold uppercase text-emerald-400">Performa</span>
+                        <h2 class="text-lg font-black text-white">Hasil Terakhir</h2>
+                    </div>
+                </div>
+                @if(!empty($formStrip))
+                    <div class="flex items-center gap-1">
+                        @foreach($formStrip as $r)
+                            @php $cls = match($r) { 'W' => 'bg-emerald-500/90 text-slate-950', 'D' => 'bg-slate-600 text-white', 'L' => 'bg-red-500/90 text-white', default => 'bg-slate-800' }; @endphp
+                            <span class="flex h-6 w-6 items-center justify-center rounded text-[11px] font-black font-mono {{ $cls }}">{{ $r }}</span>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+            <div class="grid gap-4 md:grid-cols-2">
+                @foreach($recent as $f)
+                    @include('football.partials.live-card', ['f' => $f])
+                @endforeach
+            </div>
+        </div>
+    @endif
+
     {{-- Upcoming fixtures (live from Sportmonks proxy) --}}
     @if(!empty($upcoming))
         <div class="space-y-3">

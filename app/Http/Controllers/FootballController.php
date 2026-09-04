@@ -195,8 +195,9 @@ class FootballController extends Controller
             abort(404, 'Klub tidak ditemukan.');
         }
 
-        // Upcoming fixtures fetched live from the Sportmonks proxy (not persisted).
+        // Upcoming + recent fixtures fetched live from the Sportmonks proxy.
         $upcoming = $this->footballService->getTeamUpcoming($id, 5);
+        $recent = $this->footballService->getTeamRecent($id, 6);
 
         return view('football.team', [
             'team' => $data['team'] ?? [],
@@ -207,7 +208,15 @@ class FootballController extends Controller
             'positions' => $data['positions'] ?? [],
             'rivals' => $data['rivals'] ?? [],
             'upcoming' => $upcoming,
+            'recent' => $recent,
             'seasonId' => $seasonId,
+        ]);
+    }
+
+    public function transfers(): View
+    {
+        return view('football.transfers', [
+            'transfers' => $this->footballService->getLatestTransfers(40),
         ]);
     }
 
