@@ -6,18 +6,17 @@
     <div class="space-y-10">
 
         {{-- HERO --}}
-        <div class="pitch-stripes relative overflow-hidden rounded-3xl border border-slate-800 bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 p-8 sm:p-12 shadow-2xl">
-            <div class="absolute -right-20 -top-20 h-80 w-80 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none"></div>
+        <div class="relative overflow-hidden rounded-xl border border-line bg-surface p-8 sm:p-12">
             <div class="relative z-10 max-w-2xl">
-                <span class="kicker mb-3 inline-flex items-center gap-2 text-[10px] font-bold uppercase text-emerald-400">
-                    <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span></span>
+                <span class="kicker mb-3 inline-flex items-center gap-2 text-xs font-bold uppercase text-primary">
+                    <span class="relative flex h-2 w-2"><span class=" absolute inline-flex h-full w-full rounded-lg opacity-75"></span><span class="relative inline-flex h-2 w-2 rounded-full "></span></span>
                     {{ __('home.hero.kicker') }}
                 </span>
-                <h1 class="text-3xl sm:text-5xl font-black tracking-tight text-white">{{ __('home.hero.heading') }} <span class="text-emerald-400">{{ __('home.hero.heading_accent') }}</span></h1>
-                <p class="mt-3 text-sm sm:text-base text-slate-400">{{ __('home.hero.subheading') }}</p>
+                <h1 class="text-3xl sm:text-5xl font-bold tracking-tight text-white">{{ __('home.hero.heading') }} <span class="text-accent">{{ __('home.hero.heading_accent') }}</span></h1>
+                <p class="mt-3 text-sm sm:text-base text-body">{{ __('home.hero.subheading') }}</p>
                 <div class="mt-6 flex flex-wrap gap-3">
-                    <a href="{{ route('football.live') }}" class="inline-flex items-center gap-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 px-4 py-2.5 text-sm font-bold text-slate-950 shadow-lg shadow-emerald-500/20 transition-all">{{ __('home.hero.cta_live') }}</a>
-                    <a href="{{ route('football.index') }}" class="inline-flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-sm font-bold text-slate-200 hover:border-slate-600 transition-colors">{{ __('home.hero.cta_portal') }}</a>
+                    <a href="{{ route('football.live') }}" class="inline-flex items-center gap-2 rounded-xl bg-primary hover:bg-accent px-4 py-2.5 text-sm font-bold text-white transition-all">{{ __('home.hero.cta_live') }}</a>
+                    <a href="{{ route('football.index') }}" class="inline-flex items-center gap-2 rounded-xl border border-line bg-surface px-4 py-2.5 text-sm font-bold text-white hover:border-line transition-colors">{{ __('home.hero.cta_portal') }}</a>
                 </div>
             </div>
         </div>
@@ -26,11 +25,11 @@
         @if(!empty($live))
             <section class="space-y-3">
                 <div class="flex items-center justify-between">
-                    <h2 class="flex items-center gap-2 text-lg font-black text-white">
-                        <span class="relative flex h-2.5 w-2.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span><span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-500"></span></span>
+                    <h2 class="flex items-center gap-2 text-lg font-bold text-white">
+                        <span class="relative flex h-2.5 w-2.5"><span class=" absolute inline-flex h-full w-full rounded-lg bg-accent opacity-75"></span><span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-accent"></span></span>
                         {{ __('home.live.heading') }}
                     </h2>
-                    <a href="{{ route('football.live') }}" class="text-xs font-bold text-emerald-400 hover:underline">{{ __('home.live.all') }}</a>
+                    <a href="{{ route('football.live') }}" class="text-xs font-bold text-accent hover:underline">{{ __('home.live.all') }}</a>
                 </div>
                 <div class="grid gap-4 md:grid-cols-2">
                     @foreach($live as $f)
@@ -46,15 +45,15 @@
             {{-- Today's matches --}}
             <section class="lg:col-span-2 space-y-3">
                 <div class="flex items-center justify-between">
-                    <h2 class="text-lg font-black text-white">{{ __('home.today.heading') }}</h2>
-                    <a href="{{ route('football.matchday') }}" class="text-xs font-bold text-emerald-400 hover:underline">{{ __('home.today.calendar') }}</a>
+                    <h2 class="text-lg font-bold text-white">{{ __('home.today.heading') }}</h2>
+                    <a href="{{ route('football.matchday') }}" class="text-xs font-bold text-accent hover:underline">{{ __('home.today.calendar') }}</a>
                 </div>
                 @if(!empty($today))
                     @php $byLeague = collect($today)->groupBy(fn ($f) => $f['league']['name'] ?? 'Lainnya'); @endphp
                     <div class="space-y-5">
                         @foreach($byLeague->take(4) as $leagueName => $rows)
                             <div class="space-y-2.5">
-                                <h3 class="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-slate-500">
+                                <h3 class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-white0">
                                     @if(!empty($rows[0]['league']['image_path']))<img src="{{ $rows[0]['league']['image_path'] }}" alt="" class="h-4 w-4 object-contain">@endif
                                     {{ $leagueName }}
                                 </h3>
@@ -67,7 +66,7 @@
                         @endforeach
                     </div>
                 @else
-                    <div class="rounded-2xl border border-dashed border-slate-800 bg-slate-900/40 p-8 text-center text-sm text-slate-500">{!! __('home.today.empty', ['link' => '<a href="'.route('football.matchday').'" class="text-emerald-400 hover:underline">'.e(__('home.today.empty_link')).'</a>']) !!}</div>
+                    <div class="rounded-xl border border-dashed border-line bg-surface p-8 text-center text-sm text-white0">{!! __('home.today.empty', ['link' => '<a href="'.route('football.matchday').'" class="text-accent hover:underline">'.e(__('home.today.empty_link')).'</a>']) !!}</div>
                 @endif
             </section>
 
@@ -79,12 +78,12 @@
                         <div class="relative">
                             <label for="home-league" class="sr-only">{{ __('home.featured.select_league') }}</label>
                             <select id="home-league" x-model.number="lg"
-                                    class="w-full appearance-none rounded-xl border border-slate-800 bg-slate-900 px-3.5 py-2.5 pr-9 text-sm font-bold text-slate-200 focus:border-emerald-500/50 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
+                                    class="w-full appearance-none rounded-xl border border-line bg-surface px-3.5 py-2.5 pr-9 text-sm font-bold text-white focus:border-line focus:outline-none focus:ring-2 focus:ring-line">
                                 @foreach($featuredLeagues as $i => $fl)
                                     <option value="{{ $i }}">{{ $fl['league']['name'] }}</option>
                                 @endforeach
                             </select>
-                            <svg viewBox="0 0 24 24" fill="none" class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500">
+                            <svg viewBox="0 0 24 24" fill="none" class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white0">
                                 <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </div>
@@ -93,60 +92,60 @@
                     @foreach($featuredLeagues as $i => $fl)
                         <div @if(count($featuredLeagues) > 1) x-show="lg === {{ $i }}" x-cloak @endif class="space-y-6">
                             {{-- Mini standings --}}
-                            <div class="rounded-3xl border border-slate-800 bg-slate-900/80 p-5 shadow-xl">
+                            <div class="rounded-xl border border-line bg-surface p-5">
                                 <div class="mb-4 flex items-center gap-2">
                                     @if(!empty($fl['league']['image_path']))<img src="{{ $fl['league']['image_path'] }}" alt="" class="h-6 w-6 object-contain">@endif
                                     <div class="min-w-0">
-                                        <span class="kicker block text-[9px] font-bold uppercase text-emerald-400">{{ __('home.featured.standings') }}</span>
-                                        <h3 class="truncate text-sm font-black text-white">{{ $fl['league']['name'] }}</h3>
+                                        <span class="kicker block text-xs font-bold uppercase text-primary">{{ __('home.featured.standings') }}</span>
+                                        <h3 class="truncate text-sm font-bold text-white">{{ $fl['league']['name'] }}</h3>
                                     </div>
                                 </div>
                                 @if(!empty($fl['standings']))
                                     <div class="space-y-1">
                                         @foreach($fl['standings'] as $st)
                                             <a href="{{ route('football.index', ['league_id' => $fl['league']['id'], 'season_id' => $fl['season']['id']]) }}"
-                                               class="flex items-center gap-3 rounded-xl px-2.5 py-2 hover:bg-slate-800/50 transition-colors">
-                                                <span class="w-5 text-center font-mono text-xs font-bold text-slate-500">{{ $st['position'] ?? $loop->iteration }}</span>
+                                               class="flex items-center gap-3 rounded-xl px-2.5 py-2 hover:bg-surface transition-colors">
+                                                <span class="w-5 text-center font-mono text-xs font-bold text-white0">{{ $st['position'] ?? $loop->iteration }}</span>
                                                 @if(!empty($st['team']['image_path']))<img src="{{ $st['team']['image_path'] }}" alt="" class="h-5 w-5 object-contain">@else<span class="h-5 w-5"></span>@endif
-                                                <span class="flex-1 truncate text-xs font-bold text-slate-200">{{ $st['team']['name'] ?? '-' }}</span>
-                                                <span class="font-mono text-[11px] text-slate-500">{{ $st['played'] ?? 0 }}</span>
-                                                <span class="w-6 text-right font-mono text-xs font-black text-emerald-400">{{ $st['points'] ?? 0 }}</span>
+                                                <span class="flex-1 truncate text-xs font-bold text-white">{{ $st['team']['name'] ?? '-' }}</span>
+                                                <span class="font-mono text-xs text-white0">{{ $st['played'] ?? 0 }}</span>
+                                                <span class="w-6 text-right font-mono text-xs font-bold text-accent">{{ $st['points'] ?? 0 }}</span>
                                             </a>
                                         @endforeach
                                     </div>
                                 @else
-                                    <p class="px-2 py-3 text-xs text-slate-500">{{ __('home.featured.standings_empty') }}</p>
+                                    <p class="px-2 py-3 text-xs text-white0">{{ __('home.featured.standings_empty') }}</p>
                                 @endif
-                                <a href="{{ route('football.index', ['league_id' => $fl['league']['id'], 'season_id' => $fl['season']['id']]) }}" class="mt-3 block text-center text-xs font-bold text-emerald-400 hover:underline">{{ __('home.featured.standings_full') }}</a>
+                                <a href="{{ route('football.index', ['league_id' => $fl['league']['id'], 'season_id' => $fl['season']['id']]) }}" class="mt-3 block text-center text-xs font-bold text-accent hover:underline">{{ __('home.featured.standings_full') }}</a>
                             </div>
 
                             {{-- Goal topscorers --}}
-                            <div class="rounded-3xl border border-slate-800 bg-slate-900/80 p-5 shadow-xl">
+                            <div class="rounded-xl border border-line bg-surface p-5">
                                 <div class="mb-3 flex items-center justify-between gap-2">
-                                    <span class="kicker block text-[9px] font-bold uppercase text-amber-400">{{ __('home.featured.topscorers') }}</span>
-                                    <span class="truncate text-[10px] font-bold text-slate-500">{{ $fl['league']['name'] }}</span>
+                                    <span class="kicker block text-xs font-bold uppercase text-primary">{{ __('home.featured.topscorers') }}</span>
+                                    <span class="truncate text-xs font-bold text-white0">{{ $fl['league']['name'] }}</span>
                                 </div>
                                 @if(!empty($fl['topscorers']))
                                     <div class="space-y-2">
                                         @foreach($fl['topscorers'] as $ts)
-                                            <a href="{{ route('football.player', $ts['player']['id'] ?? ($ts['player_id'] ?? 0)) }}" class="flex items-center gap-3 rounded-xl px-2 py-1.5 hover:bg-slate-800/50 transition-colors">
-                                                <span class="w-4 text-center font-mono text-xs font-bold text-slate-500">{{ $loop->iteration }}</span>
-                                                @if(!empty($ts['player']['image_path']))<img src="{{ $ts['player']['image_path'] }}" alt="" class="h-7 w-7 rounded-full object-cover border border-slate-700">@else<div class="flex h-7 w-7 items-center justify-center rounded-full bg-slate-800 text-xs">👤</div>@endif
-                                                <span class="flex-1 truncate text-xs font-bold text-slate-200">{{ $ts['player']['display_name'] ?? $ts['player']['name'] ?? 'Pemain' }}</span>
-                                                <span class="rounded-md bg-emerald-500/15 px-2 py-0.5 font-mono text-xs font-black text-emerald-300 border border-emerald-500/20">{{ $ts['total'] ?? 0 }}</span>
+                                            <a href="{{ route('football.player', $ts['player']['id'] ?? ($ts['player_id'] ?? 0)) }}" class="flex items-center gap-3 rounded-xl px-2 py-1.5 hover:bg-surface transition-colors">
+                                                <span class="w-4 text-center font-mono text-xs font-bold text-white0">{{ $loop->iteration }}</span>
+                                                @if(!empty($ts['player']['image_path']))<img src="{{ $ts['player']['image_path'] }}" alt="" class="h-7 w-7 rounded-lg object-cover border border-line">@else<div class="flex h-7 w-7 items-center justify-center rounded-lg bg-surface text-xs"><x-icon name="user" class="h-4 w-4" /></div>@endif
+                                                <span class="flex-1 truncate text-xs font-bold text-white">{{ $ts['player']['display_name'] ?? $ts['player']['name'] ?? 'Pemain' }}</span>
+                                                <span class="rounded-lg px-2 py-0.5 font-mono text-xs font-bold text-accent border border-line">{{ $ts['total'] ?? 0 }}</span>
                                             </a>
                                         @endforeach
                                     </div>
-                                    <a href="{{ route('football.index', ['league_id' => $fl['league']['id'], 'season_id' => $fl['season']['id'], 'tab' => 'topscorers']) }}" class="mt-3 block text-center text-xs font-bold text-amber-400 hover:underline">{{ __('home.featured.topscorers_full') }}</a>
+                                    <a href="{{ route('football.index', ['league_id' => $fl['league']['id'], 'season_id' => $fl['season']['id'], 'tab' => 'topscorers']) }}" class="mt-3 block text-center text-xs font-bold text-gold hover:underline">{{ __('home.featured.topscorers_full') }}</a>
                                 @else
-                                    <p class="px-2 py-3 text-xs text-slate-500">{{ __('home.featured.topscorers_empty') }}</p>
+                                    <p class="px-2 py-3 text-xs text-white0">{{ __('home.featured.topscorers_empty') }}</p>
                                 @endif
                             </div>
                         </div>
                     @endforeach
                 @else
-                    <div class="rounded-3xl border border-dashed border-slate-800 bg-slate-900/40 p-8 text-center text-sm text-slate-500">
-                        {!! __('home.featured.no_league', ['link' => '<span class="font-bold text-slate-300">'.e(__('home.featured.no_league_link')).'</span>']) !!}
+                    <div class="rounded-xl border border-dashed border-line bg-surface p-8 text-center text-sm text-white0">
+                        {!! __('home.featured.no_league', ['link' => '<span class="font-bold text-white">'.e(__('home.featured.no_league_link')).'</span>']) !!}
                     </div>
                 @endif
             </aside>
@@ -156,23 +155,23 @@
         @if(!empty($news))
             <section class="space-y-3">
                 <div class="flex items-center justify-between">
-                    <h2 class="text-lg font-black text-white">{{ __('home.news.heading') }}</h2>
-                    <a href="{{ route('news.index') }}" class="text-xs font-bold text-emerald-400 hover:underline">{{ __('home.news.all') }}</a>
+                    <h2 class="text-lg font-bold text-white">{{ __('home.news.heading') }}</h2>
+                    <a href="{{ route('news.index') }}" class="text-xs font-bold text-accent hover:underline">{{ __('home.news.all') }}</a>
                 </div>
                 <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                     @foreach($news as $item)
-                        <article class="group flex flex-col overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/80 shadow-lg transition-all hover:border-slate-700 hover:-translate-y-0.5">
+                        <article class="group flex flex-col overflow-hidden rounded-xl border border-line bg-surface transition-all hover:border-line">
                             @if(!empty($item['url_to_image']))
-                                <a href="{{ route('news.show', $item['id']) }}" class="block aspect-[16/9] overflow-hidden bg-slate-950">
-                                    <img src="{{ $item['url_to_image'] }}" alt="" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" onerror="this.closest('a').style.display='none'">
+                                <a href="{{ route('news.show', $item['id']) }}" class="block aspect-[16/9] overflow-hidden bg-ink">
+                                    <img src="{{ $item['url_to_image'] }}" alt="" class="h-full w-full object-cover duration-500 group-" loading="lazy" onerror="this.closest('a').style.display='none'">
                                 </a>
                             @endif
                             <div class="flex flex-1 flex-col p-4">
-                                <span class="mb-2 inline-flex w-fit items-center rounded-md bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-400 border border-emerald-500/20">{{ $item['source'] ?? '—' }}</span>
-                                <h3 class="mb-2 font-extrabold leading-snug text-slate-100">
-                                    <a href="{{ route('news.show', $item['id']) }}" class="transition-colors group-hover:text-emerald-400">{{ \Illuminate\Support\Str::limit($item['title'] ?? __('news.untitled'), 90) }}</a>
+                                <span class="mb-2 inline-flex w-fit items-center rounded-lg px-2 py-0.5 text-xs font-bold uppercase tracking-wider text-accent border border-line">{{ $item['source'] ?? '—' }}</span>
+                                <h3 class="mb-2 font-semibold leading-snug text-white">
+                                    <a href="{{ route('news.show', $item['id']) }}" class="transition-colors group-hover:text-accent">{{ \Illuminate\Support\Str::limit($item['title'] ?? __('news.untitled'), 90) }}</a>
                                 </h3>
-                                <time class="mt-auto font-mono text-[11px] text-slate-500">{{ isset($item['published_at']) ? \Illuminate\Support\Carbon::parse($item['published_at'])->setTimezone('Asia/Jakarta')->locale(app()->getLocale())->translatedFormat('d M Y • H:i') . ' WIB' : '' }}</time>
+                                <time class="mt-auto font-mono text-xs text-white0">{{ isset($item['published_at']) ? \Illuminate\Support\Carbon::parse($item['published_at'])->setTimezone('Asia/Jakarta')->locale(app()->getLocale())->translatedFormat('d M Y • H:i') . ' WIB' : '' }}</time>
                             </div>
                         </article>
                     @endforeach

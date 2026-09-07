@@ -8,7 +8,7 @@
 
         {{-- Spinner --}}
         <div class="mx-auto mb-6 flex h-20 w-20 items-center justify-center">
-            <svg viewBox="0 0 24 24" fill="none" class="h-16 w-16 animate-spin text-emerald-500">
+            <svg viewBox="0 0 24 24" fill="none" class="h-16 w-16 animate-spin text-accent">
                 <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" opacity="0.2"/>
                 <path d="M21 12a9 9 0 00-9-9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
@@ -16,19 +16,19 @@
 
         <template x-if="!failed">
             <div>
-                <span class="kicker block text-[10px] font-bold uppercase text-emerald-400 mb-2">{{ __('football.loading.kicker') }}</span>
-                <h1 class="text-2xl font-black text-white">{{ __('football.loading.heading') }}</h1>
-                <p class="mt-2 text-sm text-slate-400" x-text="statusText">{{ __('football.loading.status_start') }}</p>
+                <span class="kicker block text-xs font-bold uppercase text-primary mb-2">{{ __('football.loading.kicker') }}</span>
+                <h1 class="text-2xl font-bold text-white">{{ __('football.loading.heading') }}</h1>
+                <p class="mt-2 text-sm text-body" x-text="statusText">{{ __('football.loading.status_start') }}</p>
             </div>
         </template>
 
         <template x-if="failed">
             <div>
-                <h1 class="text-2xl font-black text-white">{{ __('football.loading.failed_heading') }}</h1>
-                <p class="mt-2 text-sm text-slate-400">{{ __('football.loading.failed_text') }}</p>
+                <h1 class="text-2xl font-bold text-white">{{ __('football.loading.failed_heading') }}</h1>
+                <p class="mt-2 text-sm text-body">{{ __('football.loading.failed_text') }}</p>
                 <div class="mt-6 flex items-center justify-center gap-3">
-                    <button @click="failed=false; start()" class="rounded-xl bg-emerald-500 hover:bg-emerald-400 px-4 py-2.5 text-sm font-bold text-slate-950 transition-colors">{{ __('football.loading.retry') }}</button>
-                    <a href="{{ route('football.index') }}" class="rounded-xl border border-slate-800 bg-slate-900 px-4 py-2.5 text-sm font-bold text-slate-300 hover:text-white transition-colors">{{ __('football.loading.back') }}</a>
+                    <button @click="failed=false; start()" class="rounded-xl bg-primary hover:bg-accent px-4 py-2.5 text-sm font-bold text-white transition-colors">{{ __('football.loading.retry') }}</button>
+                    <a href="{{ route('football.index') }}" class="rounded-xl border border-line bg-surface px-4 py-2.5 text-sm font-bold text-white hover:text-white transition-colors">{{ __('football.loading.back') }}</a>
                 </div>
             </div>
         </template>

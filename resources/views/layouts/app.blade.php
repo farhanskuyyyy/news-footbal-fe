@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-slate-950 text-slate-100 selection:bg-emerald-500 selection:text-black">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-ink text-white selection:bg-primary selection:text-white">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', 'KREASIBALL — '.__('common.brand.tagline'))</title>
 
-    <!-- Fonts -->
+    <!-- Fonts: DM Sans for headings, Inter for body -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Tailwind CSS & Alpine.js CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -18,88 +18,62 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-                        mono: ['"JetBrains Mono"', 'monospace'],
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        display: ['"DM Sans"', 'Inter', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
                     },
                     colors: {
-                        pitch: {
-                            50: '#f0fdf4',
-                            100: '#dcfce7',
-                            400: '#4ade80',
-                            500: '#22c55e',
-                            600: '#16a34a',
-                            700: '#15803d',
-                            800: '#166534',
-                            900: '#14532d',
-                            950: '#052e16',
-                        },
-                        stadium: {
-                            800: '#0f172a',
-                            850: '#0b1120',
-                            900: '#030712',
-                            950: '#020617',
-                        }
-                    }
-                }
-            }
+                        primary: '#8B1E2D',
+                        accent: '#E63946',
+                        gold: '#F4D35E',
+                        steel: '#457B9D',
+                        ink: '#000000',
+                        surface: '#111111',
+                        line: '#333333',
+                        body: '#999999',
+                        muted: '#6b7280',
+                    },
+                    maxWidth: {
+                        page: '1200px',
+                    },
+                },
+            },
         }
     </script>
 
     <style>
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-        }
+        body { font-family: 'Inter', system-ui, sans-serif; }
+        h1, h2, h3, h4 { font-family: 'DM Sans', Inter, sans-serif; }
         [x-cloak] { display: none !important; }
-        /* Chalk pitch-line accent bar under the navbar */
-        .pitch-accent {
-            background-image: linear-gradient(90deg,
-                transparent 0%,
-                rgba(16, 185, 129, 0.0) 0%,
-                rgba(16, 185, 129, 0.9) 15%,
-                rgba(16, 185, 129, 0.9) 85%,
-                transparent 100%);
-        }
-        /* Subtle mown-grass stripes for hero surfaces */
-        .pitch-stripes {
-            background-image: repeating-linear-gradient(
-                115deg,
-                rgba(16, 185, 129, 0.05),
-                rgba(16, 185, 129, 0.05) 40px,
-                rgba(255, 255, 255, 0.015) 40px,
-                rgba(255, 255, 255, 0.015) 80px
-            );
-        }
-        /* Kicker label — the little uppercase eyebrow above headings */
-        .kicker {
-            font-family: 'JetBrains Mono', monospace;
-            letter-spacing: 0.28em;
-        }
+        /* Small uppercase eyebrow above section headings */
+        .kicker { letter-spacing: 0.18em; }
     </style>
+
 </head>
-<body class="min-h-full flex flex-col bg-slate-950 text-slate-100 antialiased">
+<body class="flex min-h-full flex-col bg-ink text-white antialiased">
 
     {{-- Top Broadcast Navigation --}}
-    <header x-data="{ mobileOpen: false }" class="sticky top-0 z-50 bg-slate-950/85 backdrop-blur-xl">
-        <div class="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 py-3.5">
+    <header x-data="{ mobileOpen: false }" class="sticky top-0 z-50 border-b border-line bg-ink">
+        <div class="mx-auto flex w-full max-w-page items-center justify-between px-4 sm:px-6 py-4">
             <div class="flex items-center gap-8">
                 {{-- Logo / Crest --}}
                 <a href="{{ route('home') }}" class="flex items-center gap-2.5 group">
-                    <div class="relative w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/25 group-hover:scale-105 transition-transform ring-1 ring-emerald-300/30">
-                        <svg viewBox="0 0 24 24" fill="none" class="w-5 h-5 text-slate-950">
+                    <div class="flex h-9 w-9 items-center justify-center rounded-lg ">
+                        <svg viewBox="0 0 24 24" fill="none" class="h-5 w-5 text-white">
                             <circle cx="12" cy="12" r="9" fill="currentColor" opacity="0.15"/>
                             <path d="M12 3l1.9 1.4-.7 2.2h-2.4l-.7-2.2L12 3zM4.8 8.6l2.3.1.7 2.2-1.9 1.4-1.9-1.4.8-2.3zm14.4 0l.8 2.3-1.9 1.4-1.9-1.4.7-2.2 2.3-.1zM8.2 18.4l-.7-2.2 1.9-1.4 1.9 1.4-.7 2.2H8.2zm7.6 0h-2.4l-.7-2.2 1.9-1.4 1.9 1.4-.7 2.2z" fill="currentColor"/>
                         </svg>
                     </div>
                     <div>
-                        <span class="text-lg font-black tracking-tight text-white flex items-center gap-1.5">
-                            KREASI<span class="text-emerald-400">BALL</span>
-                            <span class="text-[9px] font-black uppercase tracking-widest bg-emerald-500/15 text-emerald-300 px-1.5 py-0.5 rounded border border-emerald-500/30">PRO</span>
+                        <span class="flex items-center gap-2 font-display text-lg font-bold tracking-tight text-white">
+                            KREASI<span class="text-accent">BALL</span>
+                            <span class="rounded-lg border border-line px-1.5 py-0.5 text-xs font-medium uppercase tracking-widest text-body">PRO</span>
                         </span>
                     </div>
                 </a>
 
                 {{-- Nav Links (underline active-state, inline SVG icons) --}}
-                <nav class="hidden md:flex items-center gap-1 text-sm font-semibold">
+                <nav class="hidden lg:flex items-center gap-1 text-sm font-semibold">
                     @php
                         $navItems = [
                             ['route' => 'home', 'match' => ['home'], 'label' => __('common.nav.home'),
@@ -121,17 +95,13 @@
                     @foreach($navItems as $n)
                         @php $active = request()->routeIs(...$n['match']); @endphp
                         <a href="{{ route($n['route']) }}"
-                           class="group relative px-3.5 py-2 flex items-center gap-2 transition-colors {{ $active ? 'text-white' : 'text-slate-400 hover:text-slate-100' }}">
+                           class="group flex items-center gap-2 px-3 py-2 text-sm transition-colors {{ $active ? 'font-semibold text-white' : 'text-body hover:text-white' }}">
                             @if(!empty($n['live']))
-                                <span class="relative flex h-2 w-2">
-                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>
-                                    <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
-                                </span>
+                                <span class="h-2 w-2 rounded-full bg-accent"></span>
                             @else
-                                <svg viewBox="0 0 24 24" fill="none" class="w-4 h-4 {{ $active ? 'text-emerald-400' : 'text-slate-500 group-hover:text-slate-300' }}">{!! $n['icon'] !!}</svg>
+                                <svg viewBox="0 0 24 24" fill="none" class="h-4 w-4 {{ $active ? 'text-accent' : 'text-muted group-hover:text-body' }}">{!! $n['icon'] !!}</svg>
                             @endif
-                            <span>{{ $n['label'] }}</span>
-                            <span class="absolute inset-x-2.5 -bottom-[15px] h-0.5 rounded-full transition-all {{ $active ? 'bg-emerald-400' : 'bg-transparent group-hover:bg-slate-700' }}"></span>
+                            <span class="whitespace-nowrap">{{ $n['label'] }}</span>
                         </a>
                     @endforeach
                 </nav>
@@ -143,59 +113,56 @@
                 <div x-data="{ open: false }" class="relative">
                     <button @click="open = !open" @click.outside="open = false" type="button"
                             aria-label="{{ __('common.locale.label') }}"
-                            class="flex h-9 items-center gap-1.5 rounded-full border border-slate-800 bg-slate-900/90 px-3 text-[11px] font-bold uppercase tracking-wider text-slate-300 transition-colors hover:border-slate-700 hover:text-emerald-400">
+                            class="flex h-9 items-center gap-1.5 rounded-lg border border-line px-3 text-xs font-medium uppercase tracking-wider text-body transition-colors hover:text-white">
                         <svg viewBox="0 0 24 24" fill="none" class="h-3.5 w-3.5"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 12h17M12 3.5c2.2 2.4 3.3 5.4 3.3 8.5s-1.1 6.1-3.3 8.5c-2.2-2.4-3.3-5.4-3.3-8.5S9.8 5.9 12 3.5z" stroke="currentColor" stroke-width="1.4"/></svg>
                         {{ app()->getLocale() }}
                     </button>
                     <div x-show="open" x-cloak x-transition.opacity
-                         class="absolute right-0 z-50 mt-2 w-44 overflow-hidden rounded-xl border border-slate-800 bg-slate-900 py-1 shadow-2xl">
+                         class="absolute right-0 z-50 mt-2 w-44 overflow-hidden rounded-xl border border-line bg-surface py-1">
                         @foreach(\App\Http\Middleware\SetLocale::SUPPORTED as $code => $native)
                             <a href="{{ route('locale.switch', $code) }}"
-                               class="flex items-center justify-between gap-2 px-3.5 py-2 text-xs font-bold transition-colors {{ app()->getLocale() === $code ? 'bg-emerald-500/10 text-emerald-300' : 'text-slate-300 hover:bg-slate-800' }}">
+                               class="flex items-center justify-between gap-2 px-3.5 py-2 text-xs transition-colors {{ app()->getLocale() === $code ? 'font-semibold text-accent' : 'text-body hover:text-white' }}">
                                 {{ $native }}
-                                <span class="font-mono text-[10px] uppercase text-slate-500">{{ $code }}</span>
+                                <span class="font-mono text-xs uppercase text-muted">{{ $code }}</span>
                             </a>
                         @endforeach
                     </div>
                 </div>
 
                 <a href="{{ route('football.search') }}" title="{{ __('common.nav.search_title') }}"
-                   class="flex h-9 w-9 items-center justify-center rounded-full border border-slate-800 bg-slate-900/90 text-slate-400 hover:text-emerald-400 hover:border-slate-700 transition-colors">
+                   class="flex h-9 w-9 items-center justify-center rounded-lg border border-line text-body transition-colors hover:text-white">
                     <svg viewBox="0 0 24 24" fill="none" class="h-4 w-4"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M20 20l-3.5-3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
                 </a>
                 @auth
                     <a href="{{ route('admin.dashboard') }}" title="{{ __('common.nav.admin_panel') }}"
-                       class="flex h-9 w-9 items-center justify-center rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 transition-colors">
+                       class="flex h-9 w-9 items-center justify-center rounded-lg border border-line text-accent transition-colors hover:text-white">
                         <svg viewBox="0 0 24 24" fill="none" class="h-4 w-4"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z" stroke="currentColor" stroke-width="1.6"/><path d="M19.4 15a1.7 1.7 0 00.3 1.9l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-2.9 1.2V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-2.9-1.2l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00-1.2-2.9H2a2 2 0 110-4h.1a1.7 1.7 0 001.2-2.9l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.9.3H8a1.7 1.7 0 001-1.6V2a2 2 0 114 0v.1a1.7 1.7 0 001 1.6 1.7 1.7 0 001.9-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.9V8a1.7 1.7 0 001.6 1H22a2 2 0 110 4h-.1a1.7 1.7 0 00-1.6 1z" stroke="currentColor" stroke-width="1.2"/></svg>
                     </a>
                 @endauth
-                <div class="hidden sm:flex items-center gap-2 bg-slate-900/90 border border-slate-800 px-3 py-1.5 rounded-full">
-                    <span class="relative flex h-2 w-2">
-                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                      <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                    </span>
-                    <span class="text-slate-300 font-mono text-[11px] font-semibold tracking-wider">{{ __('common.nav.live_data') }}</span>
+                <div class="hidden items-center gap-2 rounded-lg border border-line px-3 py-1.5 sm:flex">
+                    <span class="h-2 w-2 rounded-full "></span>
+                    <span class="whitespace-nowrap font-mono text-xs tracking-wider text-body">{{ __('common.nav.live_data') }}</span>
                 </div>
 
                 {{-- Mobile hamburger --}}
                 <button @click="mobileOpen = !mobileOpen" aria-label="{{ __('common.nav.menu') }}"
-                        class="md:hidden flex h-9 w-9 items-center justify-center rounded-full border border-slate-800 bg-slate-900/90 text-slate-300 hover:text-emerald-400 transition-colors">
+                        class="flex h-9 w-9 items-center justify-center rounded-lg border border-line text-body transition-colors hover:text-white lg:hidden">
                     <svg x-show="!mobileOpen" viewBox="0 0 24 24" fill="none" class="h-5 w-5"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
                     <svg x-show="mobileOpen" x-cloak viewBox="0 0 24 24" fill="none" class="h-5 w-5"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
                 </button>
             </div>
         </div>
         {{-- Mobile menu panel --}}
-        <div x-show="mobileOpen" x-cloak x-transition.opacity class="md:hidden border-t border-slate-800/80 bg-slate-950/95 px-4 py-3">
+        <div x-show="mobileOpen" x-cloak class="border-t border-line bg-ink px-4 py-3 lg:hidden">
             <nav class="flex flex-col gap-1 text-sm font-semibold">
                 @foreach($navItems as $n)
                     @php $mActive = request()->routeIs(...$n['match']); @endphp
                     <a href="{{ route($n['route']) }}"
-                       class="flex items-center gap-3 rounded-xl px-3.5 py-2.5 transition-colors {{ $mActive ? 'bg-slate-900 text-white' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-900' }}">
+                       class="flex items-center gap-3 rounded-lg px-3.5 py-2.5 transition-colors {{ $mActive ? 'bg-surface text-white' : 'text-body hover:text-white' }}">
                         @if(!empty($n['live']))
-                            <span class="flex h-2 w-2 rounded-full bg-red-500"></span>
+                            <span class="h-2 w-2 rounded-full bg-accent"></span>
                         @else
-                            <svg viewBox="0 0 24 24" fill="none" class="w-4 h-4 {{ $mActive ? 'text-emerald-400' : 'text-slate-500' }}">{!! $n['icon'] !!}</svg>
+                            <svg viewBox="0 0 24 24" fill="none" class="h-4 w-4 {{ $mActive ? 'text-accent' : 'text-muted' }}">{!! $n['icon'] !!}</svg>
                         @endif
                         {{ $n['label'] }}
                     </a>
@@ -203,31 +170,21 @@
             </nav>
         </div>
 
-        {{-- Chalk pitch-line accent --}}
-        <div class="h-px w-full bg-slate-800/80"></div>
-        <div class="pitch-accent h-0.5 w-full opacity-80"></div>
     </header>
 
     {{-- Main App View Container --}}
-    <main class="flex-1 mx-auto w-full max-w-7xl px-4 sm:px-6 py-8">
+    <main class="mx-auto w-full max-w-page flex-1 px-4 sm:px-6 py-16">
         @yield('content')
     </main>
 
     {{-- Footer --}}
-    <footer class="mt-12 border-t border-slate-900 bg-slate-950 py-8 text-xs text-slate-500">
+    <footer class="border-t border-line bg-ink py-10 text-xs text-body">
         {{-- Pitch center-line motif --}}
-        <div class="mx-auto max-w-7xl px-4 sm:px-6">
-            <div class="mb-6 flex items-center gap-4">
-                <span class="h-px flex-1 bg-slate-900"></span>
-                <span class="flex h-6 w-6 items-center justify-center rounded-full border border-slate-800 text-emerald-500/70">
-                    <svg viewBox="0 0 24 24" fill="none" class="h-3.5 w-3.5"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/></svg>
-                </span>
-                <span class="h-px flex-1 bg-slate-900"></span>
-            </div>
-            <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div class="mx-auto w-full max-w-page px-4 sm:px-6">
+            <div class="flex flex-col items-center justify-between gap-4 sm:flex-row">
                 <div class="flex items-center gap-2">
-                    <span class="font-bold text-slate-400">{{ __('common.footer.portal') }}</span>
-                    <span class="text-slate-700">•</span>
+                    <span class="font-semibold text-white">{{ __('common.footer.portal') }}</span>
+                    <span class="text-muted">/</span>
                     <span>{{ __('common.footer.powered_by') }}</span>
                 </div>
                 <span>{{ __('common.footer.rights', ['year' => date('Y')]) }}</span>
