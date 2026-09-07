@@ -12,9 +12,9 @@ class ImageUploadTest extends TestCase
 {
     public function test_upload_page_can_be_rendered(): void
     {
-        $this->get('/upload')
+        $this->get(route('upload.create'))
             ->assertOk()
-            ->assertSee('Upload Gambar');
+            ->assertSee(__('upload.heading'));
     }
 
     public function test_image_upload_saves_file_and_publishes_event(): void
@@ -29,17 +29,19 @@ class ImageUploadTest extends TestCase
 
         $file = UploadedFile::fake()->image('test_banner.jpg', 600, 400);
 
-        $response = $this->post('/upload', [
+        $response = $this->post(route('upload.store'), [
             'image' => $file,
         ]);
 
-        $response->assertRedirect('/upload');
-        $response->assertSessionHas('status', 'Gambar berhasil di-upload!');
+        $response->assertRedirect(route('upload.create'));
+        $response->assertSessionHas('status', __('upload.uploaded'));
         $response->assertSessionHas('uploaded_image');
 
         $uploadedImage = session('uploaded_image');
         $this->assertEquals('test_banner.jpg', $uploadedImage['original_name']);
-        $this->assertEquals('Terkirim ke RabbitMQ', $uploadedImage['mq_status']);
+        // The controller flashes the raw outcome, not a translated label, so
+        // the view can render it in whatever locale the reader is using.
+        $this->assertTrue($uploadedImage['mq_ok']);
 
         Storage::disk('public')->assertExists('uploads/'.$file->hashName());
     }
@@ -50,7 +52,7 @@ class ImageUploadTest extends TestCase
 
         $file = UploadedFile::fake()->create('document.pdf', 500, 'application/pdf');
 
-        $response = $this->post('/upload', [
+        $response = $this->post(route('upload.store'), [
             'image' => $file,
         ]);
 

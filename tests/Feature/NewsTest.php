@@ -38,7 +38,7 @@ class NewsTest extends TestCase
             '*/news' => Http::response(['source' => 'cache', 'data' => [$this->fakeItem()]]),
         ]);
 
-        $this->get('/')
+        $this->get(route('news.index'))
             ->assertOk()
             ->assertSee('Judul berita 1')
             ->assertSee('Example News');
@@ -52,12 +52,12 @@ class NewsTest extends TestCase
             '*/news' => Http::response(['source' => 'cache', 'data' => $items]),
         ]);
 
-        $this->get('/')
+        $this->get(route('news.index'))
             ->assertOk()
             ->assertSee('Judul berita 1')
             ->assertDontSee('Judul berita 30');
 
-        $this->get('/?page=3')
+        $this->get(route('news.index', ['page' => 3]))
             ->assertOk()
             ->assertSee('Judul berita 30');
     }
@@ -66,9 +66,9 @@ class NewsTest extends TestCase
     {
         Http::fake(fn () => throw new ConnectionException('Connection refused'));
 
-        $this->get('/')
+        $this->get(route('news.index'))
             ->assertServiceUnavailable()
-            ->assertSee('tidak tersedia');
+            ->assertSee(__('news.unavailable_heading'));
     }
 
     public function test_show_displays_a_single_item(): void
@@ -106,16 +106,16 @@ class NewsTest extends TestCase
             '*/news' => Http::response(['source' => 'cache', 'data' => [$this->fakeItem()]]),
         ]);
 
-        $this->get('/'); // warm the list cache
+        $this->get(route('news.index')); // warm the list cache
 
-        $this->post('/refresh')
+        $this->post(route('news.refresh'))
             ->assertRedirect(route('news.index'))
             ->assertSessionHas('status');
 
         Http::assertSent(fn ($request) => $request->method() === 'POST'
             && str_ends_with($request->url(), '/news/refresh'));
 
-        $this->get('/'); // cache was cleared, so this hits the API again
+        $this->get(route('news.index')); // cache was cleared, so this hits the API again
         Http::assertSentCount(3);
     }
 
@@ -127,7 +127,7 @@ class NewsTest extends TestCase
             '*/news/refresh' => Http::response(['status' => 'refreshed', 'count' => 1]),
         ]);
 
-        $this->post('/refresh')->assertSessionHas('status');
+        $this->post(route('news.refresh'))->assertSessionHas('status');
 
         Http::assertSent(fn ($request) => $request->hasHeader('X-Refresh-Token', 'secret-123'));
     }
@@ -136,7 +136,7 @@ class NewsTest extends TestCase
     {
         Http::fake(fn () => throw new ConnectionException('Connection refused'));
 
-        $this->post('/refresh')
+        $this->post(route('news.refresh'))
             ->assertRedirect(route('news.index'))
             ->assertSessionHas('error');
     }
@@ -147,8 +147,8 @@ class NewsTest extends TestCase
             '*/news' => Http::response(['source' => 'db', 'data' => [$this->fakeItem()]]),
         ]);
 
-        $this->get('/')->assertOk();
-        $this->get('/')->assertOk();
+        $this->get(route('news.index'))->assertOk();
+        $this->get(route('news.index'))->assertOk();
 
         Http::assertSentCount(1);
     }
