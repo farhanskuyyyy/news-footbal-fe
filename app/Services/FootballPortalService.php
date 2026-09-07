@@ -110,6 +110,19 @@ class FootballPortalService
         ];
     }
 
+    /**
+     * A season's stages in playing order: knock-out / qualifying stages carry
+     * `ties` (legs paired per matchup with aggregate scores), every other stage
+     * carries `standings`. Only meaningful for cups — see the overview's
+     * `has_bracket` flag.
+     */
+    public function getSeasonBracket(int $seasonId): array
+    {
+        $res = $this->get("seasons/{$seasonId}/bracket", [], 60);
+
+        return $res['data'] ?? [];
+    }
+
     public function getSeasonTeams(int $seasonId): ?array
     {
         $res = $this->get("seasons/{$seasonId}/teams", [], 120);
@@ -249,7 +262,8 @@ class FootballPortalService
         $data = $res['data'] ?? [];
 
         // Drop already-finished fixtures, sort by kickoff ascending
-        $finished = ['FT', 'AET', 'FT_PEN'];
+        // Sportmonks stores after-penalties as "FTP" — "FT_PEN" matches nothing.
+        $finished = ['FT', 'AET', 'FTP'];
         $data = array_values(array_filter($data, function ($f) use ($finished) {
             $code = $f['state']['short_name'] ?? $f['state']['state'] ?? '';
 
@@ -274,7 +288,8 @@ class FootballPortalService
         ], 600);
         $data = $res['data'] ?? [];
 
-        $finished = ['FT', 'AET', 'FT_PEN'];
+        // Sportmonks stores after-penalties as "FTP" — "FT_PEN" matches nothing.
+        $finished = ['FT', 'AET', 'FTP'];
         $data = array_values(array_filter($data, function ($f) use ($finished) {
             $code = $f['state']['short_name'] ?? $f['state']['state'] ?? '';
 

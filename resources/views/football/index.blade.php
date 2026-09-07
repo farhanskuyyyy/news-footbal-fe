@@ -119,6 +119,13 @@
                 'teams' => ['label' => __('football.portal.tabs.teams'), 'icon' => '🛡️'],
                 'transfers' => ['label' => __('football.portal.tabs.transfers'), 'icon' => '💸'],
             ];
+
+            // The bracket only means something for cups — seasons with
+            // qualifying or knock-out stages. Domestic leagues have a single
+            // group stage and would just repeat the standings tab.
+            if (! empty($overview['has_bracket'])) {
+                $tabs['bracket'] = ['label' => __('football.portal.tabs_bracket'), 'icon' => '🏆'];
+            }
         @endphp
 
         @foreach($tabs as $tabKey => $tabInfo)
@@ -184,7 +191,7 @@
                                 $statusLabel = $st['name'] ?? $code;
                             }
                             $statusIcon = match (true) {
-                                in_array($code, ['FT', 'AET', 'FT_PEN']) => '✅',
+                                in_array($code, ['FT', 'AET', 'FTP']) => '✅',
                                 in_array($code, ['NS', 'TBA']) => '🕒',
                                 in_array($code, ['LIVE', 'INPLAY', '1H', '2H', 'HT', 'ET', 'PEN_LIVE', 'BREAK']) => '🔴',
                                 default => '📌',
@@ -207,7 +214,7 @@
                         @php
                             $stateCode = $f['state']['short_name'] ?? $f['state']['state'] ?? '';
                             $isLive = in_array($stateCode, ['LIVE', '1H', '2H', 'HT', 'ET']);
-                            $isFinished = in_array($stateCode, ['FT', 'AET', 'FT_PEN']);
+                            $isFinished = in_array($stateCode, ['FT', 'AET', 'FTP']);
                             $hasScores = ($f['current_home_score'] !== null && $f['current_away_score'] !== null);
 
                             $homeName = $f['home_team']['name'] ?? explode(' vs ', $f['name'])[0] ?? __('football.card.home');
@@ -227,7 +234,7 @@
                                             {{ $isLive ? 'bg-red-600 text-white animate-pulse' : '' }}
                                             {{ $isFinished ? 'bg-slate-800 text-slate-300 border border-slate-700' : '' }}
                                             {{ in_array($stateCode, ['NS', 'TBA']) ? 'bg-blue-950 text-blue-300 border border-blue-800' : '' }}
-                                            {{ !in_array($stateCode, ['LIVE', '1H', '2H', 'HT', 'ET', 'FT', 'AET', 'FT_PEN', 'NS', 'TBA']) ? 'bg-slate-800 text-slate-300' : '' }}
+                                            {{ !in_array($stateCode, ['LIVE', '1H', '2H', 'HT', 'ET', 'FT', 'AET', 'FTP', 'NS', 'TBA']) ? 'bg-slate-800 text-slate-300' : '' }}
                                         ">
                                             {{ $stateCode }}
                                         </span>
@@ -732,6 +739,256 @@
             @else
                 <p class="text-slate-400 text-center py-12">{{ __('football.portal.transfers_empty') }}</p>
             @endif
+        </div>
+    @endif
+
+    {{-- TAB 6: CUP BRACKET (STAGES) --}}
+    @if($activeTab === 'bracket')
+        <div class="space-y-6">
+            <div>
+                <h3 class="text-lg font-black text-white flex items-center gap-2">🏆 {{ __('football.portal.bracket.heading') }}</h3>
+                <p class="text-xs text-slate-400 mt-0.5">{{ __('football.portal.bracket.sub') }}</p>
+            </div>
+
+            @php
+                // Knock-out rounds are drawn as a tree; everything else stays a list.
+                $koStages = array_values(array_filter($bracket, fn ($s) => ! empty($s['is_knockout']) && count($s['ties']) > 0));
+                $restStages = array_values(array_filter($bracket, fn ($s) => empty($s['is_knockout']) || count($s['ties']) === 0));
+            @endphp
+
+            @if(count($koStages) > 0)
+                {{-- KNOCK-OUT TREE — rounds left to right, scrolls sideways on small screens.
+                     The backend already ordered each round so the ties feeding the same
+                     later tie are adjacent, which is what makes the connectors line up. --}}
+                <div class="rounded-3xl border border-slate-800 bg-slate-900/90 p-4 sm:p-6 shadow-xl">
+                    <div class="overflow-x-auto pb-2">
+                        <div class="flex min-w-max items-stretch">
+                            @foreach($koStages as $ci => $stage)
+                                @php
+                                    $isLastColumn = $ci === count($koStages) - 1;
+                                    // Group by the tie each one feeds: a group of two draws an
+                                    // elbow, a group of one a straight line.
+                                    $groups = [];
+                                    foreach ($stage['ties'] as $tie) {
+                                        $groups['n'.($tie['next_tie_id'] ?? 'x'.$tie['id'])][] = $tie;
+                                    }
+                                @endphp
+                                <div class="flex flex-col">
+                                    <div class="mb-3 px-1 text-center text-[10px] font-black uppercase tracking-widest text-slate-500 whitespace-nowrap">
+                                        {{ $stage['name'] }}
+                                    </div>
+                                    <div class="flex flex-1 flex-col justify-around gap-4">
+                                        @foreach($groups as $group)
+                                            <div class="flex items-stretch">
+                                                <div class="flex flex-1 flex-col justify-around gap-4">
+                                                    @foreach($group as $tie)
+                                                        @php $sides = $tie['sides'] ?? []; @endphp
+                                                        <div class="w-[210px] shrink-0 rounded-xl border border-slate-800 bg-slate-950/80 p-2.5">
+                                                            @foreach($sides as $side)
+                                                                @php
+                                                                    $team = $side['team'] ?? null;
+                                                                    $isWinner = ($tie['winner_team_id'] ?? null) === ($side['team_id'] ?? null);
+                                                                @endphp
+                                                                <div class="flex items-center gap-2 py-0.5">
+                                                                    @if(!empty($team['image_path']))
+                                                                        <img src="{{ $team['image_path'] }}" alt="" class="h-4 w-4 shrink-0 object-contain">
+                                                                    @else
+                                                                        <span class="h-4 w-4 shrink-0"></span>
+                                                                    @endif
+                                                                    <a href="{{ !empty($team['id']) ? route('football.team', $team['id']) : '#' }}"
+                                                                       class="flex-1 truncate text-[11px] {{ $isWinner ? 'font-black text-white' : 'font-semibold text-slate-500' }} hover:text-emerald-400 transition-colors">
+                                                                        {{ $team['name'] ?? __('football.portal.bracket.tbd') }}
+                                                                    </a>
+                                                                    <span class="w-4 shrink-0 text-right font-mono text-[11px] {{ $isWinner ? 'font-black text-emerald-400' : 'font-bold text-slate-500' }}">
+                                                                        {{ !empty($tie['played']) ? ($side['aggregate'] ?? 0) : '–' }}
+                                                                    </span>
+                                                                </div>
+                                                            @endforeach
+
+                                                            @php
+                                                                $legScores = [];
+                                                                foreach ($tie['legs'] as $leg) {
+                                                                    $legScores[] = $leg['home_goals'] !== null
+                                                                        ? $leg['home_goals'].'-'.$leg['away_goals']
+                                                                        : ($leg['state']['short_name'] ?? 'NS');
+                                                                }
+                                                            @endphp
+                                                            <div class="mt-1.5 border-t border-slate-800/80 pt-1 text-[9px] font-mono text-slate-600">
+                                                                {{ implode(' · ', $legScores) }}
+                                                                @if(($tie['decided_by'] ?? '') === 'level' && !empty($tie['result_info']))
+                                                                    <span class="block text-amber-500/90 font-sans">{{ $tie['result_info'] }}</span>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+
+                                                @unless($isLastColumn)
+                                                    {{-- Two ties feeding one → elbow; a single tie → straight line. --}}
+                                                    @if(count($group) > 1)
+                                                        {{-- Inset ≈ half a card, so the elbow spans centre-to-centre. --}}
+                                                        <div class="my-[34px] w-5 shrink-0 rounded-r-lg border-y border-r border-slate-700"></div>
+                                                    @else
+                                                        <div class="flex w-5 shrink-0 items-center"><span class="h-px w-full bg-slate-700"></span></div>
+                                                    @endif
+                                                @endunless
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+
+                                @unless($isLastColumn)
+                                    {{-- Lead-in stub for the next round's cards. --}}
+                                    <div class="flex flex-col justify-around">
+                                        <div class="mb-3 h-[14px]"></div>
+                                        <div class="flex flex-1 flex-col justify-around gap-4">
+                                            @foreach($koStages[$ci + 1]['ties'] as $t)
+                                                <div class="flex items-center"><span class="h-px w-4 bg-slate-700"></span></div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endunless
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            @forelse($restStages as $stage)
+                <div class="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-4">
+                    {{-- Stage header --}}
+                    <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-800">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-slate-950 border border-slate-800 font-mono text-xs font-black text-emerald-400">
+                                {{ $stage['sort_order'] ?? $loop->iteration }}
+                            </span>
+                            <div class="min-w-0">
+                                <h4 class="truncate text-base font-black text-white">{{ $stage['name'] }}</h4>
+                                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">{{ $stage['type_name'] ?: '—' }}</span>
+                            </div>
+                        </div>
+                        {{-- Badge only when the source actually says so. A stage with
+                             neither flag set gets none: the League Stage is flagged
+                             neither finished nor current while its matches are being
+                             played, so "not played yet" would simply be wrong. --}}
+                        @if(!empty($stage['finished']) || !empty($stage['is_current']))
+                            <span class="rounded-md px-2 py-0.5 text-[10px] font-black uppercase tracking-wider {{ !empty($stage['finished']) ? 'bg-slate-800 text-slate-300 border border-slate-700' : 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30' }}">
+                                {{ !empty($stage['finished']) ? __('football.portal.bracket.finished') : __('football.portal.bracket.in_progress') }}
+                            </span>
+                        @endif
+                    </div>
+
+                    @if(($stage['kind'] ?? '') === 'bracket')
+                        {{-- Ties: one card per matchup, both legs + aggregate --}}
+                        @forelse($stage['ties'] as $tie)
+                            @php $sides = $tie['sides'] ?? []; @endphp
+                            <div class="rounded-2xl border border-slate-800 bg-slate-950/80 p-4">
+                                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                                    {{-- Both sides with their aggregate --}}
+                                    <div class="flex-1 space-y-1.5 min-w-0">
+                                        @foreach($sides as $side)
+                                            @php
+                                                $team = $side['team'] ?? null;
+                                                $isWinner = ($tie['winner_team_id'] ?? null) === ($side['team_id'] ?? null);
+                                            @endphp
+                                            <div class="flex items-center gap-2.5">
+                                                @if(!empty($team['image_path']))
+                                                    <img src="{{ $team['image_path'] }}" alt="" class="h-6 w-6 object-contain shrink-0">
+                                                @else
+                                                    <div class="flex h-6 w-6 items-center justify-center rounded bg-slate-800 text-[10px] shrink-0">🛡️</div>
+                                                @endif
+                                                <a href="{{ !empty($team['id']) ? route('football.team', $team['id']) : '#' }}"
+                                                   class="flex-1 truncate text-sm {{ $isWinner ? 'font-black text-white' : 'font-bold text-slate-400' }} hover:text-emerald-400 transition-colors">
+                                                    {{ $team['name'] ?? __('football.portal.bracket.tbd') }}
+                                                </a>
+                                                @if($isWinner)
+                                                    <span class="text-emerald-400 text-xs font-black">✓</span>
+                                                @endif
+                                                <span class="w-7 text-right font-mono text-sm {{ $isWinner ? 'font-black text-emerald-400' : 'font-bold text-slate-400' }}">
+                                                    {{ !empty($tie['played']) ? ($side['aggregate'] ?? 0) : '–' }}
+                                                </span>
+                                            </div>
+                                        @endforeach
+                                    </div>
+
+                                    {{-- Legs --}}
+                                    <div class="sm:w-64 shrink-0 space-y-1 sm:border-l sm:border-slate-800 sm:pl-4">
+                                        @foreach($tie['legs'] as $leg)
+                                            <a href="{{ route('football.fixture', $leg['fixture_id']) }}"
+                                               class="flex items-center justify-between gap-2 rounded-lg px-2 py-1 text-[11px] hover:bg-slate-900 transition-colors">
+                                                <span class="font-bold uppercase tracking-wider text-slate-600 shrink-0">
+                                                    {{ count($tie['legs']) > 1 ? __('football.portal.bracket.leg', ['number' => $loop->iteration]) : __('football.portal.bracket.single_leg') }}
+                                                </span>
+                                                <span class="truncate text-slate-500">{{ $leg['name'] }}</span>
+                                                <span class="font-mono font-black text-slate-300 shrink-0">
+                                                    {{ $leg['home_goals'] !== null ? $leg['home_goals'].'-'.$leg['away_goals'] : ($leg['state']['short_name'] ?? 'NS') }}
+                                                </span>
+                                            </a>
+                                        @endforeach
+
+                                        @if(($tie['decided_by'] ?? '') === 'level')
+                                            {{-- Aggregate did not settle it; the shootout / extra-time
+                                                 outcome exists only as the source's own wording. --}}
+                                            <p class="px-2 pt-1 text-[10px] text-amber-400">
+                                                {{ __('football.portal.bracket.level') }}@if(!empty($tie['result_info'])) — <span class="text-slate-400">{{ $tie['result_info'] }}</span>@endif
+                                            </p>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        @empty
+                            <p class="py-6 text-center text-xs text-slate-500">{{ __('football.portal.bracket.ties_empty') }}</p>
+                        @endforelse
+                    @else
+                        {{-- Table stage: same shape as the standings tab --}}
+                        @if(count($stage['standings']) > 0)
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-xs sm:text-sm whitespace-nowrap">
+                                    <thead class="bg-slate-950/80 text-slate-400 font-bold uppercase tracking-wider border-b border-slate-800 text-[11px]">
+                                        <tr>
+                                            <th class="py-3 px-3 text-center w-12">{{ __('football.portal.table.pos') }}</th>
+                                            <th class="py-3 px-4 min-w-[180px]">{{ __('football.portal.table.club') }}</th>
+                                            <th class="py-3 px-3 text-center" title="{{ __('football.portal.table.played_title') }}">{{ __('football.portal.table.played') }}</th>
+                                            <th class="py-3 px-3 text-center text-emerald-400" title="{{ __('football.portal.table.won_title') }}">{{ __('football.portal.table.won') }}</th>
+                                            <th class="py-3 px-3 text-center text-amber-400" title="{{ __('football.portal.table.drawn_title') }}">{{ __('football.portal.table.drawn') }}</th>
+                                            <th class="py-3 px-3 text-center text-red-400" title="{{ __('football.portal.table.lost_title') }}">{{ __('football.portal.table.lost') }}</th>
+                                            <th class="py-3 px-3 text-center" title="{{ __('football.portal.table.gd_title') }}">{{ __('football.portal.table.gd') }}</th>
+                                            <th class="py-3 px-4 text-center font-black text-emerald-400" title="{{ __('football.portal.table.points_title') }}">{{ __('football.portal.table.points') }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-800/60 font-medium text-slate-200">
+                                        @foreach($stage['standings'] as $st)
+                                            @php $team = $st['team'] ?? []; @endphp
+                                            <tr class="hover:bg-slate-800/50 transition-colors">
+                                                <td class="py-2.5 px-3 text-center font-mono font-bold text-slate-400">{{ $st['position'] ?? $loop->iteration }}</td>
+                                                <td class="py-2.5 px-4">
+                                                    <a href="{{ !empty($team['id']) ? route('football.team', $team['id']) : '#' }}" class="flex items-center gap-2.5 font-bold text-white hover:text-emerald-400 transition-colors">
+                                                        @if(!empty($team['image_path']))<img src="{{ $team['image_path'] }}" alt="" class="h-5 w-5 object-contain">@endif
+                                                        <span class="truncate">{{ $team['name'] ?? '-' }}</span>
+                                                    </a>
+                                                </td>
+                                                <td class="py-2.5 px-3 text-center font-mono text-slate-400">{{ $st['played'] ?? 0 }}</td>
+                                                <td class="py-2.5 px-3 text-center font-mono text-emerald-400">{{ $st['won'] ?? 0 }}</td>
+                                                <td class="py-2.5 px-3 text-center font-mono text-amber-400">{{ $st['draw'] ?? 0 }}</td>
+                                                <td class="py-2.5 px-3 text-center font-mono text-red-400">{{ $st['lost'] ?? 0 }}</td>
+                                                <td class="py-2.5 px-3 text-center font-mono text-slate-300">{{ $st['goal_difference'] ?? 0 }}</td>
+                                                <td class="py-2.5 px-4 text-center font-mono font-black text-base text-emerald-400 bg-slate-950/40">{{ $st['points'] ?? 0 }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @else
+                            <p class="py-6 text-center text-xs text-slate-500">{{ __('football.portal.bracket.standings_empty') }}</p>
+                        @endif
+                    @endif
+                </div>
+            @empty
+                <div class="bg-slate-900/60 border border-dashed border-slate-800 rounded-3xl p-12 text-center">
+                    <div class="text-5xl mb-3">🏆</div>
+                    <p class="text-base font-bold text-slate-200">{{ __('football.portal.bracket.empty') }}</p>
+                </div>
+            @endforelse
         </div>
     @endif
 

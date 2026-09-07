@@ -52,6 +52,7 @@ class FootballController extends Controller
         $selectedRoundId = $request->integer('round_id') ?: null;
         $fixtureStatuses = [];
         $selectedStatus = trim((string) $request->query('status', ''));
+        $bracket = [];
 
         if ($selectedSeasonId) {
             $overview = $this->footballService->getSeasonOverview($selectedSeasonId);
@@ -78,6 +79,9 @@ class FootballController extends Controller
                 case 'transfers':
                     $transfers = $this->footballService->getSeasonTransfers($selectedSeasonId) ?? [];
                     break;
+                case 'bracket':
+                    $bracket = $this->footballService->getSeasonBracket($selectedSeasonId);
+                    break;
                 case 'standings':
                 default:
                     $standings = $this->footballService->getSeasonStandings($selectedSeasonId) ?? [];
@@ -103,7 +107,8 @@ class FootballController extends Controller
             'topscorers',
             'availableTypes',
             'selectedTypeId',
-            'transfers'
+            'transfers',
+            'bracket'
         ));
     }
 

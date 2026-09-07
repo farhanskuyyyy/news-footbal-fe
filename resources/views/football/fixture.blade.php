@@ -121,9 +121,9 @@
                     @if($stateCode)
                         <span class="inline-flex items-center gap-1.5 font-mono font-black text-xs px-4 py-1.5 rounded-full uppercase tracking-wider shadow-lg
                             {{ $isLive ? 'bg-red-600 text-white animate-pulse ring-2 ring-red-400/50' : '' }}
-                            {{ in_array($stateCode, ['FT', 'AET', 'FT_PEN']) ? 'bg-slate-800 text-slate-200 border border-slate-700' : '' }}
+                            {{ in_array($stateCode, ['FT', 'AET', 'FTP']) ? 'bg-slate-800 text-slate-200 border border-slate-700' : '' }}
                             {{ in_array($stateCode, ['NS', 'TBA']) ? 'bg-blue-950 text-blue-300 border border-blue-800' : '' }}
-                            {{ !in_array($stateCode, ['LIVE', '1H', '2H', 'HT', 'ET', 'FT', 'AET', 'FT_PEN', 'NS', 'TBA']) ? 'bg-slate-800 text-slate-300' : '' }}
+                            {{ !in_array($stateCode, ['LIVE', '1H', '2H', 'HT', 'ET', 'FT', 'AET', 'FTP', 'NS', 'TBA']) ? 'bg-slate-800 text-slate-300' : '' }}
                         ">
                             <span class="w-2 h-2 rounded-full {{ $isLive ? 'bg-white' : 'bg-emerald-400' }}"></span>
                             {{ $stateCode }} • {{ $stateName }}

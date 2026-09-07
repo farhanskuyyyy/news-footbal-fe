@@ -15,7 +15,8 @@
 
     $stateCode = $f['state']['short_name'] ?? $f['state']['state'] ?? '';
     $isLive = in_array($stateCode, ['LIVE', 'INPLAY', '1H', '2H', 'HT', 'ET', 'PEN_LIVE']);
-    $isFinished = in_array($stateCode, ['FT', 'AET', 'FT_PEN']);
+    // "FTP" is Sportmonks' after-penalties code; "FT_PEN" does not exist.
+    $isFinished = in_array($stateCode, ['FT', 'AET', 'FTP']);
     $leagueName = $f['league']['name'] ?? null;
     $leagueLogo = $f['league']['image_path'] ?? null;
 
