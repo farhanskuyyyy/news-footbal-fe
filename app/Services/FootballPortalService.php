@@ -305,10 +305,15 @@ class FootballPortalService
         return false;
     }
 
-    /** Latest transfers across leagues (live proxy), newest first. */
+    /**
+     * Latest completed transfers across leagues (live proxy), newest first.
+     * The proxy forwards to Sportmonks v3 verbatim, so the path must carry the
+     * `football/` sport prefix — without it the upstream returns
+     * "The requested endpoint does not exist".
+     */
     public function getLatestTransfers(int $limit = 40): array
     {
-        $res = $this->getProxy('transfers/latest', [
+        $res = $this->getProxy('football/transfers/latest', [
             'include' => 'player;fromteam;toteam;type',
         ], 600);
         $data = $res['data'] ?? [];
@@ -316,6 +321,56 @@ class FootballPortalService
         usort($data, fn ($a, $b) => strcmp($b['date'] ?? '', $a['date'] ?? ''));
 
         return array_slice($data, 0, $limit);
+    }
+
+    /**
+     * IDs of the leagues enabled in the CMS (`status = true`). Used to push
+     * their fixtures to the top of date/live listings.
+     *
+     * @return array<int, int>
+     */
+    public function getEnabledLeagueIds(): array
+    {
+        return array_values(array_map(
+            static fn ($l) => (int) $l['id'],
+            array_filter($this->getLeagues(true) ?? [], static fn ($l) => isset($l['id']))
+        ));
+    }
+
+    /**
+     * Reorders raw Sportmonks fixtures so those from enabled leagues come
+     * first, keeping each group sorted by kickoff time. Stable within a group,
+     * so nothing is dropped — only re-ranked.
+     *
+     * @param  array<int, array>  $fixtures
+     * @param  array<int, int>  $leagueIds
+     * @return array<int, array>
+     */
+    public function prioritizeEnabledLeagues(array $fixtures, array $leagueIds): array
+    {
+        if (empty($fixtures)) {
+            return $fixtures;
+        }
+
+        $rank = array_flip($leagueIds);
+        $decorated = [];
+        foreach (array_values($fixtures) as $i => $f) {
+            $lid = (int) ($f['league_id'] ?? $f['league']['id'] ?? 0);
+            $decorated[] = [
+                'enabled' => array_key_exists($lid, $rank) ? 0 : 1,
+                'order' => array_key_exists($lid, $rank) ? $rank[$lid] : 0,
+                'kickoff' => (string) ($f['starting_at'] ?? ''),
+                'i' => $i,
+                'f' => $f,
+            ];
+        }
+
+        usort($decorated, function ($a, $b) {
+            return [$a['enabled'], $a['order'], $a['kickoff'], $a['i']]
+                <=> [$b['enabled'], $b['order'], $b['kickoff'], $b['i']];
+        });
+
+        return array_column($decorated, 'f');
     }
 
     /** Search teams / players / leagues by name via the proxy. */

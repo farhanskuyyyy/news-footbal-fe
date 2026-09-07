@@ -6,8 +6,11 @@
     $today = date('Y-m-d');
     $prev = date('Y-m-d', strtotime($date.' -1 day'));
     $next = date('Y-m-d', strtotime($date.' +1 day'));
-    // Group fixtures by league name for readability
+    // Group fixtures by league name for readability. $fixtures already arrives
+    // with CMS-enabled leagues (status = true) first, and groupBy keeps that
+    // order, so the enabled leagues stay at the top of the page.
     $byLeague = collect($fixtures)->groupBy(fn ($f) => $f['league']['name'] ?? 'Lainnya');
+    $enabledIds = collect($enabledLeagueIds ?? []);
 @endphp
 
 @section('content')
@@ -47,6 +50,9 @@
                         @endif
                         {{ $leagueName }}
                         <span class="text-xs font-mono font-bold text-slate-500">({{ count($leagueFixtures) }})</span>
+                        @if($enabledIds->contains((int) ($leagueFixtures[0]['league_id'] ?? $leagueFixtures[0]['league']['id'] ?? 0)))
+                            <span class="rounded-md border border-emerald-500/30 bg-emerald-500/15 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wider text-emerald-300">Liga Utama</span>
+                        @endif
                     </h2>
                     <div class="grid gap-4 md:grid-cols-2">
                         @foreach($leagueFixtures as $f)

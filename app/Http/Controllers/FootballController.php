@@ -18,7 +18,7 @@ class FootballController extends Controller
 
     public function index(Request $request): View
     {
-        // Public portal only lists enabled (status) + Sportmonks-active leagues.
+        // Public portal only lists leagues enabled in the CMS (status = true).
         $leagues = $this->footballService->getLeagues(true) ?? [];
 
         // Select league: from query or default to first available league
@@ -149,10 +149,16 @@ class FootballController extends Controller
 
     public function live(): View
     {
-        $matches = $this->footballService->getLiveInplay();
+        // CMS-enabled leagues (status = true) are ranked first on the board.
+        $enabledIds = $this->footballService->getEnabledLeagueIds();
+        $matches = $this->footballService->prioritizeEnabledLeagues(
+            $this->footballService->getLiveInplay(),
+            $enabledIds
+        );
 
         return view('football.live', [
             'matches' => $matches,
+            'enabledLeagueIds' => $enabledIds,
         ]);
     }
 
@@ -165,11 +171,17 @@ class FootballController extends Controller
             $date = date('Y-m-d');
         }
 
-        $fixtures = $this->footballService->getFixturesByDate($date);
+        // CMS-enabled leagues (status = true) are listed before the rest.
+        $enabledIds = $this->footballService->getEnabledLeagueIds();
+        $fixtures = $this->footballService->prioritizeEnabledLeagues(
+            $this->footballService->getFixturesByDate($date),
+            $enabledIds
+        );
 
         return view('football.matchday', [
             'date' => $date,
             'fixtures' => $fixtures,
+            'enabledLeagueIds' => $enabledIds,
         ]);
     }
 

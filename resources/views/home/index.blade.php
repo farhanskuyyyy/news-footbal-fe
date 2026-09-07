@@ -71,49 +71,83 @@
                 @endif
             </section>
 
-            {{-- Featured league: mini standings + topscorers --}}
-            <aside class="space-y-6">
-                @if($featured)
-                    {{-- Mini standings --}}
-                    <div class="rounded-3xl border border-slate-800 bg-slate-900/80 p-5 shadow-xl">
-                        <div class="mb-4 flex items-center gap-2">
-                            @if(!empty($featured['league']['image_path']))<img src="{{ $featured['league']['image_path'] }}" alt="" class="h-6 w-6 object-contain">@endif
-                            <div class="min-w-0">
-                                <span class="kicker block text-[9px] font-bold uppercase text-emerald-400">Klasemen</span>
-                                <h3 class="truncate text-sm font-black text-white">{{ $featured['league']['name'] }}</h3>
-                            </div>
-                        </div>
-                        <div class="space-y-1">
-                            @foreach($featured['standings'] as $st)
-                                <a href="{{ route('football.index', ['league_id' => $featured['league']['id'], 'season_id' => $featured['season']['id']]) }}"
-                                   class="flex items-center gap-3 rounded-xl px-2.5 py-2 hover:bg-slate-800/50 transition-colors">
-                                    <span class="w-5 text-center font-mono text-xs font-bold text-slate-500">{{ $st['position'] ?? $loop->iteration }}</span>
-                                    @if(!empty($st['team']['image_path']))<img src="{{ $st['team']['image_path'] }}" alt="" class="h-5 w-5 object-contain">@else<span class="h-5 w-5"></span>@endif
-                                    <span class="flex-1 truncate text-xs font-bold text-slate-200">{{ $st['team']['name'] ?? '-' }}</span>
-                                    <span class="font-mono text-[11px] text-slate-500">{{ $st['played'] ?? 0 }}</span>
-                                    <span class="w-6 text-right font-mono text-xs font-black text-emerald-400">{{ $st['points'] ?? 0 }}</span>
-                                </a>
-                            @endforeach
-                        </div>
-                        <a href="{{ route('football.index', ['league_id' => $featured['league']['id'], 'season_id' => $featured['season']['id']]) }}" class="mt-3 block text-center text-xs font-bold text-emerald-400 hover:underline">Klasemen lengkap →</a>
-                    </div>
-
-                    {{-- Top scorers --}}
-                    @if(!empty($featured['topscorers']))
-                        <div class="rounded-3xl border border-slate-800 bg-slate-900/80 p-5 shadow-xl">
-                            <span class="kicker mb-3 block text-[9px] font-bold uppercase text-amber-400">Top Skor</span>
-                            <div class="space-y-2">
-                                @foreach($featured['topscorers'] as $ts)
-                                    <a href="{{ route('football.player', $ts['player']['id'] ?? ($ts['player_id'] ?? 0)) }}" class="flex items-center gap-3 rounded-xl px-2 py-1.5 hover:bg-slate-800/50 transition-colors">
-                                        <span class="w-4 text-center font-mono text-xs font-bold text-slate-500">{{ $loop->iteration }}</span>
-                                        @if(!empty($ts['player']['image_path']))<img src="{{ $ts['player']['image_path'] }}" alt="" class="h-7 w-7 rounded-full object-cover border border-slate-700">@else<div class="flex h-7 w-7 items-center justify-center rounded-full bg-slate-800 text-xs">👤</div>@endif
-                                        <span class="flex-1 truncate text-xs font-bold text-slate-200">{{ $ts['player']['display_name'] ?? $ts['player']['name'] ?? 'Pemain' }}</span>
-                                        <span class="rounded-md bg-emerald-500/15 px-2 py-0.5 font-mono text-xs font-black text-emerald-300 border border-emerald-500/20">{{ $ts['total'] ?? 0 }}</span>
-                                    </a>
+            {{-- Enabled leagues (status = true): standings + goal topscorers --}}
+            <aside class="space-y-6" @if(count($featuredLeagues) > 0) x-data="{ lg: 0 }" @endif>
+                @if(count($featuredLeagues) > 0)
+                    {{-- League picker (only CMS-enabled leagues) --}}
+                    @if(count($featuredLeagues) > 1)
+                        <div class="relative">
+                            <label for="home-league" class="sr-only">Pilih liga</label>
+                            <select id="home-league" x-model.number="lg"
+                                    class="w-full appearance-none rounded-xl border border-slate-800 bg-slate-900 px-3.5 py-2.5 pr-9 text-sm font-bold text-slate-200 focus:border-emerald-500/50 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
+                                @foreach($featuredLeagues as $i => $fl)
+                                    <option value="{{ $i }}">{{ $fl['league']['name'] }}</option>
                                 @endforeach
-                            </div>
+                            </select>
+                            <svg viewBox="0 0 24 24" fill="none" class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500">
+                                <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
                         </div>
                     @endif
+
+                    @foreach($featuredLeagues as $i => $fl)
+                        <div @if(count($featuredLeagues) > 1) x-show="lg === {{ $i }}" x-cloak @endif class="space-y-6">
+                            {{-- Mini standings --}}
+                            <div class="rounded-3xl border border-slate-800 bg-slate-900/80 p-5 shadow-xl">
+                                <div class="mb-4 flex items-center gap-2">
+                                    @if(!empty($fl['league']['image_path']))<img src="{{ $fl['league']['image_path'] }}" alt="" class="h-6 w-6 object-contain">@endif
+                                    <div class="min-w-0">
+                                        <span class="kicker block text-[9px] font-bold uppercase text-emerald-400">Klasemen</span>
+                                        <h3 class="truncate text-sm font-black text-white">{{ $fl['league']['name'] }}</h3>
+                                    </div>
+                                </div>
+                                @if(!empty($fl['standings']))
+                                    <div class="space-y-1">
+                                        @foreach($fl['standings'] as $st)
+                                            <a href="{{ route('football.index', ['league_id' => $fl['league']['id'], 'season_id' => $fl['season']['id']]) }}"
+                                               class="flex items-center gap-3 rounded-xl px-2.5 py-2 hover:bg-slate-800/50 transition-colors">
+                                                <span class="w-5 text-center font-mono text-xs font-bold text-slate-500">{{ $st['position'] ?? $loop->iteration }}</span>
+                                                @if(!empty($st['team']['image_path']))<img src="{{ $st['team']['image_path'] }}" alt="" class="h-5 w-5 object-contain">@else<span class="h-5 w-5"></span>@endif
+                                                <span class="flex-1 truncate text-xs font-bold text-slate-200">{{ $st['team']['name'] ?? '-' }}</span>
+                                                <span class="font-mono text-[11px] text-slate-500">{{ $st['played'] ?? 0 }}</span>
+                                                <span class="w-6 text-right font-mono text-xs font-black text-emerald-400">{{ $st['points'] ?? 0 }}</span>
+                                            </a>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <p class="px-2 py-3 text-xs text-slate-500">Klasemen belum tersedia untuk musim ini.</p>
+                                @endif
+                                <a href="{{ route('football.index', ['league_id' => $fl['league']['id'], 'season_id' => $fl['season']['id']]) }}" class="mt-3 block text-center text-xs font-bold text-emerald-400 hover:underline">Klasemen lengkap →</a>
+                            </div>
+
+                            {{-- Goal topscorers --}}
+                            <div class="rounded-3xl border border-slate-800 bg-slate-900/80 p-5 shadow-xl">
+                                <div class="mb-3 flex items-center justify-between gap-2">
+                                    <span class="kicker block text-[9px] font-bold uppercase text-amber-400">Top Skor Gol</span>
+                                    <span class="truncate text-[10px] font-bold text-slate-500">{{ $fl['league']['name'] }}</span>
+                                </div>
+                                @if(!empty($fl['topscorers']))
+                                    <div class="space-y-2">
+                                        @foreach($fl['topscorers'] as $ts)
+                                            <a href="{{ route('football.player', $ts['player']['id'] ?? ($ts['player_id'] ?? 0)) }}" class="flex items-center gap-3 rounded-xl px-2 py-1.5 hover:bg-slate-800/50 transition-colors">
+                                                <span class="w-4 text-center font-mono text-xs font-bold text-slate-500">{{ $loop->iteration }}</span>
+                                                @if(!empty($ts['player']['image_path']))<img src="{{ $ts['player']['image_path'] }}" alt="" class="h-7 w-7 rounded-full object-cover border border-slate-700">@else<div class="flex h-7 w-7 items-center justify-center rounded-full bg-slate-800 text-xs">👤</div>@endif
+                                                <span class="flex-1 truncate text-xs font-bold text-slate-200">{{ $ts['player']['display_name'] ?? $ts['player']['name'] ?? 'Pemain' }}</span>
+                                                <span class="rounded-md bg-emerald-500/15 px-2 py-0.5 font-mono text-xs font-black text-emerald-300 border border-emerald-500/20">{{ $ts['total'] ?? 0 }}</span>
+                                            </a>
+                                        @endforeach
+                                    </div>
+                                    <a href="{{ route('football.index', ['league_id' => $fl['league']['id'], 'season_id' => $fl['season']['id'], 'tab' => 'topscorers']) }}" class="mt-3 block text-center text-xs font-bold text-amber-400 hover:underline">Top skor lengkap →</a>
+                                @else
+                                    <p class="px-2 py-3 text-xs text-slate-500">Data top skor gol belum tersedia.</p>
+                                @endif
+                            </div>
+                        </div>
+                    @endforeach
+                @else
+                    <div class="rounded-3xl border border-dashed border-slate-800 bg-slate-900/40 p-8 text-center text-sm text-slate-500">
+                        Belum ada liga aktif. Aktifkan liga di <span class="font-bold text-slate-300">Admin → Liga</span>.
+                    </div>
                 @endif
             </aside>
         </div>
