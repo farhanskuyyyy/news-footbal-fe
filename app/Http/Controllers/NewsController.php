@@ -39,8 +39,8 @@ class NewsController extends Controller
         return redirect()
             ->route('news.index')
             ->with($ok ? 'status' : 'error', $ok
-                ? 'Berita berhasil di-refresh dari sumber.'
-                : 'Gagal refresh berita — backend tidak merespons.');
+                ? __('news.refreshed')
+                : __('news.refresh_failed'));
     }
 
     public function show(int $id)

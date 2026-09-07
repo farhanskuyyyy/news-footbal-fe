@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Bandingkan Pemain - KREASIBALL')
+@section('title', __('football.compare.title'))
 
 @php
     // Aggregate a player's season statistics into career totals + avg rating.
@@ -24,13 +24,13 @@
 
     // metrics to compare: label, key, higher-is-better
     $metrics = [
-        ['Tampil', 'apps', true],
-        ['Gol', 'goals', true],
-        ['Assist', 'assists', true],
-        ['Menit', 'minutes', true],
-        ['Kartu Kuning', 'yellow', false],
-        ['Kartu Merah', 'red', false],
-        ['Rating', 'rating', true],
+        [__('football.compare.metrics.apps'), 'apps', true],
+        [__('football.compare.metrics.goals'), 'goals', true],
+        [__('football.compare.metrics.assists'), 'assists', true],
+        [__('football.compare.metrics.minutes'), 'minutes', true],
+        [__('football.compare.metrics.yellow'), 'yellow', false],
+        [__('football.compare.metrics.red'), 'red', false],
+        [__('football.compare.metrics.rating'), 'rating', true],
     ];
 @endphp
 
@@ -41,8 +41,8 @@
                 <svg viewBox="0 0 24 24" fill="none" class="h-6 w-6"><path d="M8 3v4M16 17v4M4 5h8M12 19h8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="16" cy="5" r="2.5" stroke="currentColor" stroke-width="1.6"/><circle cx="8" cy="19" r="2.5" stroke="currentColor" stroke-width="1.6"/></svg>
             </span>
             <div>
-                <span class="kicker block text-[10px] font-bold uppercase text-emerald-400">Head-to-Head</span>
-                <h1 class="text-2xl font-black text-white">Bandingkan Pemain</h1>
+                <span class="kicker block text-[10px] font-bold uppercase text-emerald-400">{{ __('football.compare.kicker') }}</span>
+                <h1 class="text-2xl font-black text-white">{{ __('football.compare.heading') }}</h1>
             </div>
         </div>
 
@@ -52,10 +52,10 @@
             <span class="text-center text-xs font-black text-slate-600">VS</span>
             <input type="number" name="p2" value="{{ $p2id }}" placeholder="Player ID 2" class="rounded-xl border border-slate-800 bg-slate-950 px-3.5 py-2.5 text-sm font-mono text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500">
             <div class="sm:col-span-3 flex justify-center">
-                <button class="rounded-xl bg-emerald-500 hover:bg-emerald-400 px-5 py-2 text-sm font-bold text-slate-950 transition-colors">Bandingkan</button>
+                <button class="rounded-xl bg-emerald-500 hover:bg-emerald-400 px-5 py-2 text-sm font-bold text-slate-950 transition-colors">{{ __('football.compare.submit') }}</button>
             </div>
         </form>
-        <p class="text-center text-xs text-slate-500">Cari ID lewat <a href="{{ route('football.search', ['type' => 'players']) }}" class="text-emerald-400 hover:underline">pencarian pemain</a>, atau klik "Bandingkan" dari halaman profil pemain.</p>
+        <p class="text-center text-xs text-slate-500">{!! __('football.compare.hint', ['link' => '<a href="'.route('football.search', ['type' => 'players']).'" class="text-emerald-400 hover:underline">'.e(__('football.compare.hint_link')).'</a>']) !!}</p>
 
         @if($player1 && $player2)
             @php
@@ -63,7 +63,7 @@
                     $p = $d['player'] ?? [];
                     $age = !empty($p['date_of_birth']) ? date_diff(date_create($p['date_of_birth']), date_create('today'))->y : null;
                     return [
-                        'name' => $p['display_name'] ?? $p['name'] ?? 'Pemain',
+                        'name' => $p['display_name'] ?? $p['name'] ?? __('football.compare.player'),
                         'img' => $p['image_path'] ?? null,
                         'pos' => $d['position'] ?? null,
                         'nat' => ($d['nationality'] ?? $d['country'] ?? [])['name'] ?? null,
@@ -84,7 +84,7 @@
                         <div class="mt-1 flex flex-wrap items-center justify-center gap-1.5 text-[11px] text-slate-400">
                             @if($b['pos'])<span class="rounded bg-slate-800 px-1.5 py-0.5 font-bold">{{ $b['pos'] }}</span>@endif
                             @if($b['flag'])<span class="flex items-center gap-1"><img src="{{ $b['flag'] }}" class="h-3 w-3 rounded-sm object-cover">{{ $b['nat'] }}</span>@elseif($b['nat'])<span>{{ $b['nat'] }}</span>@endif
-                            @if($b['age'])<span>· {{ $b['age'] }} th</span>@endif
+                            @if($b['age'])<span>· {{ $b['age'] }} {{ __('football.compare.years_short') }}</span>@endif
                         </div>
                     </div>
                 @endforeach
@@ -92,7 +92,7 @@
 
             {{-- Metric comparison bars --}}
             <div class="rounded-3xl border border-slate-800 bg-slate-900/80 p-6 shadow-xl space-y-4">
-                <h3 class="text-sm font-black text-white">Statistik Karier (total)</h3>
+                <h3 class="text-sm font-black text-white">{{ __('football.compare.career_stats') }}</h3>
                 @foreach($metrics as [$label, $key, $higherBetter])
                     @php
                         $v1 = $a1[$key] ?? 0; $v2 = $a2[$key] ?? 0;
@@ -115,7 +115,7 @@
                 @endforeach
             </div>
         @elseif($p1id || $p2id)
-            <p class="rounded-2xl border border-dashed border-slate-800 bg-slate-900/40 p-8 text-center text-sm text-slate-400">Isi <strong class="text-white">dua</strong> Player ID buat mulai perbandingan.</p>
+            <p class="rounded-2xl border border-dashed border-slate-800 bg-slate-900/40 p-8 text-center text-sm text-slate-400">{!! __('football.compare.need_two', ['strong' => '<strong class="text-white">'.e(__('football.compare.need_two_strong')).'</strong>']) !!}</p>
         @endif
     </div>
 @endsection

@@ -84,15 +84,30 @@ class FootballPortalService
         return $res['data'] ?? [];
     }
 
-    public function getSeasonFixtures(int $seasonId, ?int $roundId = null): ?array
+    /**
+     * Fixtures for a season, optionally narrowed to one round and/or one match
+     * status (FT, NS, …). The backend also decides the reading order from the
+     * status — finished newest first, upcoming soonest first — so the payload
+     * is returned whole rather than just its `data`.
+     *
+     * @return array{data: array, available_statuses: array, selected_status: string}
+     */
+    public function getSeasonFixtures(int $seasonId, ?int $roundId = null, ?string $status = null): array
     {
         $params = [];
         if ($roundId) {
             $params['round_id'] = $roundId;
         }
+        if ($status) {
+            $params['status'] = $status;
+        }
         $res = $this->get("seasons/{$seasonId}/fixtures", $params, 30);
 
-        return $res['data'] ?? [];
+        return [
+            'data' => $res['data'] ?? [],
+            'available_statuses' => $res['available_statuses'] ?? [],
+            'selected_status' => $res['selected_status'] ?? '',
+        ];
     }
 
     public function getSeasonTeams(int $seasonId): ?array

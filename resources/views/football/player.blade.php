@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', ($player['display_name'] ?? $player['name'] ?? 'Profil Pemain') . ' - KREASIBALL')
+@section('title', __('football.player.title', ['name' => $player['display_name'] ?? $player['name'] ?? __('football.player.fallback_title')]))
 
 @section('content')
 <div class="space-y-8">
@@ -8,13 +8,13 @@
     {{-- Breadcrumb & Back --}}
     <div class="flex items-center justify-between">
         <a href="{{ url()->previous() ?? route('football.index') }}" class="text-xs font-bold text-slate-400 hover:text-emerald-400 transition-colors flex items-center gap-1.5 bg-slate-900 border border-slate-800 px-3.5 py-2 rounded-xl">
-            &larr; Kembali
+            {{ __('football.player.back') }}
         </a>
         <div class="flex items-center gap-3">
             <a href="{{ route('football.compare', ['p1' => $player['id'] ?? 0]) }}"
                class="inline-flex items-center gap-1.5 rounded-xl border border-slate-800 bg-slate-900 px-3 py-2 text-xs font-bold text-slate-300 hover:text-emerald-400 hover:border-slate-700 transition-colors">
                 <svg viewBox="0 0 24 24" fill="none" class="w-3.5 h-3.5"><path d="M8 3v4M16 17v4M4 5h8M12 19h8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-                Bandingkan
+                {{ __('football.player.compare') }}
             </a>
             <span class="text-xs text-slate-500 font-mono font-bold">ID: #{{ $player['id'] ?? '-' }}</span>
         </div>
@@ -47,7 +47,7 @@
                     <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-2">
                         @if(!empty($position) || !empty($player['position_id']))
                             <span class="px-3 py-1 rounded-full text-xs font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 uppercase tracking-wider">
-                                {{ $position ?: 'Posisi #'.$player['position_id'] }}
+                                {{ $position ?: __('football.player.position_fallback', ['id' => $player['position_id']]) }}
                             </span>
                         @endif
                         @if(!empty($detailedPosition) && $detailedPosition !== $position)
@@ -67,17 +67,17 @@
                         @endif
                     </div>
                     <h1 class="text-2xl sm:text-4xl font-black tracking-tight text-white">
-                        {{ $player['display_name'] ?? $player['name'] ?? 'Nama Pemain' }}
+                        {{ $player['display_name'] ?? $player['name'] ?? __('football.player.name_fallback') }}
                     </h1>
                     @if(!empty($player['common_name']) && $player['common_name'] !== $player['name'])
-                        <p class="text-sm text-slate-400 font-medium mt-1">Nama Lengkap: {{ $player['name'] }}</p>
+                        <p class="text-sm text-slate-400 font-medium mt-1">{{ __('football.player.full_name', ['name' => $player['name']]) }}</p>
                     @endif
                 </div>
 
                 {{-- Player Metrics Grid --}}
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
                     <div class="bg-slate-950/80 border border-slate-800/80 p-3 rounded-2xl">
-                        <span class="text-[10px] uppercase font-bold text-slate-500 block">Kewarganegaraan</span>
+                        <span class="text-[10px] uppercase font-bold text-slate-500 block">{{ __('football.player.nationality') }}</span>
                         <span class="flex items-center gap-1.5 text-xs sm:text-sm font-extrabold text-white">
                             @if(!empty($natCountry['image_path']))
                                 <img src="{{ $natCountry['image_path'] }}" alt="" class="w-4 h-4 rounded-sm object-cover">
@@ -86,17 +86,17 @@
                         </span>
                     </div>
                     <div class="bg-slate-950/80 border border-slate-800/80 p-3 rounded-2xl">
-                        <span class="text-[10px] uppercase font-bold text-slate-500 block">Tinggi Badan</span>
+                        <span class="text-[10px] uppercase font-bold text-slate-500 block">{{ __('football.player.height') }}</span>
                         <span class="text-xs sm:text-sm font-extrabold text-white font-mono">{{ $player['height'] ? $player['height'] . ' cm' : '-' }}</span>
                     </div>
                     <div class="bg-slate-950/80 border border-slate-800/80 p-3 rounded-2xl">
-                        <span class="text-[10px] uppercase font-bold text-slate-500 block">Berat Badan</span>
+                        <span class="text-[10px] uppercase font-bold text-slate-500 block">{{ __('football.player.weight') }}</span>
                         <span class="text-xs sm:text-sm font-extrabold text-white font-mono">{{ $player['weight'] ? $player['weight'] . ' kg' : '-' }}</span>
                     </div>
                     <div class="bg-slate-950/80 border border-slate-800/80 p-3 rounded-2xl">
-                        <span class="text-[10px] uppercase font-bold text-slate-500 block">Tanggal Lahir</span>
+                        <span class="text-[10px] uppercase font-bold text-slate-500 block">{{ __('football.player.date_of_birth') }}</span>
                         <span class="text-xs sm:text-sm font-extrabold text-white font-mono">
-                            {{ $player['date_of_birth'] ? date('d M Y', strtotime($player['date_of_birth'])) : '-' }}
+                            {{ $player['date_of_birth'] ? \Illuminate\Support\Carbon::parse($player['date_of_birth'])->locale(app()->getLocale())->translatedFormat('d M Y') : '-' }}
                         </span>
                     </div>
                 </div>
@@ -114,8 +114,8 @@
                     <svg viewBox="0 0 24 24" fill="none" class="h-5 w-5"><path d="M12 3l7 3v5c0 4-3 6.5-7 8-4-1.5-7-4-7-8V6l7-3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
                 </span>
                 <div>
-                    <span class="kicker block text-[10px] font-bold uppercase text-emerald-400">Karier Klub</span>
-                    <h3 class="text-base font-black text-white">Klub per Musim</h3>
+                    <span class="kicker block text-[10px] font-bold uppercase text-emerald-400">{{ __('football.player.career_kicker') }}</span>
+                    <h3 class="text-base font-black text-white">{{ __('football.player.career_heading') }}</h3>
                 </div>
             </div>
 
@@ -131,16 +131,16 @@
                             @endif
                             <div class="min-w-0 flex-1">
                                 <div class="flex items-center gap-2">
-                                    <h4 class="font-bold text-sm text-white group-hover:text-emerald-400 transition-colors truncate">{{ $ch['team']['name'] ?? ('Klub #'.$ch['team_id']) }}</h4>
+                                    <h4 class="font-bold text-sm text-white group-hover:text-emerald-400 transition-colors truncate">{{ $ch['team']['name'] ?? __('football.player.club_fallback', ['id' => $ch['team_id']]) }}</h4>
                                     @if(!empty($ch['is_current']))
-                                        <span class="text-[9px] font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded border border-emerald-500/30">Aktif</span>
+                                        <span class="text-[9px] font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded border border-emerald-500/30">{{ __('football.player.current') }}</span>
                                     @endif
                                     @if(!empty($ch['captain']))
-                                        <span title="Kapten" class="flex h-4 w-4 items-center justify-center rounded-full bg-amber-400 text-slate-950 text-[9px] font-black">C</span>
+                                        <span title="{{ __('football.player.captain') }}" class="flex h-4 w-4 items-center justify-center rounded-full bg-amber-400 text-slate-950 text-[9px] font-black">C</span>
                                     @endif
                                 </div>
                                 <div class="flex items-center gap-2 text-[11px] text-slate-500 mt-0.5">
-                                    <span class="font-mono">Musim {{ $ch['season_name'] ?: '#'.$ch['season_id'] }}</span>
+                                    <span class="font-mono">{{ __('football.player.season_prefix', ['name' => $ch['season_name'] ?: '#'.$ch['season_id']]) }}</span>
                                     @if(!empty($ch['jersey_number']))
                                         <span class="text-slate-700">•</span>
                                         <span class="font-mono font-bold text-slate-400">No. {{ $ch['jersey_number'] }}</span>
@@ -151,9 +151,9 @@
                         </a>
                     @endforeach
                 </div>
-                <p class="text-[11px] text-slate-500">Tiap baris = pendaftaran skuad di satu musim. Pemain bisa terdaftar di beberapa klub karena pindah antar-musim.</p>
+                <p class="text-[11px] text-slate-500">{{ __('football.player.career_note') }}</p>
             @else
-                <p class="text-slate-400 text-xs py-4">Belum ada riwayat klub tercatat.</p>
+                <p class="text-slate-400 text-xs py-4">{{ __('football.player.career_empty') }}</p>
             @endif
         </div>
 
@@ -164,8 +164,8 @@
                     <svg viewBox="0 0 24 24" fill="none" class="h-5 w-5"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 01-10 0V4zM7 6H4v1a3 3 0 003 3M17 6h3v1a3 3 0 01-3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </span>
                 <div>
-                    <span class="kicker block text-[10px] font-bold uppercase text-amber-400">Peringkat</span>
-                    <h3 class="text-base font-black text-white">Catatan Top Skor / Statistik</h3>
+                    <span class="kicker block text-[10px] font-bold uppercase text-amber-400">{{ __('football.player.records_kicker') }}</span>
+                    <h3 class="text-base font-black text-white">{{ __('football.player.records_heading') }}</h3>
                 </div>
             </div>
 
@@ -178,7 +178,7 @@
                     @foreach($tsBySeason as $seasonName => $rows)
                         <div class="space-y-2">
                             <div class="flex items-center gap-2">
-                                <span class="text-xs font-black text-white font-mono">Musim {{ $seasonName }}</span>
+                                <span class="text-xs font-black text-white font-mono">{{ __('football.player.season_prefix', ['name' => $seasonName]) }}</span>
                                 <span class="h-px flex-1 bg-slate-800"></span>
                                 @if(!empty($rows[0]['team']))
                                     <span class="flex items-center gap-1.5 text-[11px] text-slate-500">
@@ -195,9 +195,9 @@
                                     $catIcon = str_contains($cat, 'assist') ? '👟' : (str_contains($cat, 'yellow') || str_contains($cat, 'kuning') ? '🟨' : (str_contains($cat, 'red') || str_contains($cat, 'merah') ? '🟥' : '⚽'));
                                 @endphp
                                 <div class="bg-slate-950 px-3.5 py-2.5 rounded-xl border border-slate-800 flex items-center justify-between gap-3">
-                                    <span class="text-xs font-bold text-slate-300">{{ $catIcon }} {{ $ts['type_name'] ?: 'Gol' }}</span>
+                                    <span class="text-xs font-bold text-slate-300">{{ $catIcon }} {{ $ts['type_name'] ?: __('football.player.goals_fallback') }}</span>
                                     <div class="flex items-center gap-3 shrink-0">
-                                        <span class="text-[11px] font-semibold text-slate-400">Peringkat <strong class="text-white font-mono">#{{ $ts['position'] }}</strong></span>
+                                        <span class="text-[11px] font-semibold text-slate-400">{{ __('football.player.rank') }} <strong class="text-white font-mono">#{{ $ts['position'] }}</strong></span>
                                         <span class="px-3 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 font-mono font-black text-xs border border-emerald-500/30">
                                             {{ $ts['total'] }}
                                         </span>
@@ -208,7 +208,7 @@
                     @endforeach
                 </div>
             @else
-                <p class="text-slate-400 text-xs py-4">Belum ada catatan top skor yang tercatat di database.</p>
+                <p class="text-slate-400 text-xs py-4">{{ __('football.player.records_empty') }}</p>
             @endif
         </div>
 
@@ -220,8 +220,8 @@
                         <svg viewBox="0 0 24 24" fill="none" class="h-5 w-5"><path d="M5 19V9m4.5 10V5m4.5 14v-7m4.5 7V8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
                     </span>
                     <div>
-                        <span class="kicker block text-[10px] font-bold uppercase text-emerald-400">Statistik</span>
-                        <h3 class="text-base font-black text-white">Performa Per Musim</h3>
+                        <span class="kicker block text-[10px] font-bold uppercase text-emerald-400">{{ __('football.player.stats_kicker') }}</span>
+                        <h3 class="text-base font-black text-white">{{ __('football.player.stats_heading') }}</h3>
                     </div>
                 </div>
 
@@ -229,15 +229,15 @@
                     <table class="w-full text-left text-xs sm:text-sm whitespace-nowrap">
                         <thead class="bg-slate-950/80 text-slate-400 font-bold uppercase tracking-wider border-b border-slate-800 text-[11px]">
                             <tr>
-                                <th class="py-3 px-3">Musim</th>
-                                <th class="py-3 px-3">Klub</th>
-                                <th class="py-3 px-2 text-center" title="Tampil (Appearances)">Main</th>
-                                <th class="py-3 px-2 text-center" title="Menit">Menit</th>
-                                <th class="py-3 px-2 text-center text-emerald-400" title="Gol">⚽</th>
-                                <th class="py-3 px-2 text-center text-teal-400" title="Assist">👟</th>
-                                <th class="py-3 px-2 text-center" title="Kartu Kuning">🟨</th>
-                                <th class="py-3 px-2 text-center" title="Kartu Merah">🟥</th>
-                                <th class="py-3 px-2 text-center text-amber-400" title="Rating">Rating</th>
+                                <th class="py-3 px-3">{{ __('football.player.th.season') }}</th>
+                                <th class="py-3 px-3">{{ __('football.player.th.club') }}</th>
+                                <th class="py-3 px-2 text-center" title="{{ __('football.player.th.apps_title') }}">{{ __('football.player.th.apps') }}</th>
+                                <th class="py-3 px-2 text-center" title="{{ __('football.player.th.minutes_title') }}">{{ __('football.player.th.minutes') }}</th>
+                                <th class="py-3 px-2 text-center text-emerald-400" title="{{ __('football.player.th.goals_title') }}">⚽</th>
+                                <th class="py-3 px-2 text-center text-teal-400" title="{{ __('football.player.th.assists_title') }}">👟</th>
+                                <th class="py-3 px-2 text-center" title="{{ __('football.player.th.yellow_title') }}">🟨</th>
+                                <th class="py-3 px-2 text-center" title="{{ __('football.player.th.red_title') }}">🟥</th>
+                                <th class="py-3 px-2 text-center text-amber-400" title="{{ __('football.player.th.rating_title') }}">{{ __('football.player.th.rating') }}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-800/60 font-medium text-slate-200">
@@ -282,7 +282,7 @@
         @if(count($transfers) > 0)
             <div class="lg:col-span-2 bg-slate-900/90 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-4">
                 <h3 class="text-base font-black text-white flex items-center gap-2">
-                    💸 Riwayat Transfer Pemain
+                    {{ __('football.player.transfers_heading') }}
                 </h3>
 
                 <div class="space-y-3">
@@ -310,21 +310,21 @@
                                         <span class="text-[11px] font-mono font-black px-2 py-0.5 rounded-md bg-amber-500/15 text-amber-300 border border-amber-500/30">{{ $feeText }}</span>
                                     @endif
                                 </div>
-                                <span class="text-xs text-slate-400 font-medium">{{ $tr['date'] ? date('d F Y', strtotime($tr['date'])) : 'Resmi' }}</span>
+                                <span class="text-xs text-slate-400 font-medium">{{ $tr['date'] ? \Illuminate\Support\Carbon::parse($tr['date'])->locale(app()->getLocale())->translatedFormat('d F Y') : __('football.transfers.official') }}</span>
                             </div>
                             <div class="flex items-center gap-2 text-xs font-bold">
                                 <span class="flex items-center gap-1.5 bg-slate-900 px-2.5 py-1.5 rounded-xl text-slate-300 border border-slate-800">
                                     @if(!empty($tr['from_team']['image_path']))
                                         <img src="{{ $tr['from_team']['image_path'] }}" alt="" class="w-4 h-4 object-contain">
                                     @endif
-                                    <span class="truncate max-w-[120px]">{{ $tr['from_team']['name'] ?? 'Klub Asal' }}</span>
+                                    <span class="truncate max-w-[120px]">{{ $tr['from_team']['name'] ?? __('football.transfers.from_club') }}</span>
                                 </span>
                                 <span class="text-emerald-400 font-mono font-black">&rarr;</span>
                                 <span class="flex items-center gap-1.5 bg-emerald-950/60 px-2.5 py-1.5 rounded-xl text-emerald-300 border border-emerald-800/50">
                                     @if(!empty($tr['to_team']['image_path']))
                                         <img src="{{ $tr['to_team']['image_path'] }}" alt="" class="w-4 h-4 object-contain">
                                     @endif
-                                    <span class="truncate max-w-[120px]">{{ $tr['to_team']['name'] ?? 'Klub Tujuan' }}</span>
+                                    <span class="truncate max-w-[120px]">{{ $tr['to_team']['name'] ?? __('football.transfers.to_club') }}</span>
                                 </span>
                             </div>
                         </div>

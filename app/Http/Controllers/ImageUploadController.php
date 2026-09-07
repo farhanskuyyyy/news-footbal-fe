@@ -48,9 +48,9 @@ class ImageUploadController extends Controller
 
         $mqPublished = $this->rabbitMQService->publishImageUpload($payload);
 
-        $message = 'Gambar berhasil di-upload!';
+        $message = __('upload.uploaded');
         if (! $mqPublished) {
-            $message .= ' (Catatan: Event RabbitMQ gagal dikirim / RabbitMQ offline)';
+            $message .= __('upload.uploaded_mq_failed');
         }
 
         return redirect()
@@ -61,7 +61,9 @@ class ImageUploadController extends Controller
                 'filename' => basename($path),
                 'original_name' => $file->getClientOriginalName(),
                 'size_formatted' => round($file->getSize() / 1024, 2).' KB',
-                'mq_status' => $mqPublished ? 'Terkirim ke RabbitMQ' : 'Gagal terkirim ke RabbitMQ',
+                // Store the raw outcome, not a translated string — the view
+                // renders the label in whatever locale is active when it reads it.
+                'mq_ok' => $mqPublished,
             ]);
     }
 }

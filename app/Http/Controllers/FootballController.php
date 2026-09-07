@@ -50,6 +50,8 @@ class FootballController extends Controller
         $selectedTypeId = $request->integer('type_id') ?: null;
         $transfers = [];
         $selectedRoundId = $request->integer('round_id') ?: null;
+        $fixtureStatuses = [];
+        $selectedStatus = trim((string) $request->query('status', ''));
 
         if ($selectedSeasonId) {
             $overview = $this->footballService->getSeasonOverview($selectedSeasonId);
@@ -57,7 +59,12 @@ class FootballController extends Controller
             switch ($activeTab) {
                 case 'fixtures':
                     $rounds = $this->footballService->getSeasonRounds($selectedSeasonId) ?? [];
-                    $fixtures = $this->footballService->getSeasonFixtures($selectedSeasonId, $selectedRoundId) ?? [];
+                    $payload = $this->footballService->getSeasonFixtures($selectedSeasonId, $selectedRoundId, $selectedStatus ?: null);
+                    $fixtures = $payload['data'];
+                    $fixtureStatuses = $payload['available_statuses'];
+                    // The backend drops a status it does not recognise, so mirror
+                    // its verdict instead of keeping a bogus pill highlighted.
+                    $selectedStatus = $payload['selected_status'];
                     break;
                 case 'teams':
                     $teams = $this->footballService->getSeasonTeams($selectedSeasonId) ?? [];
@@ -90,6 +97,8 @@ class FootballController extends Controller
             'rounds',
             'selectedRoundId',
             'fixtures',
+            'fixtureStatuses',
+            'selectedStatus',
             'teams',
             'topscorers',
             'availableTypes',
@@ -204,7 +213,7 @@ class FootballController extends Controller
         $data = $this->footballService->getTeamDetail($id, $seasonId);
 
         if (! $data) {
-            abort(404, 'Klub tidak ditemukan.');
+            abort(404, __('football.team.not_found'));
         }
 
         // Upcoming + recent fixtures fetched live from the Sportmonks proxy.
@@ -250,7 +259,7 @@ class FootballController extends Controller
         $data = $this->footballService->getPlayerDetail($id);
 
         if (! $data) {
-            abort(404, 'Data pemain tidak ditemukan.');
+            abort(404, __('football.player.not_found'));
         }
 
         return view('football.player', [

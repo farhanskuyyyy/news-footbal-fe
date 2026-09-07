@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', $item['title'] ?? 'Detail Berita')
+@section('title', $item['title'] ?? __('news.detail_title'))
 
 @section('content')
     <div class="mx-auto max-w-3xl space-y-6">
@@ -9,7 +9,7 @@
         <a href="{{ route('news.index') }}"
            class="inline-flex items-center gap-1.5 rounded-xl border border-slate-800 bg-slate-900 px-3.5 py-2 text-xs font-bold text-slate-400 hover:text-emerald-400 hover:border-slate-700 transition-colors">
             <svg viewBox="0 0 24 24" fill="none" class="w-4 h-4"><path d="M19 12H5M11 18l-6-6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Kembali ke daftar berita
+            {{ __('news.back') }}
         </a>
 
         <article class="rounded-3xl border border-slate-800 bg-slate-900/80 p-6 sm:p-8 shadow-2xl">
@@ -23,12 +23,12 @@
                     <span class="text-slate-700">•</span>
                 @endif
                 <time datetime="{{ $item['published_at'] ?? '' }}" class="font-mono text-slate-500">
-                    {{ isset($item['published_at']) ? \Illuminate\Support\Carbon::parse($item['published_at'])->setTimezone('Asia/Jakarta')->locale('id')->translatedFormat('d M Y • H:i') . ' WIB' : '—' }}
+                    {{ isset($item['published_at']) ? \Illuminate\Support\Carbon::parse($item['published_at'])->setTimezone('Asia/Jakarta')->locale(app()->getLocale())->translatedFormat('d M Y • H:i') . ' WIB' : '—' }}
                 </time>
             </div>
 
             <h1 class="mb-6 text-2xl sm:text-4xl font-black leading-tight tracking-tight text-white">
-                {{ $item['title'] ?? 'Tanpa judul' }}
+                {{ $item['title'] ?? __('news.untitled') }}
             </h1>
 
             @if (!empty($item['url_to_image']))
@@ -52,7 +52,7 @@
             @if (!empty($item['url']))
                 <a href="{{ $item['url'] }}" target="_blank" rel="noopener noreferrer"
                    class="inline-flex items-center gap-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 px-4 py-2.5 text-sm font-bold text-slate-950 shadow-lg shadow-emerald-500/20 transition-all">
-                    Baca di sumber asli
+                    {{ __('news.read_source') }}
                     <svg viewBox="0 0 24 24" fill="none" class="w-4 h-4"><path d="M7 17L17 7M17 7H9M17 7v8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </a>
             @endif

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'KREASIBALL - Pusat Jadwal, Skor Langsung & Klasemen')
+@section('title', __('football.portal.title'))
 
 @section('content')
 <div class="space-y-8">
@@ -14,18 +14,18 @@
             <div>
                 <div class="flex items-center gap-2 mb-2">
                     <span class="kicker inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> MATCHDAY PORTAL
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> {{ __('football.portal.kicker') }}
                     </span>
-                    <span class="text-xs text-slate-400">Database Real-time Football</span>
+                    <span class="text-xs text-slate-400">{{ __('football.portal.realtime_db') }}</span>
                 </div>
                 <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white flex items-center gap-3">
                     @if($selectedLeague && !empty($selectedLeague['image_path']))
                         <img src="{{ $selectedLeague['image_path'] }}" alt="{{ $selectedLeague['name'] }}" class="w-9 h-9 object-contain filter drop-shadow">
                     @endif
-                    <span>{{ $selectedLeague['name'] ?? 'Pilih Liga Sepak Bola' }}</span>
+                    <span>{{ $selectedLeague['name'] ?? __('football.portal.choose_league') }}</span>
                 </h1>
                 <p class="text-xs sm:text-sm text-slate-400 mt-1 max-w-xl">
-                    Pantau statistik pertandingan, formasi 22 pemain langsung di satu lapangan, skor babak, dan bursa transfer terkini.
+                    {{ __('football.portal.subheading') }}
                 </p>
             </div>
 
@@ -33,7 +33,7 @@
             <div class="flex flex-wrap items-center gap-3 bg-slate-950/90 p-3 rounded-2xl border border-slate-800 self-start md:self-auto shadow-xl">
                 {{-- League Select --}}
                 <div class="flex items-center gap-2">
-                    <label for="leagueSelect" class="text-xs font-bold uppercase tracking-wider text-slate-400">Liga:</label>
+                    <label for="leagueSelect" class="text-xs font-bold uppercase tracking-wider text-slate-400">{{ __('football.portal.league_label') }}</label>
                     <select id="leagueSelect"
                             onchange="location.href='{{ route('football.index') }}?league_id=' + this.value"
                             class="bg-slate-900 border border-slate-700 text-white font-bold text-xs sm:text-sm rounded-xl px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all cursor-pointer">
@@ -48,13 +48,13 @@
                 {{-- Season Select --}}
                 @if(count($seasons) > 0)
                     <div class="flex items-center gap-2">
-                        <label for="seasonSelect" class="text-xs font-bold uppercase tracking-wider text-slate-400">Musim:</label>
+                        <label for="seasonSelect" class="text-xs font-bold uppercase tracking-wider text-slate-400">{{ __('football.portal.season_label') }}</label>
                         <select id="seasonSelect"
                                 onchange="location.href='{{ route('football.index', ['league_id' => $selectedLeagueId]) }}&season_id=' + this.value + '&tab={{ $activeTab }}'"
                                 class="bg-slate-900 border border-slate-700 text-white font-bold text-xs sm:text-sm rounded-xl px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all cursor-pointer">
                             @foreach($seasons as $s)
                                 <option value="{{ $s['id'] }}" {{ $selectedSeasonId == $s['id'] ? 'selected' : '' }}>
-                                    {{ $s['name'] }} {{ !empty($s['is_current']) ? '⭐️ (Aktif)' : '' }}
+                                    {{ $s['name'] }} {{ !empty($s['is_current']) ? __('football.portal.current_season') : '' }}
                                 </option>
                             @endforeach
                         </select>
@@ -72,7 +72,7 @@
                     🛡️
                 </div>
                 <div>
-                    <span class="text-xs text-slate-400 font-bold uppercase tracking-wider">Klub Peserta</span>
+                    <span class="text-xs text-slate-400 font-bold uppercase tracking-wider">{{ __('football.portal.stats.teams') }}</span>
                     <h3 class="text-xl font-extrabold text-white font-mono">{{ $overview['total_teams'] ?? 0 }}</h3>
                 </div>
             </div>
@@ -82,7 +82,7 @@
                     ⚽
                 </div>
                 <div>
-                    <span class="text-xs text-slate-400 font-bold uppercase tracking-wider">Pertandingan</span>
+                    <span class="text-xs text-slate-400 font-bold uppercase tracking-wider">{{ __('football.portal.stats.fixtures') }}</span>
                     <h3 class="text-xl font-extrabold text-white font-mono">{{ $overview['total_fixtures'] ?? 0 }}</h3>
                 </div>
             </div>
@@ -92,7 +92,7 @@
                     🔄
                 </div>
                 <div>
-                    <span class="text-xs text-slate-400 font-bold uppercase tracking-wider">Total Ronde</span>
+                    <span class="text-xs text-slate-400 font-bold uppercase tracking-wider">{{ __('football.portal.stats.rounds') }}</span>
                     <h3 class="text-xl font-extrabold text-white font-mono">{{ $overview['total_rounds'] ?? 0 }}</h3>
                 </div>
             </div>
@@ -102,7 +102,7 @@
                     👑
                 </div>
                 <div>
-                    <span class="text-xs text-slate-400 font-bold uppercase tracking-wider">Musim</span>
+                    <span class="text-xs text-slate-400 font-bold uppercase tracking-wider">{{ __('football.portal.stats.season') }}</span>
                     <h3 class="text-base font-extrabold text-white truncate max-w-[130px]">{{ $overview['season']['name'] ?? '-' }}</h3>
                 </div>
             </div>
@@ -113,11 +113,11 @@
     <div class="flex items-center gap-2 border-b border-slate-800 pb-1 overflow-x-auto">
         @php
             $tabs = [
-                'fixtures' => ['label' => 'Jadwal & Hasil', 'icon' => '📅'],
-                'standings' => ['label' => 'Klasemen Liga', 'icon' => '📊'],
-                'topscorers' => ['label' => 'Top Skor', 'icon' => '👟'],
-                'teams' => ['label' => 'Klub & Skuad', 'icon' => '🛡️'],
-                'transfers' => ['label' => 'Bursa Transfer', 'icon' => '💸'],
+                'fixtures' => ['label' => __('football.portal.tabs.fixtures'), 'icon' => '📅'],
+                'standings' => ['label' => __('football.portal.tabs.standings'), 'icon' => '📊'],
+                'topscorers' => ['label' => __('football.portal.tabs.topscorers'), 'icon' => '👟'],
+                'teams' => ['label' => __('football.portal.tabs.teams'), 'icon' => '🛡️'],
+                'transfers' => ['label' => __('football.portal.tabs.transfers'), 'icon' => '💸'],
             ];
         @endphp
 
@@ -137,20 +137,66 @@
     @if($activeTab === 'fixtures')
         <div class="space-y-6">
 
+            @php
+                // Base params every fixtures-tab link keeps; each control adds its own.
+                $fxBase = ['league_id' => $selectedLeagueId, 'season_id' => $selectedSeasonId, 'tab' => 'fixtures'];
+                $fxRoundBase = $selectedStatus ? $fxBase + ['status' => $selectedStatus] : $fxBase;
+                $fxStatusBase = $selectedRoundId ? $fxBase + ['round_id' => $selectedRoundId] : $fxBase;
+            @endphp
+
             {{-- Round Select Dropdown --}}
             @if(count($rounds) > 0)
                 <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl flex items-center gap-3 shadow-md max-w-sm">
-                    <label for="roundSelect" class="text-xs font-bold text-slate-400 uppercase tracking-wider whitespace-nowrap">Pilih Ronde:</label>
+                    <label for="roundSelect" class="text-xs font-bold text-slate-400 uppercase tracking-wider whitespace-nowrap">{{ __('football.portal.round_label') }}</label>
                     <select id="roundSelect"
-                            onchange="location.href='{{ route('football.index', ['league_id' => $selectedLeagueId, 'season_id' => $selectedSeasonId, 'tab' => 'fixtures']) }}' + (this.value ? '&round_id=' + this.value : '')"
+                            onchange="location.href='{{ route('football.index', $fxRoundBase) }}' + (this.value ? '&round_id=' + this.value : '')"
                             class="bg-slate-950 border border-slate-700 text-white font-bold text-xs sm:text-sm rounded-xl px-3.5 py-2 w-full focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all cursor-pointer">
-                        <option value="">Semua Ronde</option>
+                        <option value="">{{ __('football.portal.all_rounds') }}</option>
                         @foreach($rounds as $r)
                             <option value="{{ $r['id'] }}" {{ $selectedRoundId == $r['id'] ? 'selected' : '' }}>
-                                Ronde {{ $r['name'] }}
+                                {{ __('football.portal.round', ['name' => $r['name']]) }}
                             </option>
                         @endforeach
                     </select>
+                </div>
+            @endif
+
+            {{-- Match status filter (FT / NS / …). Built from the states this
+                 season actually has, so new ones appear without a code change. --}}
+            @if(count($fixtureStatuses) > 0)
+                <div class="bg-slate-900/90 border border-slate-800 p-3 rounded-2xl flex items-center gap-2 overflow-x-auto shadow-md">
+                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider px-2 whitespace-nowrap">{{ __('football.portal.status_label') }}</span>
+
+                    <a href="{{ route('football.index', $fxStatusBase) }}"
+                       class="px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all {{ $selectedStatus === '' ? 'bg-emerald-500 text-slate-950 font-black shadow-md' : 'bg-slate-950 text-slate-300 hover:bg-slate-800 hover:text-white border border-slate-800' }}">
+                        {{ __('football.portal.status_all') }}
+                    </a>
+
+                    @foreach($fixtureStatuses as $st)
+                        @php
+                            $code = strtoupper($st['short_name'] ?? '');
+                            $isActive = strtoupper($selectedStatus) === $code;
+                            // Friendly label for the states we know; otherwise the
+                            // name Sportmonks gave us.
+                            $statusKey = 'football.portal.status.'.strtolower($code);
+                            $statusLabel = __($statusKey);
+                            if ($statusLabel === $statusKey) {
+                                $statusLabel = $st['name'] ?? $code;
+                            }
+                            $statusIcon = match (true) {
+                                in_array($code, ['FT', 'AET', 'FT_PEN']) => '✅',
+                                in_array($code, ['NS', 'TBA']) => '🕒',
+                                in_array($code, ['LIVE', 'INPLAY', '1H', '2H', 'HT', 'ET', 'PEN_LIVE', 'BREAK']) => '🔴',
+                                default => '📌',
+                            };
+                        @endphp
+                        <a href="{{ route('football.index', $fxStatusBase + ['status' => $code]) }}"
+                           class="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all {{ $isActive ? 'bg-emerald-500 text-slate-950 font-black shadow-md scale-105' : 'bg-slate-950 text-slate-300 hover:bg-slate-800 hover:text-white border border-slate-800' }}">
+                            <span>{{ $statusIcon }}</span>
+                            <span>{{ $statusLabel }}</span>
+                            <span class="font-mono {{ $isActive ? 'text-slate-800' : 'text-slate-500' }}">{{ $st['count'] ?? 0 }}</span>
+                        </a>
+                    @endforeach
                 </div>
             @endif
 
@@ -164,8 +210,8 @@
                             $isFinished = in_array($stateCode, ['FT', 'AET', 'FT_PEN']);
                             $hasScores = ($f['current_home_score'] !== null && $f['current_away_score'] !== null);
 
-                            $homeName = $f['home_team']['name'] ?? explode(' vs ', $f['name'])[0] ?? 'Home';
-                            $awayName = $f['away_team']['name'] ?? explode(' vs ', $f['name'])[1] ?? 'Away';
+                            $homeName = $f['home_team']['name'] ?? explode(' vs ', $f['name'])[0] ?? __('football.card.home');
+                            $awayName = $f['away_team']['name'] ?? explode(' vs ', $f['name'])[1] ?? __('football.card.away');
                             $homeLogo = $f['home_team']['image_path'] ?? null;
                             $awayLogo = $f['away_team']['image_path'] ?? null;
                         @endphp
@@ -187,7 +233,7 @@
                                         </span>
                                     @endif
                                     <span class="text-slate-400 font-medium">
-                                        {{ $f['starting_at'] ? \Illuminate\Support\Carbon::parse($f['starting_at'], 'UTC')->setTimezone('Asia/Jakarta')->locale('id')->translatedFormat('d M Y • H:i') . ' WIB' : 'TBD' }}
+                                        {{ $f['starting_at'] ? \Illuminate\Support\Carbon::parse($f['starting_at'], 'UTC')->setTimezone('Asia/Jakarta')->locale(app()->getLocale())->translatedFormat('d M Y • H:i') . ' WIB' : __('football.portal.tbd') }}
                                     </span>
                                 </div>
 
@@ -241,7 +287,7 @@
                             {{-- Bottom Action Link --}}
                             <div class="pt-2 text-right">
                                 <span class="text-xs font-bold text-emerald-400 group-hover:underline inline-flex items-center gap-1">
-                                    Match Center & Taktik &rarr;
+                                    {{ __('football.portal.match_center') }}
                                 </span>
                             </div>
                         </a>
@@ -250,8 +296,15 @@
             @else
                 <div class="bg-slate-900/60 border border-slate-800 rounded-3xl p-12 text-center text-slate-400">
                     <div class="text-5xl mb-3">📅</div>
-                    <p class="text-base font-bold text-slate-200">Belum ada pertandingan untuk musim ini.</p>
-                    <p class="text-xs text-slate-500 mt-1">Jalankan scraper fixtures di backend untuk memuat jadwal pertandingan.</p>
+                    @if($selectedStatus || $selectedRoundId)
+                        {{-- Empty because of the active filter, not because the
+                             season has no data — say so, and offer a way out. --}}
+                        <p class="text-base font-bold text-slate-200">{{ __('football.portal.fixtures_empty_filtered') }}</p>
+                        <a href="{{ route('football.index', $fxBase) }}" class="mt-3 inline-block text-xs font-bold text-emerald-400 hover:underline">{{ __('football.portal.clear_filter') }}</a>
+                    @else
+                        <p class="text-base font-bold text-slate-200">{{ __('football.portal.fixtures_empty') }}</p>
+                        <p class="text-xs text-slate-500 mt-1">{{ __('football.portal.fixtures_empty_hint') }}</p>
+                    @endif
                 </div>
             @endif
         </div>
@@ -263,14 +316,14 @@
             <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-800">
                 <div>
                     <h3 class="text-lg font-black text-white flex items-center gap-2">
-                        📊 Klasemen Musim {{ $overview['season']['name'] ?? '' }}
+                        📊 {{ __('football.portal.standings_heading', ['season' => $overview['season']['name'] ?? '']) }}
                     </h3>
-                    <p class="text-xs text-slate-400 mt-0.5">Peringkat klub berdasarkan perolehan poin terkini.</p>
+                    <p class="text-xs text-slate-400 mt-0.5">{{ __('football.portal.standings_sub') }}</p>
                 </div>
                 <div class="hidden sm:flex items-center gap-4 text-xs font-bold">
-                    <span class="flex items-center gap-1 text-blue-400"><span class="w-2 h-2 rounded-full bg-blue-500"></span> UCL (1-4)</span>
-                    <span class="flex items-center gap-1 text-orange-400"><span class="w-2 h-2 rounded-full bg-orange-500"></span> UEL (5-6)</span>
-                    <span class="flex items-center gap-1 text-red-400"><span class="w-2 h-2 rounded-full bg-red-500"></span> Degradasi</span>
+                    <span class="flex items-center gap-1 text-blue-400"><span class="w-2 h-2 rounded-full bg-blue-500"></span> {{ __('football.portal.legend.ucl') }}</span>
+                    <span class="flex items-center gap-1 text-orange-400"><span class="w-2 h-2 rounded-full bg-orange-500"></span> {{ __('football.portal.legend.uel') }}</span>
+                    <span class="flex items-center gap-1 text-red-400"><span class="w-2 h-2 rounded-full bg-red-500"></span> {{ __('football.portal.legend.relegation') }}</span>
                 </div>
             </div>
 
@@ -279,17 +332,17 @@
                     <table class="w-full text-left text-xs sm:text-sm whitespace-nowrap">
                         <thead class="bg-slate-950/80 text-slate-400 font-bold uppercase tracking-wider border-b border-slate-800 text-[11px]">
                             <tr>
-                                <th class="py-3.5 px-3 text-center w-12">Pos</th>
-                                <th class="py-3.5 px-4 min-w-[200px]">Klub</th>
-                                <th class="py-3.5 px-3 text-center" title="Main (Played)">Main</th>
-                                <th class="py-3.5 px-3 text-center text-emerald-400" title="Menang (Won)">M</th>
-                                <th class="py-3.5 px-3 text-center text-amber-400" title="Seri (Draw)">S</th>
-                                <th class="py-3.5 px-3 text-center text-red-400" title="Kalah (Lost)">K</th>
-                                <th class="py-3.5 px-3 text-center" title="Gol Memasukkan - Gol Kemasukan">GM-GK</th>
-                                <th class="py-3.5 px-3 text-center" title="Selisih Gol (Goal Difference)">SG</th>
-                                <th class="py-3.5 px-4 text-center font-black text-emerald-400" title="Poin (Points)">Poin</th>
-                                <th class="py-3.5 px-3 text-center" title="5 Laga Terakhir">Form</th>
-                                <th class="py-3.5 px-3 text-center">Detail</th>
+                                <th class="py-3.5 px-3 text-center w-12">{{ __('football.portal.table.pos') }}</th>
+                                <th class="py-3.5 px-4 min-w-[200px]">{{ __('football.portal.table.club') }}</th>
+                                <th class="py-3.5 px-3 text-center" title="{{ __('football.portal.table.played_title') }}">{{ __('football.portal.table.played') }}</th>
+                                <th class="py-3.5 px-3 text-center text-emerald-400" title="{{ __('football.portal.table.won_title') }}">{{ __('football.portal.table.won') }}</th>
+                                <th class="py-3.5 px-3 text-center text-amber-400" title="{{ __('football.portal.table.drawn_title') }}">{{ __('football.portal.table.drawn') }}</th>
+                                <th class="py-3.5 px-3 text-center text-red-400" title="{{ __('football.portal.table.lost_title') }}">{{ __('football.portal.table.lost') }}</th>
+                                <th class="py-3.5 px-3 text-center" title="{{ __('football.portal.table.goals_title') }}">{{ __('football.portal.table.goals') }}</th>
+                                <th class="py-3.5 px-3 text-center" title="{{ __('football.portal.table.gd_title') }}">{{ __('football.portal.table.gd') }}</th>
+                                <th class="py-3.5 px-4 text-center font-black text-emerald-400" title="{{ __('football.portal.table.points_title') }}">{{ __('football.portal.table.points') }}</th>
+                                <th class="py-3.5 px-3 text-center" title="{{ __('football.portal.table.form_title') }}">{{ __('football.portal.table.form') }}</th>
+                                <th class="py-3.5 px-3 text-center">{{ __('football.portal.table.detail') }}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-800/60 font-medium text-slate-200">
@@ -387,7 +440,7 @@
                                                             'L' => 'bg-red-500/90 text-white',
                                                             default => 'bg-slate-800 text-slate-400',
                                                         };
-                                                        $label = match($r) { 'W' => 'Menang', 'D' => 'Seri', 'L' => 'Kalah', default => '' };
+                                                        $label = match($r) { 'W' => __('football.portal.form.won'), 'D' => __('football.portal.form.drawn'), 'L' => __('football.portal.form.lost'), default => '' };
                                                     @endphp
                                                     <span title="{{ $label }}" class="flex h-5 w-5 items-center justify-center rounded text-[10px] font-black font-mono {{ $cls }}">{{ $r }}</span>
                                                 @endforeach
@@ -401,7 +454,7 @@
                                     <td class="py-3.5 px-3 text-center">
                                         @if(!empty($team['id']))
                                             <a href="{{ route('football.team', $team['id']) }}?season_id={{ $selectedSeasonId }}" class="text-xs font-bold text-slate-400 hover:text-white px-2.5 py-1 bg-slate-800 rounded-lg border border-slate-700 hover:border-slate-600 transition-all">
-                                                Skuad &rarr;
+                                                {{ __('football.portal.squad_btn') }}
                                             </a>
                                         @endif
                                     </td>
@@ -411,7 +464,7 @@
                     </table>
                 </div>
             @else
-                <p class="text-slate-400 text-center py-12">Belum ada data klasemen untuk musim ini.</p>
+                <p class="text-slate-400 text-center py-12">{{ __('football.portal.standings_empty') }}</p>
             @endif
         </div>
     @endif
@@ -423,7 +476,7 @@
             {{-- 4 Metric Categories Switcher (Goals, Assists, Yellow Cards, Red Cards) --}}
             @if(count($availableTypes) > 0)
                 <div class="bg-slate-900/90 border border-slate-800 p-3 rounded-2xl flex items-center gap-2 overflow-x-auto">
-                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider px-2">Kategori:</span>
+                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider px-2">{{ __('football.portal.category_label') }}</span>
                     @foreach($availableTypes as $tp)
                         @php
                             $isTypeSelected = ($selectedTypeId == $tp['id']);
@@ -450,7 +503,7 @@
             @endif
 
             @php
-                $activeTypeName = $topscorers[0]['type']['name'] ?? 'Total';
+                $activeTypeName = $topscorers[0]['type']['name'] ?? __('football.portal.total');
             @endphp
 
             {{-- Top 3 Podium Cards --}}
@@ -468,7 +521,7 @@
                                     @else
                                         <div class="w-20 h-20 rounded-full bg-slate-700 flex items-center justify-center text-3xl mx-auto">👤</div>
                                     @endif
-                                    <h4 class="font-extrabold text-base text-white mt-3 group-hover:text-emerald-400 transition-colors">{{ $second['player']['display_name'] ?? $second['player']['name'] ?? 'Pemain' }}</h4>
+                                    <h4 class="font-extrabold text-base text-white mt-3 group-hover:text-emerald-400 transition-colors">{{ $second['player']['display_name'] ?? $second['player']['name'] ?? __('football.portal.player') }}</h4>
                                 </a>
                                 <p class="text-xs text-slate-400 font-semibold mt-0.5">{{ $second['team']['name'] ?? 'Klub' }}</p>
                             </div>
@@ -490,7 +543,7 @@
                                     @else
                                         <div class="w-24 h-24 rounded-full bg-amber-900/50 flex items-center justify-center text-4xl mx-auto">👤</div>
                                     @endif
-                                    <h4 class="font-black text-lg text-white mt-3 group-hover:text-amber-300 transition-colors">{{ $first['player']['display_name'] ?? $first['player']['name'] ?? 'Pemain' }}</h4>
+                                    <h4 class="font-black text-lg text-white mt-3 group-hover:text-amber-300 transition-colors">{{ $first['player']['display_name'] ?? $first['player']['name'] ?? __('football.portal.player') }}</h4>
                                 </a>
                                 <p class="text-xs text-amber-300/80 font-bold mt-0.5">{{ $first['team']['name'] ?? 'Klub' }}</p>
                             </div>
@@ -512,7 +565,7 @@
                                     @else
                                         <div class="w-20 h-20 rounded-full bg-slate-700 flex items-center justify-center text-3xl mx-auto">👤</div>
                                     @endif
-                                    <h4 class="font-extrabold text-base text-white mt-3 group-hover:text-emerald-400 transition-colors">{{ $third['player']['display_name'] ?? $third['player']['name'] ?? 'Pemain' }}</h4>
+                                    <h4 class="font-extrabold text-base text-white mt-3 group-hover:text-emerald-400 transition-colors">{{ $third['player']['display_name'] ?? $third['player']['name'] ?? __('football.portal.player') }}</h4>
                                 </a>
                                 <p class="text-xs text-slate-400 font-semibold mt-0.5">{{ $third['team']['name'] ?? 'Klub' }}</p>
                             </div>
@@ -527,8 +580,8 @@
             {{-- Full Topscorers Table --}}
             <div class="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 shadow-xl">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-base font-black text-white">🏆 Peringkat: {{ $activeTypeName }}</h3>
-                    <span class="text-xs text-slate-400 font-bold">{{ count($topscorers) }} Pemain</span>
+                    <h3 class="text-base font-black text-white">🏆 {{ __('football.portal.ranking', ['type' => $activeTypeName]) }}</h3>
+                    <span class="text-xs text-slate-400 font-bold">{{ trans_choice('football.portal.players_count', count($topscorers), ['count' => count($topscorers)]) }}</span>
                 </div>
                 @if(count($topscorers) > 0)
                     <div class="overflow-x-auto">
@@ -536,10 +589,10 @@
                             <thead class="bg-slate-950/80 text-slate-400 font-bold uppercase tracking-wider border-b border-slate-800 text-[11px]">
                                 <tr>
                                     <th class="py-3 px-3 text-center w-12">#</th>
-                                    <th class="py-3 px-4">Pemain</th>
-                                    <th class="py-3 px-4">Klub</th>
-                                    <th class="py-3 px-3 text-center">Kategori</th>
-                                    <th class="py-3 px-3 text-center">Jumlah</th>
+                                    <th class="py-3 px-4">{{ __('football.portal.th.player') }}</th>
+                                    <th class="py-3 px-4">{{ __('football.portal.th.club') }}</th>
+                                    <th class="py-3 px-3 text-center">{{ __('football.portal.th.category') }}</th>
+                                    <th class="py-3 px-3 text-center">{{ __('football.portal.th.total') }}</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-800/60 font-medium text-slate-200">
@@ -561,7 +614,7 @@
                                                 @else
                                                     <div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-xs">👤</div>
                                                 @endif
-                                                <span>{{ $pl['display_name'] ?? $pl['name'] ?? 'Pemain #' . $ts['player_id'] }}</span>
+                                                <span>{{ $pl['display_name'] ?? $pl['name'] ?? __('football.portal.player_fallback', ['id' => $ts['player_id']]) }}</span>
                                             </a>
                                         </td>
                                         <td class="py-3 px-4 text-slate-300">
@@ -578,7 +631,7 @@
                                         </td>
                                         <td class="py-3 px-3 text-center text-slate-400 text-xs">
                                             <span class="px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 font-semibold border border-slate-700">
-                                                {{ $tp['name'] ?? 'Top Stat' }}
+                                                {{ $tp['name'] ?? __('football.portal.top_stat') }}
                                             </span>
                                         </td>
                                         <td class="py-3 px-3 text-center font-mono font-black text-base text-emerald-400">
@@ -590,7 +643,7 @@
                         </table>
                     </div>
                 @else
-                    <p class="text-slate-400 text-center py-12">Belum ada data untuk kategori ini di musim terpilih.</p>
+                    <p class="text-slate-400 text-center py-12">{{ __('football.portal.topscorers_empty') }}</p>
                 @endif
             </div>
         </div>
@@ -599,7 +652,7 @@
     {{-- TAB 4: KLUB & SQUAD --}}
     @if($activeTab === 'teams')
         <div class="space-y-6">
-            <h3 class="text-base font-black text-white">🛡️ Klub Peserta Musim {{ $overview['season']['name'] ?? '' }}</h3>
+            <h3 class="text-base font-black text-white">🛡️ {{ __('football.portal.teams_heading', ['season' => $overview['season']['name'] ?? '']) }}</h3>
             @if(count($teams) > 0)
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
                     @foreach($teams as $t)
@@ -619,13 +672,13 @@
                                 @endif
                             </div>
                             <span class="px-4 py-1.5 rounded-full bg-slate-800 text-xs font-bold text-slate-300 border border-slate-700">
-                                {{ $t['squad_count'] ?? 0 }} Pemain Terdaftar
+                                {{ trans_choice('football.portal.squad_registered', $t['squad_count'] ?? 0, ['count' => $t['squad_count'] ?? 0]) }}
                             </span>
                         </a>
                     @endforeach
                 </div>
             @else
-                <p class="text-slate-400 text-center py-12">Belum ada data klub peserta untuk musim ini.</p>
+                <p class="text-slate-400 text-center py-12">{{ __('football.portal.teams_empty') }}</p>
             @endif
         </div>
     @endif
@@ -634,7 +687,7 @@
     @if($activeTab === 'transfers')
         <div class="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-6">
             <h3 class="text-base font-black text-white flex items-center gap-2">
-                💸 Riwayat Bursa Transfer Terkini
+                💸 {{ __('football.portal.transfers_heading') }}
             </h3>
             @if(count($transfers) > 0)
                 <div class="space-y-3">
@@ -657,27 +710,27 @@
                                 @endif
                                 <div>
                                     <a href="{{ route('football.player', $pl['id'] ?? $tr['player_id']) }}" class="font-extrabold text-sm text-white hover:text-emerald-400 transition-colors">
-                                        {{ $pl['display_name'] ?? $pl['name'] ?? 'Pemain #' . $tr['player_id'] }}
+                                        {{ $pl['display_name'] ?? $pl['name'] ?? __('football.portal.player_fallback', ['id' => $tr['player_id']]) }}
                                     </a>
-                                    <p class="text-xs text-slate-500">{{ $tr['date'] ? date('d F Y', strtotime($tr['date'])) : 'Resmi' }}</p>
+                                    <p class="text-xs text-slate-500">{{ $tr['date'] ? \Illuminate\Support\Carbon::parse($tr['date'])->locale(app()->getLocale())->translatedFormat('d F Y') : __('football.transfers.official') }}</p>
                                 </div>
                             </div>
 
                             {{-- Clubs Transfer Route --}}
                             <div class="flex items-center gap-3 text-xs font-bold">
                                 <span class="text-slate-400 bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-800">
-                                    {{ $from['name'] ?? 'Klub Asal' }}
+                                    {{ $from['name'] ?? __('football.transfers.from_club') }}
                                 </span>
                                 <span class="text-emerald-400 font-mono font-black">&rarr;</span>
                                 <span class="text-emerald-300 bg-emerald-950/60 px-3 py-1.5 rounded-lg border border-emerald-800/50">
-                                    {{ $to['name'] ?? 'Klub Tujuan' }}
+                                    {{ $to['name'] ?? __('football.transfers.to_club') }}
                                 </span>
                             </div>
                         </div>
                     @endforeach
                 </div>
             @else
-                <p class="text-slate-400 text-center py-12">Belum ada data transfer untuk klub di musim ini.</p>
+                <p class="text-slate-400 text-center py-12">{{ __('football.portal.transfers_empty') }}</p>
             @endif
         </div>
     @endif

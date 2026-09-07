@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'KREASIBALL — Portal Sepak Bola')
+@section('title', __('home.title'))
 
 @section('content')
     <div class="space-y-10">
@@ -11,13 +11,13 @@
             <div class="relative z-10 max-w-2xl">
                 <span class="kicker mb-3 inline-flex items-center gap-2 text-[10px] font-bold uppercase text-emerald-400">
                     <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span></span>
-                    Portal Real-time
+                    {{ __('home.hero.kicker') }}
                 </span>
-                <h1 class="text-3xl sm:text-5xl font-black tracking-tight text-white">Semua Sepak Bola, <span class="text-emerald-400">Satu Tempat.</span></h1>
-                <p class="mt-3 text-sm sm:text-base text-slate-400">Skor langsung, jadwal, klasemen, statistik pemain, transfer, dan berita — diperbarui dari sumber.</p>
+                <h1 class="text-3xl sm:text-5xl font-black tracking-tight text-white">{{ __('home.hero.heading') }} <span class="text-emerald-400">{{ __('home.hero.heading_accent') }}</span></h1>
+                <p class="mt-3 text-sm sm:text-base text-slate-400">{{ __('home.hero.subheading') }}</p>
                 <div class="mt-6 flex flex-wrap gap-3">
-                    <a href="{{ route('football.live') }}" class="inline-flex items-center gap-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 px-4 py-2.5 text-sm font-bold text-slate-950 shadow-lg shadow-emerald-500/20 transition-all">Skor Langsung</a>
-                    <a href="{{ route('football.index') }}" class="inline-flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-sm font-bold text-slate-200 hover:border-slate-600 transition-colors">Portal Bola</a>
+                    <a href="{{ route('football.live') }}" class="inline-flex items-center gap-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 px-4 py-2.5 text-sm font-bold text-slate-950 shadow-lg shadow-emerald-500/20 transition-all">{{ __('home.hero.cta_live') }}</a>
+                    <a href="{{ route('football.index') }}" class="inline-flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-sm font-bold text-slate-200 hover:border-slate-600 transition-colors">{{ __('home.hero.cta_portal') }}</a>
                 </div>
             </div>
         </div>
@@ -28,9 +28,9 @@
                 <div class="flex items-center justify-between">
                     <h2 class="flex items-center gap-2 text-lg font-black text-white">
                         <span class="relative flex h-2.5 w-2.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span><span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-500"></span></span>
-                        Sedang Berlangsung
+                        {{ __('home.live.heading') }}
                     </h2>
-                    <a href="{{ route('football.live') }}" class="text-xs font-bold text-emerald-400 hover:underline">Semua →</a>
+                    <a href="{{ route('football.live') }}" class="text-xs font-bold text-emerald-400 hover:underline">{{ __('home.live.all') }}</a>
                 </div>
                 <div class="grid gap-4 md:grid-cols-2">
                     @foreach($live as $f)
@@ -46,8 +46,8 @@
             {{-- Today's matches --}}
             <section class="lg:col-span-2 space-y-3">
                 <div class="flex items-center justify-between">
-                    <h2 class="text-lg font-black text-white">Pertandingan Hari Ini</h2>
-                    <a href="{{ route('football.matchday') }}" class="text-xs font-bold text-emerald-400 hover:underline">Kalender →</a>
+                    <h2 class="text-lg font-black text-white">{{ __('home.today.heading') }}</h2>
+                    <a href="{{ route('football.matchday') }}" class="text-xs font-bold text-emerald-400 hover:underline">{{ __('home.today.calendar') }}</a>
                 </div>
                 @if(!empty($today))
                     @php $byLeague = collect($today)->groupBy(fn ($f) => $f['league']['name'] ?? 'Lainnya'); @endphp
@@ -67,7 +67,7 @@
                         @endforeach
                     </div>
                 @else
-                    <div class="rounded-2xl border border-dashed border-slate-800 bg-slate-900/40 p-8 text-center text-sm text-slate-500">Tidak ada pertandingan hari ini. Cek <a href="{{ route('football.matchday') }}" class="text-emerald-400 hover:underline">kalender</a>.</div>
+                    <div class="rounded-2xl border border-dashed border-slate-800 bg-slate-900/40 p-8 text-center text-sm text-slate-500">{!! __('home.today.empty', ['link' => '<a href="'.route('football.matchday').'" class="text-emerald-400 hover:underline">'.e(__('home.today.empty_link')).'</a>']) !!}</div>
                 @endif
             </section>
 
@@ -77,7 +77,7 @@
                     {{-- League picker (only CMS-enabled leagues) --}}
                     @if(count($featuredLeagues) > 1)
                         <div class="relative">
-                            <label for="home-league" class="sr-only">Pilih liga</label>
+                            <label for="home-league" class="sr-only">{{ __('home.featured.select_league') }}</label>
                             <select id="home-league" x-model.number="lg"
                                     class="w-full appearance-none rounded-xl border border-slate-800 bg-slate-900 px-3.5 py-2.5 pr-9 text-sm font-bold text-slate-200 focus:border-emerald-500/50 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
                                 @foreach($featuredLeagues as $i => $fl)
@@ -97,7 +97,7 @@
                                 <div class="mb-4 flex items-center gap-2">
                                     @if(!empty($fl['league']['image_path']))<img src="{{ $fl['league']['image_path'] }}" alt="" class="h-6 w-6 object-contain">@endif
                                     <div class="min-w-0">
-                                        <span class="kicker block text-[9px] font-bold uppercase text-emerald-400">Klasemen</span>
+                                        <span class="kicker block text-[9px] font-bold uppercase text-emerald-400">{{ __('home.featured.standings') }}</span>
                                         <h3 class="truncate text-sm font-black text-white">{{ $fl['league']['name'] }}</h3>
                                     </div>
                                 </div>
@@ -115,15 +115,15 @@
                                         @endforeach
                                     </div>
                                 @else
-                                    <p class="px-2 py-3 text-xs text-slate-500">Klasemen belum tersedia untuk musim ini.</p>
+                                    <p class="px-2 py-3 text-xs text-slate-500">{{ __('home.featured.standings_empty') }}</p>
                                 @endif
-                                <a href="{{ route('football.index', ['league_id' => $fl['league']['id'], 'season_id' => $fl['season']['id']]) }}" class="mt-3 block text-center text-xs font-bold text-emerald-400 hover:underline">Klasemen lengkap →</a>
+                                <a href="{{ route('football.index', ['league_id' => $fl['league']['id'], 'season_id' => $fl['season']['id']]) }}" class="mt-3 block text-center text-xs font-bold text-emerald-400 hover:underline">{{ __('home.featured.standings_full') }}</a>
                             </div>
 
                             {{-- Goal topscorers --}}
                             <div class="rounded-3xl border border-slate-800 bg-slate-900/80 p-5 shadow-xl">
                                 <div class="mb-3 flex items-center justify-between gap-2">
-                                    <span class="kicker block text-[9px] font-bold uppercase text-amber-400">Top Skor Gol</span>
+                                    <span class="kicker block text-[9px] font-bold uppercase text-amber-400">{{ __('home.featured.topscorers') }}</span>
                                     <span class="truncate text-[10px] font-bold text-slate-500">{{ $fl['league']['name'] }}</span>
                                 </div>
                                 @if(!empty($fl['topscorers']))
@@ -137,16 +137,16 @@
                                             </a>
                                         @endforeach
                                     </div>
-                                    <a href="{{ route('football.index', ['league_id' => $fl['league']['id'], 'season_id' => $fl['season']['id'], 'tab' => 'topscorers']) }}" class="mt-3 block text-center text-xs font-bold text-amber-400 hover:underline">Top skor lengkap →</a>
+                                    <a href="{{ route('football.index', ['league_id' => $fl['league']['id'], 'season_id' => $fl['season']['id'], 'tab' => 'topscorers']) }}" class="mt-3 block text-center text-xs font-bold text-amber-400 hover:underline">{{ __('home.featured.topscorers_full') }}</a>
                                 @else
-                                    <p class="px-2 py-3 text-xs text-slate-500">Data top skor gol belum tersedia.</p>
+                                    <p class="px-2 py-3 text-xs text-slate-500">{{ __('home.featured.topscorers_empty') }}</p>
                                 @endif
                             </div>
                         </div>
                     @endforeach
                 @else
                     <div class="rounded-3xl border border-dashed border-slate-800 bg-slate-900/40 p-8 text-center text-sm text-slate-500">
-                        Belum ada liga aktif. Aktifkan liga di <span class="font-bold text-slate-300">Admin → Liga</span>.
+                        {!! __('home.featured.no_league', ['link' => '<span class="font-bold text-slate-300">'.e(__('home.featured.no_league_link')).'</span>']) !!}
                     </div>
                 @endif
             </aside>
@@ -156,8 +156,8 @@
         @if(!empty($news))
             <section class="space-y-3">
                 <div class="flex items-center justify-between">
-                    <h2 class="text-lg font-black text-white">Berita Terbaru</h2>
-                    <a href="{{ route('news.index') }}" class="text-xs font-bold text-emerald-400 hover:underline">Semua berita →</a>
+                    <h2 class="text-lg font-black text-white">{{ __('home.news.heading') }}</h2>
+                    <a href="{{ route('news.index') }}" class="text-xs font-bold text-emerald-400 hover:underline">{{ __('home.news.all') }}</a>
                 </div>
                 <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                     @foreach($news as $item)
@@ -170,9 +170,9 @@
                             <div class="flex flex-1 flex-col p-4">
                                 <span class="mb-2 inline-flex w-fit items-center rounded-md bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-400 border border-emerald-500/20">{{ $item['source'] ?? '—' }}</span>
                                 <h3 class="mb-2 font-extrabold leading-snug text-slate-100">
-                                    <a href="{{ route('news.show', $item['id']) }}" class="transition-colors group-hover:text-emerald-400">{{ \Illuminate\Support\Str::limit($item['title'] ?? 'Tanpa judul', 90) }}</a>
+                                    <a href="{{ route('news.show', $item['id']) }}" class="transition-colors group-hover:text-emerald-400">{{ \Illuminate\Support\Str::limit($item['title'] ?? __('news.untitled'), 90) }}</a>
                                 </h3>
-                                <time class="mt-auto font-mono text-[11px] text-slate-500">{{ isset($item['published_at']) ? \Illuminate\Support\Carbon::parse($item['published_at'])->setTimezone('Asia/Jakarta')->locale('id')->translatedFormat('d M Y • H:i') . ' WIB' : '' }}</time>
+                                <time class="mt-auto font-mono text-[11px] text-slate-500">{{ isset($item['published_at']) ? \Illuminate\Support\Carbon::parse($item['published_at'])->setTimezone('Asia/Jakarta')->locale(app()->getLocale())->translatedFormat('d M Y • H:i') . ' WIB' : '' }}</time>
                             </div>
                         </article>
                     @endforeach

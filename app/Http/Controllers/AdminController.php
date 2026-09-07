@@ -50,8 +50,8 @@ class AdminController extends Controller
         return back()->with(
             $ok ? 'status' : 'error',
             $ok
-                ? ('Liga '.($status ? 'diaktifkan' : 'dinonaktifkan').'.')
-                : 'Gagal mengubah status liga.'
+                ? ($status ? __('admin.flash.league_enabled') : __('admin.flash.league_disabled'))
+                : __('admin.flash.league_failed')
         );
     }
 
@@ -63,12 +63,12 @@ class AdminController extends Controller
         $res = $this->admin->triggerFootball($force, $leagueId, $seasonId);
 
         if (($res['status'] ?? 0) === 409) {
-            return back()->with('error', 'Job football masih berjalan — hentikan dulu sebelum menjalankan ulang.');
+            return back()->with('error', __('admin.flash.football_running'));
         }
 
         return back()->with(
             $res['ok'] ? 'status' : 'error',
-            $res['ok'] ? 'Scrape football dijalankan (background).' : 'Gagal menjalankan scrape football.'
+            $res['ok'] ? __('admin.flash.football_started') : __('admin.flash.football_failed')
         );
     }
 
@@ -88,14 +88,14 @@ class AdminController extends Controller
         $res = $this->admin->trigger($job, $force);
 
         if (($res['status'] ?? 0) === 409) {
-            return back()->with('error', "Job '{$job}' masih berjalan — hentikan dulu sebelum menjalankan ulang.");
+            return back()->with('error', __('admin.flash.job_running', ['job' => $job]));
         }
 
         return back()->with(
             $res['ok'] ? 'status' : 'error',
             $res['ok']
-                ? "Job '{$job}' dijalankan (background)."
-                : ($res['message'] ?? "Gagal menjalankan job '{$job}'.")
+                ? __('admin.flash.job_started', ['job' => $job])
+                : ($res['message'] ?? __('admin.flash.job_failed', ['job' => $job]))
         );
     }
 
@@ -103,13 +103,13 @@ class AdminController extends Controller
     {
         $id = (int) $request->input('fixture_id');
         if ($id <= 0) {
-            return back()->with('error', 'Fixture ID tidak valid.');
+            return back()->with('error', __('admin.flash.fixture_invalid'));
         }
         $res = $this->admin->scrapeFixture($id);
 
         return back()->with(
             $res['ok'] ? 'status' : 'error',
-            $res['ok'] ? "Fixture {$id} berhasil di-scrape." : "Gagal scrape fixture {$id}."
+            $res['ok'] ? __('admin.flash.fixture_scraped', ['id' => $id]) : __('admin.flash.fixture_failed', ['id' => $id])
         );
     }
 
@@ -117,7 +117,7 @@ class AdminController extends Controller
     {
         $this->admin->stop($job);
 
-        return back()->with('status', "Menghentikan job '{$job}'.");
+        return back()->with('status', __('admin.flash.job_stopping', ['job' => $job]));
     }
 
     public function refreshNews(): RedirectResponse
@@ -126,7 +126,7 @@ class AdminController extends Controller
 
         return back()->with(
             $ok ? 'status' : 'error',
-            $ok ? 'Berita berhasil di-refresh.' : 'Gagal refresh berita.'
+            $ok ? __('admin.flash.news_refreshed') : __('admin.flash.news_failed')
         );
     }
 }

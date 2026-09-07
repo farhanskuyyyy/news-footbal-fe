@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Jadwal Pertandingan - KREASIBALL')
+@section('title', __('football.matchday.title'))
 
 @php
     $today = date('Y-m-d');
@@ -20,11 +20,11 @@
             <div class="absolute -right-16 -top-16 w-72 h-72 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
             <div class="relative z-10 flex flex-col sm:flex-row sm:items-end justify-between gap-6">
                 <div>
-                    <span class="kicker inline-block text-[10px] font-bold uppercase text-emerald-400 mb-3">MATCHDAY</span>
+                    <span class="kicker inline-block text-[10px] font-bold uppercase text-emerald-400 mb-3">{{ __('football.matchday.kicker') }}</span>
                     <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-white">
-                        {{ $date === $today ? 'Pertandingan Hari Ini' : \Illuminate\Support\Carbon::parse($date)->translatedFormat('l, d F Y') }}
+                        {{ $date === $today ? __('football.matchday.today') : \Illuminate\Support\Carbon::parse($date)->locale(app()->getLocale())->translatedFormat('l, d F Y') }}
                     </h1>
-                    <p class="text-xs sm:text-sm text-slate-400 mt-1.5 font-mono">{{ count($fixtures) }} pertandingan terjadwal.</p>
+                    <p class="text-xs sm:text-sm text-slate-400 mt-1.5 font-mono">{{ trans_choice('football.matchday.count', count($fixtures), ['count' => count($fixtures)]) }}</p>
                 </div>
                 <div class="flex items-center gap-2">
                     <a href="{{ route('football.matchday', ['date' => $prev]) }}" class="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-800 bg-slate-900 text-slate-300 hover:border-slate-700 hover:text-emerald-400 transition-colors">
@@ -51,7 +51,7 @@
                         {{ $leagueName }}
                         <span class="text-xs font-mono font-bold text-slate-500">({{ count($leagueFixtures) }})</span>
                         @if($enabledIds->contains((int) ($leagueFixtures[0]['league_id'] ?? $leagueFixtures[0]['league']['id'] ?? 0)))
-                            <span class="rounded-md border border-emerald-500/30 bg-emerald-500/15 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wider text-emerald-300">Liga Utama</span>
+                            <span class="rounded-md border border-emerald-500/30 bg-emerald-500/15 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wider text-emerald-300">{{ __('football.matchday.main_league') }}</span>
                         @endif
                     </h2>
                     <div class="grid gap-4 md:grid-cols-2">
@@ -63,8 +63,8 @@
             @endforeach
         @else
             <div class="rounded-3xl border border-dashed border-slate-800 bg-slate-900/40 p-12 text-center">
-                <p class="text-base font-bold text-slate-200">Tidak ada pertandingan pada tanggal ini.</p>
-                <p class="text-xs text-slate-500 mt-1">Coba tanggal lain dengan navigasi di atas.</p>
+                <p class="text-base font-bold text-slate-200">{{ __('football.matchday.empty') }}</p>
+                <p class="text-xs text-slate-500 mt-1">{{ __('football.matchday.empty_hint') }}</p>
             </div>
         @endif
     </div>

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Menyiapkan Pertandingan...')
+@section('title', __('football.loading.title'))
 
 @section('content')
     <div class="mx-auto max-w-lg py-16 text-center"
@@ -16,19 +16,19 @@
 
         <template x-if="!failed">
             <div>
-                <span class="kicker block text-[10px] font-bold uppercase text-emerald-400 mb-2">Menyiapkan Data</span>
-                <h1 class="text-2xl font-black text-white">Mengambil data pertandingan…</h1>
-                <p class="mt-2 text-sm text-slate-400" x-text="statusText">Menghubungi server &amp; mengunduh detail laga dari Sportmonks.</p>
+                <span class="kicker block text-[10px] font-bold uppercase text-emerald-400 mb-2">{{ __('football.loading.kicker') }}</span>
+                <h1 class="text-2xl font-black text-white">{{ __('football.loading.heading') }}</h1>
+                <p class="mt-2 text-sm text-slate-400" x-text="statusText">{{ __('football.loading.status_start') }}</p>
             </div>
         </template>
 
         <template x-if="failed">
             <div>
-                <h1 class="text-2xl font-black text-white">Pertandingan tidak ditemukan</h1>
-                <p class="mt-2 text-sm text-slate-400">Data laga ini belum tersedia dan gagal diambil dari sumber.</p>
+                <h1 class="text-2xl font-black text-white">{{ __('football.loading.failed_heading') }}</h1>
+                <p class="mt-2 text-sm text-slate-400">{{ __('football.loading.failed_text') }}</p>
                 <div class="mt-6 flex items-center justify-center gap-3">
-                    <button @click="failed=false; start()" class="rounded-xl bg-emerald-500 hover:bg-emerald-400 px-4 py-2.5 text-sm font-bold text-slate-950 transition-colors">Coba lagi</button>
-                    <a href="{{ route('football.index') }}" class="rounded-xl border border-slate-800 bg-slate-900 px-4 py-2.5 text-sm font-bold text-slate-300 hover:text-white transition-colors">Kembali ke Portal</a>
+                    <button @click="failed=false; start()" class="rounded-xl bg-emerald-500 hover:bg-emerald-400 px-4 py-2.5 text-sm font-bold text-slate-950 transition-colors">{{ __('football.loading.retry') }}</button>
+                    <a href="{{ route('football.index') }}" class="rounded-xl border border-slate-800 bg-slate-900 px-4 py-2.5 text-sm font-bold text-slate-300 hover:text-white transition-colors">{{ __('football.loading.back') }}</a>
                 </div>
             </div>
         </template>
@@ -38,10 +38,10 @@
         function fixtureLoader(fixtureId) {
             return {
                 failed: false,
-                statusText: 'Menghubungi server & mengunduh detail laga dari Sportmonks.',
+                statusText: @json(__('football.loading.status_start')),
                 async start() {
                     this.failed = false;
-                    this.statusText = 'Mengunduh detail laga… ini bisa memakan beberapa detik.';
+                    this.statusText = @json(__('football.loading.status_downloading'));
                     try {
                         const res = await fetch(`{{ url('/football/fixtures') }}/${fixtureId}/prepare`, {
                             method: 'POST',
@@ -52,7 +52,7 @@
                         });
                         const data = await res.json();
                         if (data.ready) {
-                            this.statusText = 'Selesai! Mengalihkan…';
+                            this.statusText = @json(__('football.loading.status_done'));
                             window.location = `{{ url('/football/fixtures') }}/${fixtureId}`;
                             return;
                         }

@@ -33,9 +33,9 @@
             @endif
         </a>
         <div class="min-w-0">
-            <a href="{{ route('football.player', $pl['id'] ?? 0) }}" class="block truncate text-sm font-black text-white hover:text-emerald-400 transition-colors">{{ $pl['display_name'] ?? $pl['name'] ?? 'Pemain' }}</a>
+            <a href="{{ route('football.player', $pl['id'] ?? 0) }}" class="block truncate text-sm font-black text-white hover:text-emerald-400 transition-colors">{{ $pl['display_name'] ?? $pl['name'] ?? __('football.transfers.player') }}</a>
             <span class="font-mono text-[11px] text-slate-500">
-                {{ !empty($tr['date']) ? \Illuminate\Support\Carbon::parse($tr['date'])->locale('id')->translatedFormat('d M Y') : 'Resmi' }}
+                {{ !empty($tr['date']) ? \Illuminate\Support\Carbon::parse($tr['date'])->locale(app()->getLocale())->translatedFormat('d M Y') : __('football.transfers.official') }}
             </span>
         </div>
     </div>
@@ -44,12 +44,12 @@
     <div class="flex flex-1 items-center justify-center gap-2.5 text-xs font-bold">
         <a href="{{ !empty($from['id']) ? route('football.team', $from['id']) : '#' }}" class="flex items-center gap-1.5 rounded-lg bg-slate-950 px-2.5 py-1.5 text-slate-300 border border-slate-800 hover:border-slate-700 transition-colors max-w-[42%] min-w-0">
             @if(!empty($from['image_path']))<img src="{{ $from['image_path'] }}" alt="" class="h-4 w-4 object-contain shrink-0">@endif
-            <span class="truncate">{{ $from['name'] ?? 'Klub Asal' }}</span>
+            <span class="truncate">{{ $from['name'] ?? __('football.transfers.from_club') }}</span>
         </a>
         <svg viewBox="0 0 24 24" fill="none" class="h-4 w-4 shrink-0 text-emerald-400"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <a href="{{ !empty($to['id']) ? route('football.team', $to['id']) : '#' }}" class="flex items-center gap-1.5 rounded-lg border border-emerald-800/50 bg-emerald-950/60 px-2.5 py-1.5 text-emerald-300 transition-colors hover:border-emerald-700 max-w-[42%] min-w-0">
             @if(!empty($to['image_path']))<img src="{{ $to['image_path'] }}" alt="" class="h-4 w-4 object-contain shrink-0">@endif
-            <span class="truncate">{{ $to['name'] ?? 'Klub Tujuan' }}</span>
+            <span class="truncate">{{ $to['name'] ?? __('football.transfers.to_club') }}</span>
         </a>
     </div>
 

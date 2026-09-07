@@ -33,7 +33,7 @@ class AuthController extends Controller
 
         return back()
             ->withInput($request->only('email'))
-            ->withErrors(['email' => 'Email atau password salah.']);
+            ->withErrors(['email' => __('auth.failed')]);
     }
 
     public function logout(Request $request): RedirectResponse

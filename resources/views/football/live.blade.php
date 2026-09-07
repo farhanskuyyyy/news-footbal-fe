@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Skor Langsung - KREASIBALL')
+@section('title', __('football.live.title'))
 
 @section('content')
     {{-- Auto-refresh every 30s while viewing the live board --}}
@@ -16,10 +16,10 @@
                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75"></span>
                         <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
                     </span>
-                    LIVE NOW
+                    {{ __('football.live.kicker') }}
                 </span>
-                <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-white">Skor Langsung</h1>
-                <p class="text-xs sm:text-sm text-slate-400 mt-1.5">Pertandingan yang sedang berlangsung — otomatis diperbarui tiap 30 detik.</p>
+                <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-white">{{ __('football.live.heading') }}</h1>
+                <p class="text-xs sm:text-sm text-slate-400 mt-1.5">{{ __('football.live.subheading') }}</p>
             </div>
         </div>
 
@@ -34,8 +34,8 @@
                 <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-950 border border-slate-800 text-slate-500">
                     <svg viewBox="0 0 24 24" fill="none" class="h-7 w-7"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </div>
-                <p class="text-base font-bold text-slate-200">Tidak ada pertandingan langsung saat ini.</p>
-                <p class="text-xs text-slate-500 mt-1">Cek <a href="{{ route('football.matchday') }}" class="text-emerald-400 hover:underline">jadwal hari ini</a> untuk laga berikutnya.</p>
+                <p class="text-base font-bold text-slate-200">{{ __('football.live.empty') }}</p>
+                <p class="text-xs text-slate-500 mt-1">{!! __('football.live.empty_hint', ['link' => '<a href="'.route('football.matchday').'" class="text-emerald-400 hover:underline">'.e(__('football.live.empty_link')).'</a>']) !!}</p>
             </div>
         @endif
     </div>

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', ($team['name'] ?? 'Klub') . ' - Profil & Skuad Pemain')
+@section('title', __('football.team.title', ['name' => $team['name'] ?? __('football.team.fallback')]))
 
 @section('content')
 <div class="space-y-8">
@@ -8,7 +8,7 @@
     {{-- Breadcrumb --}}
     <div>
         <a href="{{ url()->previous() ?? route('football.index') }}" class="text-xs font-bold text-slate-400 hover:text-emerald-400 transition-colors flex items-center gap-1.5 bg-slate-900 border border-slate-800 px-3.5 py-2 rounded-xl inline-flex">
-            &larr; Kembali ke Daftar Klub & Klasemen
+            {{ __('football.team.back') }}
         </a>
     </div>
 
@@ -35,12 +35,12 @@
 
                 <div class="flex flex-wrap items-center justify-center sm:justify-start gap-5 text-xs text-slate-400 font-medium pt-1">
                     @if(!empty($team['founded']))
-                        <span class="flex items-center gap-1.5">📅 Berdiri: <strong class="text-slate-200">{{ $team['founded'] }}</strong></span>
+                        <span class="flex items-center gap-1.5">📅 {{ __('football.team.founded') }} <strong class="text-slate-200">{{ $team['founded'] }}</strong></span>
                     @endif
                     @if($venue)
-                        <span class="flex items-center gap-1.5">📍 Stadion: <strong class="text-slate-200">{{ $venue['name'] }}</strong> ({{ $venue['city_name'] ?? '' }})</span>
+                        <span class="flex items-center gap-1.5">📍 {{ __('football.team.stadium') }} <strong class="text-slate-200">{{ $venue['name'] }}</strong> ({{ $venue['city_name'] ?? '' }})</span>
                         @if(!empty($venue['capacity']))
-                            <span class="flex items-center gap-1.5">👥 Kapasitas: <strong class="text-slate-200">{{ number_format($venue['capacity']) }}</strong></span>
+                            <span class="flex items-center gap-1.5">👥 {{ __('football.team.capacity') }} <strong class="text-slate-200">{{ number_format($venue['capacity']) }}</strong></span>
                         @endif
                     @endif
                 </div>
@@ -60,10 +60,10 @@
                         <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-800 text-2xl border border-slate-700">🧑‍💼</div>
                     @endif
                     <div class="min-w-0">
-                        <span class="kicker block text-[10px] font-bold uppercase text-emerald-400">Pelatih Kepala</span>
-                        <h3 class="text-base font-black text-white truncate mt-0.5">{{ $coach['display_name'] ?? $coach['name'] ?? 'Pelatih' }}</h3>
+                        <span class="kicker block text-[10px] font-bold uppercase text-emerald-400">{{ __('football.team.coach_kicker') }}</span>
+                        <h3 class="text-base font-black text-white truncate mt-0.5">{{ $coach['display_name'] ?? $coach['name'] ?? __('football.team.coach_fallback') }}</h3>
                         @if(!empty($coach['date_of_birth']))
-                            <p class="text-[11px] text-slate-500 font-mono">{{ date_diff(date_create($coach['date_of_birth']), date_create('today'))->y }} thn</p>
+                            <p class="text-[11px] text-slate-500 font-mono">{{ date_diff(date_create($coach['date_of_birth']), date_create('today'))->y }} {{ __('football.team.years_short') }}</p>
                         @endif
                     </div>
                 </div>
@@ -72,7 +72,7 @@
             {{-- Rivals chips --}}
             @if(!empty($rivals))
                 <div class="bg-slate-900/90 border border-slate-800 rounded-3xl p-5 shadow-xl {{ $coach ? 'lg:col-span-2' : 'lg:col-span-3' }}">
-                    <span class="kicker block text-[10px] font-bold uppercase text-slate-400 mb-3">🔥 Rival / Derby</span>
+                    <span class="kicker block text-[10px] font-bold uppercase text-slate-400 mb-3">{{ __('football.team.rivals') }}</span>
                     <div class="flex flex-wrap gap-2">
                         @foreach($rivals as $rv)
                             <a href="{{ route('football.team', $rv['id']) }}?season_id={{ $seasonId }}"
@@ -101,22 +101,22 @@
                 </div>
             @endif
             <div class="flex-1 p-6">
-                <span class="kicker block text-[10px] font-bold uppercase text-emerald-400 mb-2">🏟️ Markas / Stadion</span>
+                <span class="kicker block text-[10px] font-bold uppercase text-emerald-400 mb-2">{{ __('football.team.venue_kicker') }}</span>
                 <h3 class="text-lg font-black text-white">{{ $venue['name'] ?? '-' }}</h3>
                 @if(!empty($venue['address']))
                     <p class="text-xs text-slate-400 mt-1">{{ $venue['address'] }}</p>
                 @endif
                 <div class="mt-4 grid grid-cols-3 gap-3">
                     <div class="rounded-2xl border border-slate-800 bg-slate-950/80 p-3">
-                        <span class="block text-[10px] uppercase font-bold text-slate-500">Kota</span>
+                        <span class="block text-[10px] uppercase font-bold text-slate-500">{{ __('football.team.city') }}</span>
                         <span class="text-sm font-extrabold text-white truncate block">{{ $venue['city_name'] ?? '-' }}</span>
                     </div>
                     <div class="rounded-2xl border border-slate-800 bg-slate-950/80 p-3">
-                        <span class="block text-[10px] uppercase font-bold text-slate-500">Kapasitas</span>
+                        <span class="block text-[10px] uppercase font-bold text-slate-500">{{ __('football.team.capacity_label') }}</span>
                         <span class="text-sm font-extrabold text-white font-mono block">{{ !empty($venue['capacity']) ? number_format($venue['capacity']) : '-' }}</span>
                     </div>
                     <div class="rounded-2xl border border-slate-800 bg-slate-950/80 p-3">
-                        <span class="block text-[10px] uppercase font-bold text-slate-500">Permukaan</span>
+                        <span class="block text-[10px] uppercase font-bold text-slate-500">{{ __('football.team.surface') }}</span>
                         <span class="text-sm font-extrabold text-white capitalize truncate block">{{ $venue['surface'] ?? '-' }}</span>
                     </div>
                 </div>
@@ -156,8 +156,8 @@
                         <svg viewBox="0 0 24 24" fill="none" class="h-5 w-5"><path d="M4 7h16M4 12h10M4 17h7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
                     </span>
                     <div>
-                        <span class="kicker block text-[10px] font-bold uppercase text-emerald-400">Performa</span>
-                        <h2 class="text-lg font-black text-white">Hasil Terakhir</h2>
+                        <span class="kicker block text-[10px] font-bold uppercase text-emerald-400">{{ __('football.team.performance') }}</span>
+                        <h2 class="text-lg font-black text-white">{{ __('football.team.recent_results') }}</h2>
                     </div>
                 </div>
                 @if(!empty($formStrip))
@@ -185,8 +185,8 @@
                     <svg viewBox="0 0 24 24" fill="none" class="h-5 w-5"><rect x="4" y="5.5" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M4 9.5h16M8 3.5v4M16 3.5v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
                 </span>
                 <div>
-                    <span class="kicker block text-[10px] font-bold uppercase text-emerald-400">Jadwal</span>
-                    <h2 class="text-lg font-black text-white">5 Pertandingan Berikutnya</h2>
+                    <span class="kicker block text-[10px] font-bold uppercase text-emerald-400">{{ __('football.team.schedule') }}</span>
+                    <h2 class="text-lg font-black text-white">{{ __('football.team.next_matches') }}</h2>
                 </div>
             </div>
             <div class="grid gap-4 md:grid-cols-2">
@@ -201,11 +201,11 @@
     <div class="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6">
         <div class="flex items-center justify-between pb-4 border-b border-slate-800">
             <div>
-                <h2 class="text-lg font-black text-white flex items-center gap-2">👥 Skuad Pemain</h2>
-                <p class="text-xs text-slate-400 mt-0.5">Daftar pemain resmi yang terdaftar di klub ini. Klik pemain untuk melihat detail profil.</p>
+                <h2 class="text-lg font-black text-white flex items-center gap-2">{{ __('football.team.squad_heading') }}</h2>
+                <p class="text-xs text-slate-400 mt-0.5">{{ __('football.team.squad_sub') }}</p>
             </div>
             <span class="text-xs font-mono font-bold px-3.5 py-1.5 bg-slate-950 text-emerald-400 border border-slate-800 rounded-xl">
-                {{ count($players) }} Pemain
+                {{ trans_choice('football.team.players_count', count($players), ['count' => count($players)]) }}
             </span>
         </div>
 
@@ -233,7 +233,7 @@
                     @endphp
                     <a href="{{ route('football.player', $p['id']) }}" class="group relative p-4 rounded-2xl border border-slate-800 bg-slate-950/80 hover:bg-slate-850 hover:border-emerald-500/50 hover:shadow-xl transition-all flex items-center gap-3.5">
                         @if($isCaptain)
-                            <span title="Kapten" class="absolute top-2.5 right-2.5 flex h-5 w-5 items-center justify-center rounded-full bg-amber-400 text-slate-950 text-[10px] font-black shadow">C</span>
+                            <span title="{{ __('football.team.captain') }}" class="absolute top-2.5 right-2.5 flex h-5 w-5 items-center justify-center rounded-full bg-amber-400 text-slate-950 text-[10px] font-black shadow">C</span>
                         @endif
 
                         <div class="relative flex-shrink-0">
@@ -255,12 +255,18 @@
                                 @php
                                     $pid = $p['position_id'] ?? 0;
                                     $posIcon = match($pid) { 24 => '🧤', 25 => '🛡️', 26 => '⚙️', 27 => '⚡', default => '⚽' };
-                                    // Prefer the resolved Type-dictionary name; fall back to Indonesian labels
-                                    $posLabel = ($positions[$pid] ?? null) ?: match($pid) { 24 => 'Kiper', 25 => 'Bek', 26 => 'Gelandang', 27 => 'Penyerang', default => 'Pemain' };
+                                    // Prefer the resolved Type-dictionary name; fall back to translated labels
+                                    $posLabel = ($positions[$pid] ?? null) ?: match($pid) {
+                                        24 => __('football.team.positions.gk'),
+                                        25 => __('football.team.positions.def'),
+                                        26 => __('football.team.positions.mid'),
+                                        27 => __('football.team.positions.fwd'),
+                                        default => __('football.team.positions.player'),
+                                    };
                                 @endphp
                                 {{ $posIcon }} {{ $posLabel }}
                                 @if(!empty($p['date_of_birth']))
-                                    • {{ date_diff(date_create($p['date_of_birth']), date_create('today'))->y }} thn
+                                    • {{ date_diff(date_create($p['date_of_birth']), date_create('today'))->y }} {{ __('football.team.years_short') }}
                                 @endif
                             </p>
                             @if(!empty($p['height']))
@@ -272,7 +278,7 @@
             </div>
         @else
             <div class="p-12 text-center text-slate-400 text-sm">
-                Belum ada data pemain detail pada tim ini.
+                {{ __('football.team.players_empty') }}
             </div>
         @endif
     </div>

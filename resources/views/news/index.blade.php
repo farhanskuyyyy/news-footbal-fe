@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Berita Sepak Bola Terkini')
+@section('title', __('news.title'))
 
 @section('content')
     <div class="space-y-8">
@@ -15,11 +15,11 @@
                             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                             <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                         </span>
-                        LIVE FEED
+                        {{ __('news.kicker') }}
                     </span>
-                    <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-white">Berita Sepak Bola Terkini</h1>
+                    <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-white">{{ __('news.heading') }}</h1>
                     <p class="text-xs sm:text-sm text-slate-400 mt-1.5 max-w-lg">
-                        Kabar transfer, hasil pertandingan, dan sorotan dari lapangan hijau — diperbarui langsung dari sumber.
+                        {{ __('news.subheading') }}
                     </p>
                 </div>
                 <form method="POST" action="{{ route('news.refresh') }}" onsubmit="this.querySelector('button').disabled = true">
@@ -27,7 +27,7 @@
                     <button type="submit"
                             class="inline-flex items-center gap-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 px-4 py-2.5 text-sm font-bold text-slate-950 shadow-lg shadow-emerald-500/20 transition-all disabled:opacity-50 disabled:cursor-wait">
                         <svg viewBox="0 0 24 24" fill="none" class="w-4 h-4"><path d="M4 12a8 8 0 0113.7-5.6M20 12a8 8 0 01-13.7 5.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M17 3v3.5h-3.5M7 21v-3.5h3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                        Refresh Berita
+                        {{ __('news.refresh') }}
                     </button>
                 </form>
             </div>
@@ -51,8 +51,8 @@
                 <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-950 border border-slate-800 text-emerald-500/70">
                     <svg viewBox="0 0 24 24" fill="none" class="h-7 w-7"><rect x="4" y="5" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M7.5 9h6M7.5 12h6M7.5 15h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
                 </div>
-                <p class="text-base font-bold text-slate-200">Belum ada berita.</p>
-                <p class="text-xs text-slate-500 mt-1">Tekan tombol Refresh Berita untuk menarik kabar terbaru.</p>
+                <p class="text-base font-bold text-slate-200">{{ __('news.empty') }}</p>
+                <p class="text-xs text-slate-500 mt-1">{{ __('news.empty_hint') }}</p>
             </div>
         @else
             <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -73,13 +73,13 @@
                                     {{ $item['source'] ?? '—' }}
                                 </span>
                                 <time datetime="{{ $item['published_at'] ?? '' }}" class="font-mono text-[11px] text-slate-500">
-                                    {{ isset($item['published_at']) ? \Illuminate\Support\Carbon::parse($item['published_at'])->setTimezone('Asia/Jakarta')->locale('id')->translatedFormat('d M Y • H:i') . ' WIB' : '—' }}
+                                    {{ isset($item['published_at']) ? \Illuminate\Support\Carbon::parse($item['published_at'])->setTimezone('Asia/Jakarta')->locale(app()->getLocale())->translatedFormat('d M Y • H:i') . ' WIB' : '—' }}
                                 </time>
                             </div>
 
                             <h2 class="mb-2 font-extrabold leading-snug text-slate-100">
                                 <a href="{{ route('news.show', $item['id']) }}" class="transition-colors group-hover:text-emerald-400">
-                                    {{ $item['title'] ?? 'Tanpa judul' }}
+                                    {{ $item['title'] ?? __('news.untitled') }}
                                 </a>
                             </h2>
 
@@ -88,7 +88,7 @@
                             </p>
 
                             <a href="{{ route('news.show', $item['id']) }}" class="mt-auto inline-flex items-center gap-1.5 text-sm font-bold text-emerald-400 hover:gap-2.5 transition-all">
-                                Baca selengkapnya
+                                {{ __('news.read_more') }}
                                 <svg viewBox="0 0 24 24" fill="none" class="w-4 h-4"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
                             </a>
                         </div>
