@@ -34,7 +34,7 @@
         </a>
         <div class="min-w-0">
             <a href="{{ route('football.player', $pl['id'] ?? 0) }}" class="block truncate text-sm font-bold text-white hover:text-accent transition-colors">{{ $pl['display_name'] ?? $pl['name'] ?? __('football.transfers.player') }}</a>
-            <span class="font-mono text-xs text-white0">
+            <span class="font-mono text-xs text-muted">
                 {{ !empty($tr['date']) ? \Illuminate\Support\Carbon::parse($tr['date'])->locale(app()->getLocale())->translatedFormat('d M Y') : __('football.transfers.official') }}
             </span>
         </div>

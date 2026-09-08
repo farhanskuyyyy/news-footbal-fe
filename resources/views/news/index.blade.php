@@ -51,7 +51,7 @@
                     <svg viewBox="0 0 24 24" fill="none" class="h-7 w-7"><rect x="4" y="5" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M7.5 9h6M7.5 12h6M7.5 15h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
                 </div>
                 <p class="text-base font-bold text-white">{{ __('news.empty') }}</p>
-                <p class="text-xs text-white0 mt-1">{{ __('news.empty_hint') }}</p>
+                <p class="text-xs text-muted mt-1">{{ __('news.empty_hint') }}</p>
             </div>
         @else
             <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -70,7 +70,7 @@
                                 <span class="inline-flex items-center gap-1.5 rounded-lg px-2 py-0.5 font-bold uppercase tracking-wider text-xs text-accent border border-line">
                                     {{ $item['source'] ?? '—' }}
                                 </span>
-                                <time datetime="{{ $item['published_at'] ?? '' }}" class="font-mono text-xs text-white0">
+                                <time datetime="{{ $item['published_at'] ?? '' }}" class="font-mono text-xs text-muted">
                                     {{ isset($item['published_at']) ? \Illuminate\Support\Carbon::parse($item['published_at'])->setTimezone('Asia/Jakarta')->locale(app()->getLocale())->translatedFormat('d M Y • H:i') . ' WIB' : '—' }}
                                 </time>
                             </div>
@@ -94,7 +94,7 @@
                 @endforeach
             </div>
 
-            <div class="mt-8 [&_nav]:flex [&_nav]:justify-center [&_a]:text-white [&_span]:text-white0">
+            <div class="mt-8 [&_nav]:flex [&_nav]:justify-center [&_a]:text-white [&_span]:text-muted">
                 {{ $news->links() }}
             </div>
         @endif

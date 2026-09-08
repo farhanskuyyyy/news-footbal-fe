@@ -22,7 +22,7 @@
                     <span class="text-body font-medium">{{ $item['author'] }}</span>
                     <span class="text-muted">•</span>
                 @endif
-                <time datetime="{{ $item['published_at'] ?? '' }}" class="font-mono text-white0">
+                <time datetime="{{ $item['published_at'] ?? '' }}" class="font-mono text-muted">
                     {{ isset($item['published_at']) ? \Illuminate\Support\Carbon::parse($item['published_at'])->setTimezone('Asia/Jakarta')->locale(app()->getLocale())->translatedFormat('d M Y • H:i') . ' WIB' : '—' }}
                 </time>
             </div>

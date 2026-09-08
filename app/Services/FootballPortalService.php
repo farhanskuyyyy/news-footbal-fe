@@ -92,7 +92,7 @@ class FootballPortalService
      *
      * @return array{data: array, available_statuses: array, selected_status: string}
      */
-    public function getSeasonFixtures(int $seasonId, ?int $roundId = null, ?string $status = null): array
+    public function getSeasonFixtures(int $seasonId, ?int $roundId = null, ?string $status = null, ?int $teamId = null): array
     {
         $params = [];
         if ($roundId) {
@@ -101,12 +101,17 @@ class FootballPortalService
         if ($status) {
             $params['status'] = $status;
         }
+        if ($teamId) {
+            $params['team_id'] = $teamId;
+        }
         $res = $this->get("seasons/{$seasonId}/fixtures", $params, 30);
 
         return [
             'data' => $res['data'] ?? [],
             'available_statuses' => $res['available_statuses'] ?? [],
             'selected_status' => $res['selected_status'] ?? '',
+            'available_teams' => $res['available_teams'] ?? [],
+            'selected_team_id' => (int) ($res['selected_team_id'] ?? 0),
         ];
     }
 

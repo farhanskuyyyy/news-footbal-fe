@@ -55,7 +55,7 @@
                 <button class="rounded-xl bg-primary hover:bg-accent px-5 py-2 text-sm font-bold text-white transition-colors">{{ __('football.compare.submit') }}</button>
             </div>
         </form>
-        <p class="text-center text-xs text-white0">{!! __('football.compare.hint', ['link' => '<a href="'.route('football.search', ['type' => 'players']).'" class="text-accent hover:underline">'.e(__('football.compare.hint_link')).'</a>']) !!}</p>
+        <p class="text-center text-xs text-muted">{!! __('football.compare.hint', ['link' => '<a href="'.route('football.search', ['type' => 'players']).'" class="text-accent hover:underline">'.e(__('football.compare.hint_link')).'</a>']) !!}</p>
 
         @if($player1 && $player2)
             @php
@@ -104,7 +104,7 @@
                     <div>
                         <div class="mb-1 flex items-center justify-between text-xs font-bold">
                             <span class="font-mono {{ $win1 ? 'text-accent' : 'text-body' }}">{{ $v1 ?? '-' }}</span>
-                            <span class="text-xs uppercase tracking-wider text-white0">{{ $label }}</span>
+                            <span class="text-xs uppercase tracking-wider text-muted">{{ $label }}</span>
                             <span class="font-mono {{ $win2 ? 'text-steel' : 'text-body' }}">{{ $v2 ?? '-' }}</span>
                         </div>
                         <div class="flex items-center gap-1">

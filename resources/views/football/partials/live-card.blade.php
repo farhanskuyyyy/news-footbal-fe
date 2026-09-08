@@ -18,6 +18,11 @@
     $isLive = in_array($stateCode, ['1st', '2nd', 'HT', 'BRK', 'et', 'ETB', '2et', 'PEN', 'PENB']);
     // "FTP" is Sportmonks' after-penalties code; "FT_PEN" does not exist.
     $isFinished = in_array($stateCode, ['FT', 'AET', 'FTP']);
+    // Winner, once the match is over and the score is not level. A drawn league
+    // match simply has no winner, so neither side is marked.
+    $homeWon = $isFinished && $hasScore && $homeGoals > $awayGoals;
+    $awayWon = $isFinished && $hasScore && $awayGoals > $homeGoals;
+
     $leagueName = $f['league']['name'] ?? null;
     $leagueLogo = $f['league']['image_path'] ?? null;
 
@@ -51,7 +56,10 @@
             @else
                 <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-surface text-xs"><x-icon name="shield" class="h-4 w-4" /></div>
             @endif
-            <span class="truncate text-sm font-bold text-white group-hover:text-accent transition-colors">{{ $home['name'] ?? __('football.card.home') }}</span>
+            <span class="truncate text-sm transition-colors group-hover:text-accent {{ $homeWon ? 'font-bold text-white' : ($awayWon ? 'font-medium text-body' : 'font-bold text-white') }}">{{ $home['name'] ?? __('football.card.home') }}</span>
+            @if($homeWon)
+                <x-icon name="check" class="h-3.5 w-3.5 shrink-0 text-accent" />
+            @endif
         </div>
 
         <div class="flex-shrink-0 rounded-xl border border-line bg-ink px-3 py-1.5 font-mono min-w-[64px] text-center">
@@ -63,7 +71,10 @@
         </div>
 
         <div class="flex flex-1 items-center justify-end gap-2.5 min-w-0 text-right">
-            <span class="truncate text-sm font-bold text-white group-hover:text-accent transition-colors">{{ $away['name'] ?? __('football.card.away') }}</span>
+            @if($awayWon)
+                <x-icon name="check" class="h-3.5 w-3.5 shrink-0 text-accent" />
+            @endif
+            <span class="truncate text-sm transition-colors group-hover:text-accent {{ $awayWon ? 'font-bold text-white' : ($homeWon ? 'font-medium text-body' : 'font-bold text-white') }}">{{ $away['name'] ?? __('football.card.away') }}</span>
             @if(!empty($away['image_path']))
                 <img src="{{ $away['image_path'] }}" alt="{{ $away['name'] ?? '' }}" class="h-8 w-8 object-contain">
             @else
@@ -74,7 +85,7 @@
 
     {{-- Kickoff date/time in WIB (only when not finished) --}}
     @if($kick && !$isFinished)
-        <div class="mt-2.5 flex items-center justify-center gap-1.5 border-t border-line pt-2 text-xs text-white0">
+        <div class="mt-2.5 flex items-center justify-center gap-1.5 border-t border-line pt-2 text-xs text-muted">
             <svg viewBox="0 0 24 24" fill="none" class="h-3.5 w-3.5"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
             <span class="font-mono">{{ $kick->locale(app()->getLocale())->translatedFormat('D, d M Y • H:i') }} WIB</span>
         </div>

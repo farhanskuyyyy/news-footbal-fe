@@ -36,10 +36,10 @@
                     <span class="relative inline-flex rounded-lg h-2.5 w-2.5 bg-primary"></span>
                 </span>
                 <h2 class="text-base font-bold text-white">{{ __('admin.jobs.heading') }}</h2>
-                <span class="text-xs font-mono text-white0">{{ __('admin.jobs.auto_refresh') }}</span>
+                <span class="text-xs font-mono text-muted">{{ __('admin.jobs.auto_refresh') }}</span>
             </div>
             <template x-if="running.length === 0">
-                <p class="text-sm text-white0">{{ __('admin.jobs.empty') }}</p>
+                <p class="text-sm text-muted">{{ __('admin.jobs.empty') }}</p>
             </template>
             <div class="flex flex-wrap gap-2">
                 <template x-for="job in running" :key="job">
@@ -68,7 +68,7 @@
                                 <button class="rounded-lg bg-primary hover:bg-accent px-3 py-1.5 text-xs font-bold text-white transition-colors">{{ __('admin.scraper.run') }}</button>
                             </div>
                             @if(in_array($job, ['football', 'fixture-details']))
-                                <label class="mt-2 flex items-center gap-1.5 text-xs text-white0">
+                                <label class="mt-2 flex items-center gap-1.5 text-xs text-muted">
                                     <input type="checkbox" name="force" value="1" class="rounded-lg border-line bg-ink text-accent focus:ring-line">
                                     {{ __('admin.scraper.force_ttl') }}
                                 </label>
@@ -187,7 +187,7 @@
                                 </td>
                             </tr>
                         @empty
-                            <tr><td colspan="5" class="py-6 text-center text-white0">{!! __('admin.leagues.empty', ['job' => '<span class="font-mono">leagues</span>']) !!}</td></tr>
+                            <tr><td colspan="5" class="py-6 text-center text-muted">{!! __('admin.leagues.empty', ['job' => '<span class="font-mono">leagues</span>']) !!}</td></tr>
                         @endforelse
                     </tbody>
                 </table>
@@ -225,7 +225,7 @@
                             </tr>
                         </template>
                         <template x-if="sync.length === 0">
-                            <tr><td colspan="4" class="py-6 text-center text-white0">{{ __('admin.sync.empty') }}</td></tr>
+                            <tr><td colspan="4" class="py-6 text-center text-muted">{{ __('admin.sync.empty') }}</td></tr>
                         </template>
                     </tbody>
                 </table>

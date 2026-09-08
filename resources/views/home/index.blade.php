@@ -53,7 +53,7 @@
                     <div class="space-y-5">
                         @foreach($byLeague->take(4) as $leagueName => $rows)
                             <div class="space-y-2.5">
-                                <h3 class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-white0">
+                                <h3 class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted">
                                     @if(!empty($rows[0]['league']['image_path']))<img src="{{ $rows[0]['league']['image_path'] }}" alt="" class="h-4 w-4 object-contain">@endif
                                     {{ $leagueName }}
                                 </h3>
@@ -66,7 +66,7 @@
                         @endforeach
                     </div>
                 @else
-                    <div class="rounded-xl border border-dashed border-line bg-surface p-8 text-center text-sm text-white0">{!! __('home.today.empty', ['link' => '<a href="'.route('football.matchday').'" class="text-accent hover:underline">'.e(__('home.today.empty_link')).'</a>']) !!}</div>
+                    <div class="rounded-xl border border-dashed border-line bg-surface p-8 text-center text-sm text-muted">{!! __('home.today.empty', ['link' => '<a href="'.route('football.matchday').'" class="text-accent hover:underline">'.e(__('home.today.empty_link')).'</a>']) !!}</div>
                 @endif
             </section>
 
@@ -83,7 +83,7 @@
                                     <option value="{{ $i }}">{{ $fl['league']['name'] }}</option>
                                 @endforeach
                             </select>
-                            <svg viewBox="0 0 24 24" fill="none" class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white0">
+                            <svg viewBox="0 0 24 24" fill="none" class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted">
                                 <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </div>
@@ -105,16 +105,16 @@
                                         @foreach($fl['standings'] as $st)
                                             <a href="{{ route('football.index', ['league_id' => $fl['league']['id'], 'season_id' => $fl['season']['id']]) }}"
                                                class="flex items-center gap-3 rounded-xl px-2.5 py-2 hover:bg-surface transition-colors">
-                                                <span class="w-5 text-center font-mono text-xs font-bold text-white0">{{ $st['position'] ?? $loop->iteration }}</span>
+                                                <span class="w-5 text-center font-mono text-xs font-bold text-muted">{{ $st['position'] ?? $loop->iteration }}</span>
                                                 @if(!empty($st['team']['image_path']))<img src="{{ $st['team']['image_path'] }}" alt="" class="h-5 w-5 object-contain">@else<span class="h-5 w-5"></span>@endif
                                                 <span class="flex-1 truncate text-xs font-bold text-white">{{ $st['team']['name'] ?? '-' }}</span>
-                                                <span class="font-mono text-xs text-white0">{{ $st['played'] ?? 0 }}</span>
+                                                <span class="font-mono text-xs text-muted">{{ $st['played'] ?? 0 }}</span>
                                                 <span class="w-6 text-right font-mono text-xs font-bold text-accent">{{ $st['points'] ?? 0 }}</span>
                                             </a>
                                         @endforeach
                                     </div>
                                 @else
-                                    <p class="px-2 py-3 text-xs text-white0">{{ __('home.featured.standings_empty') }}</p>
+                                    <p class="px-2 py-3 text-xs text-muted">{{ __('home.featured.standings_empty') }}</p>
                                 @endif
                                 <a href="{{ route('football.index', ['league_id' => $fl['league']['id'], 'season_id' => $fl['season']['id']]) }}" class="mt-3 block text-center text-xs font-bold text-accent hover:underline">{{ __('home.featured.standings_full') }}</a>
                             </div>
@@ -123,13 +123,13 @@
                             <div class="rounded-xl border border-line bg-surface p-5">
                                 <div class="mb-3 flex items-center justify-between gap-2">
                                     <span class="kicker block text-xs font-bold uppercase text-primary">{{ __('home.featured.topscorers') }}</span>
-                                    <span class="truncate text-xs font-bold text-white0">{{ $fl['league']['name'] }}</span>
+                                    <span class="truncate text-xs font-bold text-muted">{{ $fl['league']['name'] }}</span>
                                 </div>
                                 @if(!empty($fl['topscorers']))
                                     <div class="space-y-2">
                                         @foreach($fl['topscorers'] as $ts)
                                             <a href="{{ route('football.player', $ts['player']['id'] ?? ($ts['player_id'] ?? 0)) }}" class="flex items-center gap-3 rounded-xl px-2 py-1.5 hover:bg-surface transition-colors">
-                                                <span class="w-4 text-center font-mono text-xs font-bold text-white0">{{ $loop->iteration }}</span>
+                                                <span class="w-4 text-center font-mono text-xs font-bold text-muted">{{ $loop->iteration }}</span>
                                                 @if(!empty($ts['player']['image_path']))<img src="{{ $ts['player']['image_path'] }}" alt="" class="h-7 w-7 rounded-lg object-cover border border-line">@else<div class="flex h-7 w-7 items-center justify-center rounded-lg bg-surface text-xs"><x-icon name="user" class="h-4 w-4" /></div>@endif
                                                 <span class="flex-1 truncate text-xs font-bold text-white">{{ $ts['player']['display_name'] ?? $ts['player']['name'] ?? 'Pemain' }}</span>
                                                 <span class="rounded-lg px-2 py-0.5 font-mono text-xs font-bold text-accent border border-line">{{ $ts['total'] ?? 0 }}</span>
@@ -138,13 +138,13 @@
                                     </div>
                                     <a href="{{ route('football.index', ['league_id' => $fl['league']['id'], 'season_id' => $fl['season']['id'], 'tab' => 'topscorers']) }}" class="mt-3 block text-center text-xs font-bold text-gold hover:underline">{{ __('home.featured.topscorers_full') }}</a>
                                 @else
-                                    <p class="px-2 py-3 text-xs text-white0">{{ __('home.featured.topscorers_empty') }}</p>
+                                    <p class="px-2 py-3 text-xs text-muted">{{ __('home.featured.topscorers_empty') }}</p>
                                 @endif
                             </div>
                         </div>
                     @endforeach
                 @else
-                    <div class="rounded-xl border border-dashed border-line bg-surface p-8 text-center text-sm text-white0">
+                    <div class="rounded-xl border border-dashed border-line bg-surface p-8 text-center text-sm text-muted">
                         {!! __('home.featured.no_league', ['link' => '<span class="font-bold text-white">'.e(__('home.featured.no_league_link')).'</span>']) !!}
                     </div>
                 @endif
@@ -171,7 +171,7 @@
                                 <h3 class="mb-2 font-semibold leading-snug text-white">
                                     <a href="{{ route('news.show', $item['id']) }}" class="transition-colors group-hover:text-accent">{{ \Illuminate\Support\Str::limit($item['title'] ?? __('news.untitled'), 90) }}</a>
                                 </h3>
-                                <time class="mt-auto font-mono text-xs text-white0">{{ isset($item['published_at']) ? \Illuminate\Support\Carbon::parse($item['published_at'])->setTimezone('Asia/Jakarta')->locale(app()->getLocale())->translatedFormat('d M Y • H:i') . ' WIB' : '' }}</time>
+                                <time class="mt-auto font-mono text-xs text-muted">{{ isset($item['published_at']) ? \Illuminate\Support\Carbon::parse($item['published_at'])->setTimezone('Asia/Jakarta')->locale(app()->getLocale())->translatedFormat('d M Y • H:i') . ' WIB' : '' }}</time>
                             </div>
                         </article>
                     @endforeach

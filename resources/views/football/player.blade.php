@@ -16,7 +16,7 @@
                 <svg viewBox="0 0 24 24" fill="none" class="w-3.5 h-3.5"><path d="M8 3v4M16 17v4M4 5h8M12 19h8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
                 {{ __('football.player.compare') }}
             </a>
-            <span class="text-xs text-white0 font-mono font-bold">ID: #{{ $player['id'] ?? '-' }}</span>
+            <span class="text-xs text-muted font-mono font-bold">ID: #{{ $player['id'] ?? '-' }}</span>
         </div>
     </div>
 
@@ -76,7 +76,7 @@
                 {{-- Player Metrics Grid --}}
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
                     <div class="bg-ink border border-line p-3 rounded-xl">
-                        <span class="text-xs uppercase font-bold text-white0 block">{{ __('football.player.nationality') }}</span>
+                        <span class="text-xs uppercase font-bold text-muted block">{{ __('football.player.nationality') }}</span>
                         <span class="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-white">
                             @if(!empty($natCountry['image_path']))
                                 <img src="{{ $natCountry['image_path'] }}" alt="" class="w-4 h-4 rounded-sm object-cover">
@@ -85,15 +85,15 @@
                         </span>
                     </div>
                     <div class="bg-ink border border-line p-3 rounded-xl">
-                        <span class="text-xs uppercase font-bold text-white0 block">{{ __('football.player.height') }}</span>
+                        <span class="text-xs uppercase font-bold text-muted block">{{ __('football.player.height') }}</span>
                         <span class="text-xs sm:text-sm font-semibold text-white font-mono">{{ $player['height'] ? $player['height'] . ' cm' : '-' }}</span>
                     </div>
                     <div class="bg-ink border border-line p-3 rounded-xl">
-                        <span class="text-xs uppercase font-bold text-white0 block">{{ __('football.player.weight') }}</span>
+                        <span class="text-xs uppercase font-bold text-muted block">{{ __('football.player.weight') }}</span>
                         <span class="text-xs sm:text-sm font-semibold text-white font-mono">{{ $player['weight'] ? $player['weight'] . ' kg' : '-' }}</span>
                     </div>
                     <div class="bg-ink border border-line p-3 rounded-xl">
-                        <span class="text-xs uppercase font-bold text-white0 block">{{ __('football.player.date_of_birth') }}</span>
+                        <span class="text-xs uppercase font-bold text-muted block">{{ __('football.player.date_of_birth') }}</span>
                         <span class="text-xs sm:text-sm font-semibold text-white font-mono">
                             {{ $player['date_of_birth'] ? \Illuminate\Support\Carbon::parse($player['date_of_birth'])->locale(app()->getLocale())->translatedFormat('d M Y') : '-' }}
                         </span>
@@ -138,7 +138,7 @@
                                         <span title="{{ __('football.player.captain') }}" class="flex h-4 w-4 items-center justify-center rounded-lg bg-gold text-muted text-xs font-bold">C</span>
                                     @endif
                                 </div>
-                                <div class="flex items-center gap-2 text-xs text-white0 mt-0.5">
+                                <div class="flex items-center gap-2 text-xs text-muted mt-0.5">
                                     <span class="font-mono">{{ __('football.player.season_prefix', ['name' => $ch['season_name'] ?: '#'.$ch['season_id']]) }}</span>
                                     @if(!empty($ch['jersey_number']))
                                         <span class="text-muted">•</span>
@@ -150,7 +150,7 @@
                         </a>
                     @endforeach
                 </div>
-                <p class="text-xs text-white0">{{ __('football.player.career_note') }}</p>
+                <p class="text-xs text-muted">{{ __('football.player.career_note') }}</p>
             @else
                 <p class="text-body text-xs py-4">{{ __('football.player.career_empty') }}</p>
             @endif
@@ -180,7 +180,7 @@
                                 <span class="text-xs font-bold text-white font-mono">{{ __('football.player.season_prefix', ['name' => $seasonName]) }}</span>
                                 <span class="h-px flex-1 bg-surface"></span>
                                 @if(!empty($rows[0]['team']))
-                                    <span class="flex items-center gap-1.5 text-xs text-white0">
+                                    <span class="flex items-center gap-1.5 text-xs text-muted">
                                         @if(!empty($rows[0]['team']['image_path']))
                                             <img src="{{ $rows[0]['team']['image_path'] }}" alt="" class="w-3.5 h-3.5 object-contain">
                                         @endif
@@ -252,7 +252,7 @@
                                                 <span class="truncate max-w-[140px]">{{ $s['team']['name'] }}</span>
                                             </span>
                                         @else
-                                            <span class="text-white0">—</span>
+                                            <span class="text-muted">—</span>
                                         @endif
                                     </td>
                                     <td class="py-3 px-2 text-center font-mono">{{ $s['appearances'] ?? 0 }}</td>

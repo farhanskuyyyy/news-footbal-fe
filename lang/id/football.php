@@ -140,6 +140,8 @@ return [
             'standings_empty' => 'Belum ada klasemen untuk stage ini.',
             'empty' => 'Musim ini belum punya data stage.',
         ],
+        'club_label' => 'Klub:',
+        'all_clubs' => 'Semua klub',
         'round_label' => 'Pilih Ronde:',
         'all_rounds' => 'Semua Ronde',
         'round' => 'Ronde :name',

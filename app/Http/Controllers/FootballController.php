@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Services\FootballPortalService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\View\View;
 
 class FootballController extends Controller
@@ -31,8 +32,13 @@ class FootballController extends Controller
         $seasons = $seasonsData['data'] ?? [];
         $selectedLeague = $seasonsData['league'] ?? null;
 
-        // Select season: from query or default to current / first season
+        // Select season: from query or default to current / first season. A
+        // season_id left over from another league is dropped — otherwise the page
+        // shows one league's name above another league's totals.
         $selectedSeasonId = $request->integer('season_id');
+        if ($selectedSeasonId && ! collect($seasons)->contains('id', $selectedSeasonId)) {
+            $selectedSeasonId = null;
+        }
         if (! $selectedSeasonId && count($seasons) > 0) {
             // Pick current season if available, else first
             $currentSeason = collect($seasons)->firstWhere('is_current', true) ?? $seasons[0];
@@ -52,6 +58,8 @@ class FootballController extends Controller
         $selectedRoundId = $request->integer('round_id') ?: null;
         $fixtureStatuses = [];
         $selectedStatus = trim((string) $request->query('status', ''));
+        $fixtureTeams = [];
+        $selectedTeamId = $request->integer('team_id') ?: null;
         $bracket = [];
 
         if ($selectedSeasonId) {
@@ -60,12 +68,14 @@ class FootballController extends Controller
             switch ($activeTab) {
                 case 'fixtures':
                     $rounds = $this->footballService->getSeasonRounds($selectedSeasonId) ?? [];
-                    $payload = $this->footballService->getSeasonFixtures($selectedSeasonId, $selectedRoundId, $selectedStatus ?: null);
+                    $payload = $this->footballService->getSeasonFixtures($selectedSeasonId, $selectedRoundId, $selectedStatus ?: null, $selectedTeamId);
                     $fixtures = $payload['data'];
                     $fixtureStatuses = $payload['available_statuses'];
-                    // The backend drops a status it does not recognise, so mirror
-                    // its verdict instead of keeping a bogus pill highlighted.
+                    $fixtureTeams = $payload['available_teams'];
+                    // The backend drops a status or club it does not recognise, so
+                    // mirror its verdict instead of keeping a bogus filter shown.
                     $selectedStatus = $payload['selected_status'];
+                    $selectedTeamId = $payload['selected_team_id'] ?: null;
                     break;
                 case 'teams':
                     $teams = $this->footballService->getSeasonTeams($selectedSeasonId) ?? [];
@@ -103,6 +113,8 @@ class FootballController extends Controller
             'fixtures',
             'fixtureStatuses',
             'selectedStatus',
+            'fixtureTeams',
+            'selectedTeamId',
             'teams',
             'topscorers',
             'availableTypes',
@@ -176,7 +188,7 @@ class FootballController extends Controller
         ]);
     }
 
-    public function matchday(Request $request): View
+    public function matchday(Request $request): View|Response
     {
         $date = $request->query('date', date('Y-m-d'));
         // Guard the date format; fall back to today on anything unexpected.
@@ -192,11 +204,19 @@ class FootballController extends Controller
             $enabledIds
         );
 
-        return view('football.matchday', [
+        $data = [
             'date' => $date,
             'fixtures' => $fixtures,
             'enabledLeagueIds' => $enabledIds,
-        ]);
+        ];
+
+        // The date controls fetch just the list and swap it in, so the rest of
+        // the page never reloads.
+        if ($request->ajax()) {
+            return response()->view('football.partials.matchday-list', $data);
+        }
+
+        return view('football.matchday', $data);
     }
 
     public function search(Request $request): View

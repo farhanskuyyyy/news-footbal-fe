@@ -41,18 +41,18 @@
                     <div class="mb-4">
                         <label for="image" class="mb-2 block text-sm font-semibold text-white">{{ __('upload.choose_image') }}</label>
                         <div class="relative flex min-h-[160px] flex-col items-center justify-center rounded-xl border-2 border-dashed border-line bg-ink p-6 text-center hover:border-line transition">
-                            <svg class="mb-3 h-10 w-10 text-white0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="mb-3 h-10 w-10 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                             </svg>
                             <span class="text-sm font-semibold text-white">{{ __('upload.dropzone') }}</span>
-                            <span class="mt-1 text-xs text-white0">{{ __('upload.dropzone_hint') }}</span>
+                            <span class="mt-1 text-xs text-muted">{{ __('upload.dropzone_hint') }}</span>
                             <input id="image" name="image" type="file" accept="image/*" class="absolute inset-0 cursor-pointer opacity-0" onchange="previewImage(event)" required>
                         </div>
                     </div>
 
                     {{-- Preview Box --}}
                     <div id="preview-container" class="mb-4 hidden rounded-xl border border-line bg-ink p-3">
-                        <p class="mb-2 text-xs font-semibold text-white0">{{ __('upload.preview') }}</p>
+                        <p class="mb-2 text-xs font-semibold text-muted">{{ __('upload.preview') }}</p>
                         <img id="image-preview" src="#" alt="Preview" class="max-h-48 rounded-xl object-cover">
                     </div>
 
@@ -73,19 +73,19 @@
                         </div>
                         <dl class="space-y-2 text-sm text-white">
                             <div class="flex justify-between">
-                                <dt class="font-medium text-white0">{{ __('upload.original_name') }}</dt>
+                                <dt class="font-medium text-muted">{{ __('upload.original_name') }}</dt>
                                 <dd class="font-semibold">{{ $img['original_name'] }}</dd>
                             </div>
                             <div class="flex justify-between">
-                                <dt class="font-medium text-white0">{{ __('upload.stored_name') }}</dt>
+                                <dt class="font-medium text-muted">{{ __('upload.stored_name') }}</dt>
                                 <dd class="font-mono text-xs">{{ $img['filename'] }}</dd>
                             </div>
                             <div class="flex justify-between">
-                                <dt class="font-medium text-white0">{{ __('upload.size') }}</dt>
+                                <dt class="font-medium text-muted">{{ __('upload.size') }}</dt>
                                 <dd class="font-mono">{{ $img['size_formatted'] }}</dd>
                             </div>
                             <div class="flex justify-between items-center pt-2 border-t border-line">
-                                <dt class="font-medium text-white0">{{ __('upload.mq_status') }}</dt>
+                                <dt class="font-medium text-muted">{{ __('upload.mq_status') }}</dt>
                                 <dd class="rounded-lg px-2.5 py-0.5 text-xs font-semibold {{ !empty($img['mq_ok']) ? 'text-accent border border-line' : 'text-gold border border-line' }}">
                                     {{ !empty($img['mq_ok']) ? __('upload.mq_sent') : __('upload.mq_failed') }}
                                 </dd>

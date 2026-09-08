@@ -88,8 +88,6 @@
                              'icon' => '<path d="M4 8h13m0 0l-3-3m3 3l-3 3M20 16H7m0 0l3-3m-3 3l3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>'],
                             ['route' => 'news.index', 'match' => ['news.*'], 'label' => __('common.nav.news'),
                              'icon' => '<rect x="4" y="5" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M7.5 9h6M7.5 12h6M7.5 15h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>'],
-                            ['route' => 'upload.create', 'match' => ['upload.*'], 'label' => __('common.nav.upload'),
-                             'icon' => '<path d="M12 15V5m0 0l-3.5 3.5M12 5l3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 15v2.5A1.5 1.5 0 006.5 19h11a1.5 1.5 0 001.5-1.5V15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>'],
                         ];
                     @endphp
                     @foreach($navItems as $n)

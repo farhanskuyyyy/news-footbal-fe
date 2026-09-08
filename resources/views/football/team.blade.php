@@ -63,7 +63,7 @@
                         <span class="kicker block text-xs font-bold uppercase text-primary">{{ __('football.team.coach_kicker') }}</span>
                         <h3 class="text-base font-bold text-white truncate mt-0.5">{{ $coach['display_name'] ?? $coach['name'] ?? __('football.team.coach_fallback') }}</h3>
                         @if(!empty($coach['date_of_birth']))
-                            <p class="text-xs text-white0 font-mono">{{ date_diff(date_create($coach['date_of_birth']), date_create('today'))->y }} {{ __('football.team.years_short') }}</p>
+                            <p class="text-xs text-muted font-mono">{{ date_diff(date_create($coach['date_of_birth']), date_create('today'))->y }} {{ __('football.team.years_short') }}</p>
                         @endif
                     </div>
                 </div>
@@ -107,15 +107,15 @@
                 @endif
                 <div class="mt-4 grid grid-cols-3 gap-3">
                     <div class="rounded-xl border border-line bg-ink p-3">
-                        <span class="block text-xs uppercase font-bold text-white0">{{ __('football.team.city') }}</span>
+                        <span class="block text-xs uppercase font-bold text-muted">{{ __('football.team.city') }}</span>
                         <span class="text-sm font-semibold text-white truncate block">{{ $venue['city_name'] ?? '-' }}</span>
                     </div>
                     <div class="rounded-xl border border-line bg-ink p-3">
-                        <span class="block text-xs uppercase font-bold text-white0">{{ __('football.team.capacity_label') }}</span>
+                        <span class="block text-xs uppercase font-bold text-muted">{{ __('football.team.capacity_label') }}</span>
                         <span class="text-sm font-semibold text-white font-mono block">{{ !empty($venue['capacity']) ? number_format($venue['capacity']) : '-' }}</span>
                     </div>
                     <div class="rounded-xl border border-line bg-ink p-3">
-                        <span class="block text-xs uppercase font-bold text-white0">{{ __('football.team.surface') }}</span>
+                        <span class="block text-xs uppercase font-bold text-muted">{{ __('football.team.surface') }}</span>
                         <span class="text-sm font-semibold text-white capitalize truncate block">{{ $venue['surface'] ?? '-' }}</span>
                     </div>
                 </div>
@@ -269,7 +269,7 @@
                                 @endif
                             </p>
                             @if(!empty($p['height']))
-                                <span class="text-xs text-white0 font-mono block">{{ $p['height'] }} cm / {{ $p['weight'] ?? '-' }} kg</span>
+                                <span class="text-xs text-muted font-mono block">{{ $p['height'] }} cm / {{ $p['weight'] ?? '-' }} kg</span>
                             @endif
                         </div>
                     </a>

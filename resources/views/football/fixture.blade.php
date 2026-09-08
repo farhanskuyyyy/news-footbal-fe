@@ -240,7 +240,7 @@
                         @foreach($homeScorers as $g)
                             <div class="flex items-center justify-end gap-2 text-xs sm:text-sm">
                                 <span class="{{ $g['cls'] }} font-semibold truncate">{{ $g['name'] }}</span>
-                                @if($g['note'])<span class="text-xs text-white0 font-bold">({{ $g['note'] }})</span>@endif
+                                @if($g['note'])<span class="text-xs text-muted font-bold">({{ $g['note'] }})</span>@endif
                                 <span class="font-mono text-body shrink-0">{{ $g['min'] }}</span>
                                 <span class="shrink-0">{!! $g['icon'] !!}</span>
                             </div>
@@ -251,7 +251,7 @@
                             <div class="flex items-center gap-2 text-xs sm:text-sm">
                                 <span class="shrink-0">{!! $g['icon'] !!}</span>
                                 <span class="font-mono text-body shrink-0">{{ $g['min'] }}</span>
-                                @if($g['note'])<span class="text-xs text-white0 font-bold">({{ $g['note'] }})</span>@endif
+                                @if($g['note'])<span class="text-xs text-muted font-bold">({{ $g['note'] }})</span>@endif
                                 <span class="{{ $g['cls'] }} font-semibold truncate">{{ $g['name'] }}</span>
                             </div>
                         @endforeach
@@ -349,7 +349,8 @@
                                                 $evStats = $playerEventsMap[$pId] ?? null;
                                                 $pEventsList = $evStats['list'] ?? [];
                                             @endphp
-                                            <button type="button" 
+                                            <button type="button"
+                                                    title="{{ $p['detailed_position_name'] ?: $p['position_name'] }}"
                                                     @click="openModal({{ json_encode($p) }}, '{{ addslashes($homeName) }}', {{ json_encode($pEventsList) }})"
                                                     class="group flex flex-col items-center text-center focus:outline-none relative">
                                                 
@@ -443,7 +444,8 @@
                                                 $evStats = $playerEventsMap[$pId] ?? null;
                                                 $pEventsList = $evStats['list'] ?? [];
                                             @endphp
-                                            <button type="button" 
+                                            <button type="button"
+                                                    title="{{ $p['detailed_position_name'] ?: $p['position_name'] }}"
                                                     @click="openModal({{ json_encode($p) }}, '{{ addslashes($awayName) }}', {{ json_encode($pEventsList) }})"
                                                     class="group flex flex-col items-center text-center focus:outline-none relative">
                                                 
@@ -549,7 +551,8 @@
                                     $evStats = $playerEventsMap[$pId] ?? null;
                                     $pEventsList = $evStats['list'] ?? [];
                                 @endphp
-                                <button type="button" 
+                                <button type="button"
+                                        title="{{ $p['detailed_position_name'] ?: $p['position_name'] }}"
                                         @click="openModal({{ json_encode($p) }}, '{{ addslashes($homeName) }}', {{ json_encode($pEventsList) }})"
                                         class="flex items-center gap-2 p-2 rounded-xl bg-surface hover:bg-surface border border-line text-left transition-colors relative">
                                     @if(!empty($p['player_image']))
@@ -562,7 +565,7 @@
                                     <div class="min-w-0 flex-1">
                                         <span class="text-xs font-bold text-white block truncate hover:text-accent">{{ $p['player_name'] }}</span>
                                         <div class="flex items-center gap-1">
-                                            <span class="text-xs text-white0 font-mono">No. {{ $p['jersey_number'] ?? '-' }}</span>
+                                            <span class="text-xs text-muted font-mono">No. {{ $p['jersey_number'] ?? '-' }}</span>
                                             @if(!empty($p['rating']))
                                                 @php
                                                     $rt = (float) $p['rating'];
@@ -585,7 +588,7 @@
                                     </div>
                                 </button>
                             @empty
-                                <p class="text-xs text-white0 col-span-2 italic">{{ __('football.fixture.bench_empty') }}</p>
+                                <p class="text-xs text-muted col-span-2 italic">{{ __('football.fixture.bench_empty') }}</p>
                             @endforelse
                         </div>
                     </div>
@@ -603,7 +606,8 @@
                                     $evStats = $playerEventsMap[$pId] ?? null;
                                     $pEventsList = $evStats['list'] ?? [];
                                 @endphp
-                                <button type="button" 
+                                <button type="button"
+                                        title="{{ $p['detailed_position_name'] ?: $p['position_name'] }}"
                                         @click="openModal({{ json_encode($p) }}, '{{ addslashes($awayName) }}', {{ json_encode($pEventsList) }})"
                                         class="flex items-center gap-2 p-2 rounded-xl bg-surface hover:bg-surface border border-line text-left transition-colors relative">
                                     @if(!empty($p['player_image']))
@@ -616,7 +620,7 @@
                                     <div class="min-w-0 flex-1">
                                         <span class="text-xs font-bold text-white block truncate hover:text-steel">{{ $p['player_name'] }}</span>
                                         <div class="flex items-center gap-1">
-                                            <span class="text-xs text-white0 font-mono">No. {{ $p['jersey_number'] ?? '-' }}</span>
+                                            <span class="text-xs text-muted font-mono">No. {{ $p['jersey_number'] ?? '-' }}</span>
                                             @if(!empty($p['rating']))
                                                 @php
                                                     $rt = (float) $p['rating'];
@@ -639,7 +643,7 @@
                                     </div>
                                 </button>
                             @empty
-                                <p class="text-xs text-white0 col-span-2 italic">{{ __('football.fixture.bench_empty') }}</p>
+                                <p class="text-xs text-muted col-span-2 italic">{{ __('football.fixture.bench_empty') }}</p>
                             @endforelse
                         </div>
                     </div>
@@ -989,11 +993,11 @@
                             <span class="text-xs text-body font-bold" x-text="selectedPlayer.team_name"></span>
                         </div>
                         <h3 class="text-lg font-bold text-white mt-1" x-text="selectedPlayer.player_name"></h3>
-                        <span class="text-xs text-body font-semibold" x-text="@js(__('football.fixture.modal.position', ['position' => '__P__'])).replace('__P__', selectedPlayer.position_name || @js(__('football.fixture.player')))"></span>
+                        <span class="text-xs text-body font-semibold" x-text="@js(__('football.fixture.modal.position', ['position' => '__P__'])).replace('__P__', selectedPlayer.detailed_position_name || selectedPlayer.position_name || @js(__('football.fixture.player')))"></span>
                     </div>
                 </div>
 
-                <button @click="showModal = false" class="text-white0 hover:text-white p-2 rounded-xl bg-ink border border-line hover:border-line transition-colors">
+                <button @click="showModal = false" class="text-muted hover:text-white p-2 rounded-xl bg-ink border border-line hover:border-line transition-colors">
                     <svg viewBox="0 0 24 24" fill="none" class="w-5 h-5"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
                 </button>
             </div>
@@ -1124,20 +1128,20 @@
                     </div>
                 </div>
                 @if($bookName)
-                    <span class="text-xs font-bold text-white0 font-mono self-start">{{ $bookName }}</span>
+                    <span class="text-xs font-bold text-muted font-mono self-start">{{ $bookName }}</span>
                 @endif
             </div>
             <div class="grid grid-cols-3 gap-3">
                 <div class="rounded-xl border border-line bg-ink p-4 text-center">
-                    <span class="block text-xs uppercase font-bold text-white0 truncate">{{ $home_team['name'] ?? '1' }}</span>
+                    <span class="block text-xs uppercase font-bold text-muted truncate">{{ $home_team['name'] ?? '1' }}</span>
                     <span class="mt-1 block text-xl font-bold font-mono text-accent">{{ $oHome ?? '-' }}</span>
                 </div>
                 <div class="rounded-xl border border-line bg-ink p-4 text-center">
-                    <span class="block text-xs uppercase font-bold text-white0">{{ __('football.fixture.draw') }}</span>
+                    <span class="block text-xs uppercase font-bold text-muted">{{ __('football.fixture.draw') }}</span>
                     <span class="mt-1 block text-xl font-bold font-mono text-white">{{ $oDraw ?? '-' }}</span>
                 </div>
                 <div class="rounded-xl border border-line bg-ink p-4 text-center">
-                    <span class="block text-xs uppercase font-bold text-white0 truncate">{{ $away_team['name'] ?? '2' }}</span>
+                    <span class="block text-xs uppercase font-bold text-muted truncate">{{ $away_team['name'] ?? '2' }}</span>
                     <span class="mt-1 block text-xl font-bold font-mono text-accent">{{ $oAway ?? '-' }}</span>
                 </div>
             </div>

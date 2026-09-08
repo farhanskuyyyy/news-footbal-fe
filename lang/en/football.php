@@ -140,6 +140,8 @@ return [
             'standings_empty' => 'No standings for this stage yet.',
             'empty' => 'This season has no stage data yet.',
         ],
+        'club_label' => 'Club:',
+        'all_clubs' => 'All clubs',
         'round_label' => 'Pick a round:',
         'all_rounds' => 'All rounds',
         'round' => 'Round :name',

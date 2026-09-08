@@ -22,7 +22,7 @@
         @else
             <div class="rounded-xl border border-dashed border-line bg-surface p-12 text-center">
                 <p class="text-base font-bold text-white">{{ __('football.transfers.empty') }}</p>
-                <p class="mt-1 text-xs text-white0">{{ __('football.transfers.empty_hint') }}</p>
+                <p class="mt-1 text-xs text-muted">{{ __('football.transfers.empty_hint') }}</p>
             </div>
         @endif
     </div>
