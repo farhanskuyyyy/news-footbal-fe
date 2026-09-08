@@ -4,7 +4,11 @@
     $today = date('Y-m-d');
     // $fixtures already arrives with CMS-enabled leagues (status = true) first,
     // and groupBy keeps that order, so those leagues stay at the top.
-    $byLeague = collect($fixtures)->groupBy(fn ($f) => $f['league']['name'] ?? '—');
+    // Kick-off order, then grouped by league: groupBy preserves the order it
+    // sees, so sorting first keeps each league's matches chronological.
+    $byLeague = collect($fixtures)
+        ->sortBy(fn ($f) => $f['starting_at'] ?? '')
+        ->groupBy(fn ($f) => $f['league']['name'] ?? '—');
     $enabledIds = collect($enabledLeagueIds ?? []);
 @endphp
 

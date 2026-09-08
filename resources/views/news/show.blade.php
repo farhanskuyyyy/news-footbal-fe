@@ -8,7 +8,7 @@
         {{-- Back link --}}
         <a href="{{ route('news.index') }}"
            class="inline-flex items-center gap-1.5 rounded-xl border border-line bg-surface px-3.5 py-2 text-xs font-bold text-body hover:text-accent hover:border-line transition-colors">
-            <svg viewBox="0 0 24 24" fill="none" class="w-4 h-4"><path d="M19 12H5M11 18l-6-6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" class="icon w-4 h-4"><path d="M19 12H5M11 18l-6-6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
             {{ __('news.back') }}
         </a>
 
@@ -53,7 +53,7 @@
                 <a href="{{ $item['url'] }}" target="_blank" rel="noopener noreferrer"
                    class="inline-flex items-center gap-2 rounded-xl bg-primary hover:bg-accent px-4 py-2.5 text-sm font-bold text-white transition-all">
                     {{ __('news.read_source') }}
-                    <svg viewBox="0 0 24 24" fill="none" class="w-4 h-4"><path d="M7 17L17 7M17 7H9M17 7v8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" class="icon w-4 h-4"><path d="M7 17L17 7M17 7H9M17 7v8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </a>
             @endif
         </article>

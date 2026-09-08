@@ -46,7 +46,7 @@
             @if(!empty($from['image_path']))<img src="{{ $from['image_path'] }}" alt="" class="h-4 w-4 object-contain shrink-0">@endif
             <span class="truncate">{{ $from['name'] ?? __('football.transfers.from_club') }}</span>
         </a>
-        <svg viewBox="0 0 24 24" fill="none" class="h-4 w-4 shrink-0 text-accent"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" class="icon h-4 w-4 shrink-0 text-accent"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <a href="{{ !empty($to['id']) ? route('football.team', $to['id']) : '#' }}" class="flex items-center gap-1.5 rounded-lg border border-line px-2.5 py-1.5 text-accent transition-colors hover:border-line max-w-[42%] min-w-0">
             @if(!empty($to['image_path']))<img src="{{ $to['image_path'] }}" alt="" class="h-4 w-4 object-contain shrink-0">@endif
             <span class="truncate">{{ $to['name'] ?? __('football.transfers.to_club') }}</span>

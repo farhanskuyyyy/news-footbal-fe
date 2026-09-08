@@ -13,7 +13,7 @@
         <div class="flex items-center gap-3">
             <a href="{{ route('football.compare', ['p1' => $player['id'] ?? 0]) }}"
                class="inline-flex items-center gap-1.5 rounded-xl border border-line bg-surface px-3 py-2 text-xs font-bold text-white hover:text-accent hover:border-line transition-colors">
-                <svg viewBox="0 0 24 24" fill="none" class="w-3.5 h-3.5"><path d="M8 3v4M16 17v4M4 5h8M12 19h8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" class="icon w-3.5 h-3.5"><path d="M8 3v4M16 17v4M4 5h8M12 19h8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
                 {{ __('football.player.compare') }}
             </a>
             <span class="text-xs text-muted font-mono font-bold">ID: #{{ $player['id'] ?? '-' }}</span>
@@ -110,7 +110,7 @@
         <div class="bg-surface border border-line rounded-xl p-6 space-y-4">
             <div class="flex items-center gap-3">
                 <span class="flex h-9 w-9 items-center justify-center rounded-xl border border-line text-accent">
-                    <svg viewBox="0 0 24 24" fill="none" class="h-5 w-5"><path d="M12 3l7 3v5c0 4-3 6.5-7 8-4-1.5-7-4-7-8V6l7-3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" class="icon h-5 w-5"><path d="M12 3l7 3v5c0 4-3 6.5-7 8-4-1.5-7-4-7-8V6l7-3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
                 </span>
                 <div>
                     <span class="kicker block text-xs font-bold uppercase text-primary">{{ __('football.player.career_kicker') }}</span>
@@ -135,7 +135,7 @@
                                         <span class="text-xs font-bold uppercase tracking-wider text-accent px-1.5 py-0.5 rounded-lg border border-line">{{ __('football.player.current') }}</span>
                                     @endif
                                     @if(!empty($ch['captain']))
-                                        <span title="{{ __('football.player.captain') }}" class="flex h-4 w-4 items-center justify-center rounded-lg bg-gold text-muted text-xs font-bold">C</span>
+                                        <span title="{{ __('football.player.captain') }}" class="flex h-4 w-4 items-center justify-center rounded-lg bg-gold text-ink text-xs font-bold">C</span>
                                     @endif
                                 </div>
                                 <div class="flex items-center gap-2 text-xs text-muted mt-0.5">
@@ -146,7 +146,7 @@
                                     @endif
                                 </div>
                             </div>
-                            <svg viewBox="0 0 24 24" fill="none" class="h-4 w-4 text-muted group-hover:text-accent transition-colors shrink-0"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            <svg viewBox="0 0 24 24" fill="none" class="icon h-4 w-4 text-muted group-hover:text-accent transition-colors shrink-0"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
                         </a>
                     @endforeach
                 </div>
@@ -160,7 +160,7 @@
         <div class="bg-surface border border-line rounded-xl p-6 space-y-4">
             <div class="flex items-center gap-3">
                 <span class="flex h-9 w-9 items-center justify-center rounded-xl border border-line text-gold">
-                    <svg viewBox="0 0 24 24" fill="none" class="h-5 w-5"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 01-10 0V4zM7 6H4v1a3 3 0 003 3M17 6h3v1a3 3 0 01-3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" class="icon h-5 w-5"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 01-10 0V4zM7 6H4v1a3 3 0 003 3M17 6h3v1a3 3 0 01-3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </span>
                 <div>
                     <span class="kicker block text-xs font-bold uppercase text-primary">{{ __('football.player.records_kicker') }}</span>
@@ -216,7 +216,7 @@
             <div class="lg:col-span-2 bg-surface border border-line rounded-xl p-6 space-y-4">
                 <div class="flex items-center gap-3">
                     <span class="flex h-9 w-9 items-center justify-center rounded-xl border border-line text-accent">
-                        <svg viewBox="0 0 24 24" fill="none" class="h-5 w-5"><path d="M5 19V9m4.5 10V5m4.5 14v-7m4.5 7V8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                        <svg viewBox="0 0 24 24" fill="none" class="icon h-5 w-5"><path d="M5 19V9m4.5 10V5m4.5 14v-7m4.5 7V8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
                     </span>
                     <div>
                         <span class="kicker block text-xs font-bold uppercase text-primary">{{ __('football.player.stats_kicker') }}</span>

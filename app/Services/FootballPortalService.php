@@ -92,7 +92,7 @@ class FootballPortalService
      *
      * @return array{data: array, available_statuses: array, selected_status: string}
      */
-    public function getSeasonFixtures(int $seasonId, ?int $roundId = null, ?string $status = null, ?int $teamId = null): array
+    public function getSeasonFixtures(int $seasonId, ?int $roundId = null, ?string $status = null, ?int $teamId = null, ?string $sort = null): array
     {
         $params = [];
         if ($roundId) {
@@ -104,6 +104,9 @@ class FootballPortalService
         if ($teamId) {
             $params['team_id'] = $teamId;
         }
+        if ($sort) {
+            $params['sort'] = $sort;
+        }
         $res = $this->get("seasons/{$seasonId}/fixtures", $params, 30);
 
         return [
@@ -112,6 +115,7 @@ class FootballPortalService
             'selected_status' => $res['selected_status'] ?? '',
             'available_teams' => $res['available_teams'] ?? [],
             'selected_team_id' => (int) ($res['selected_team_id'] ?? 0),
+            'sort' => $res['sort'] ?? 'asc',
         ];
     }
 
@@ -226,8 +230,12 @@ class FootballPortalService
         $res = $this->getProxy("fixtures/head-to-head/{$teamA}/{$teamB}", [
             'include' => 'participants;scores;league;state',
         ], 3600);
+        $data = $res['data'] ?? [];
 
-        return $res['data'] ?? [];
+        // Past meetings read best newest-first; the proxy returns them unsorted.
+        usort($data, fn ($a, $b) => strcmp($b['starting_at'] ?? '', $a['starting_at'] ?? ''));
+
+        return $data;
     }
 
     /** Win/draw/loss & market probabilities for a fixture. */

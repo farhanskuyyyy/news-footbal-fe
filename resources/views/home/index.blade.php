@@ -83,7 +83,7 @@
                                     <option value="{{ $i }}">{{ $fl['league']['name'] }}</option>
                                 @endforeach
                             </select>
-                            <svg viewBox="0 0 24 24" fill="none" class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted">
+                            <svg viewBox="0 0 24 24" fill="none" class="icon pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted">
                                 <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </div>

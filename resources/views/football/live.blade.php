@@ -31,7 +31,7 @@
         @else
             <div class="rounded-xl border border-dashed border-line bg-surface p-12 text-center">
                 <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-ink border border-line text-muted">
-                    <svg viewBox="0 0 24 24" fill="none" class="h-7 w-7"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" class="icon h-7 w-7"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </div>
                 <p class="text-base font-bold text-white">{{ __('football.live.empty') }}</p>
                 <p class="text-xs text-muted mt-1">{!! __('football.live.empty_hint', ['link' => '<a href="'.route('football.matchday').'" class="text-accent hover:underline">'.e(__('football.live.empty_link')).'</a>']) !!}</p>

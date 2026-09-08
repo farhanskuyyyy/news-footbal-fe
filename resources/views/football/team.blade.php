@@ -152,7 +152,7 @@
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
                     <span class="flex h-9 w-9 items-center justify-center rounded-xl border border-line text-accent">
-                        <svg viewBox="0 0 24 24" fill="none" class="h-5 w-5"><path d="M4 7h16M4 12h10M4 17h7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                        <svg viewBox="0 0 24 24" fill="none" class="icon h-5 w-5"><path d="M4 7h16M4 12h10M4 17h7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
                     </span>
                     <div>
                         <span class="kicker block text-xs font-bold uppercase text-primary">{{ __('football.team.performance') }}</span>
@@ -181,7 +181,7 @@
         <div class="space-y-3">
             <div class="flex items-center gap-3">
                 <span class="flex h-9 w-9 items-center justify-center rounded-xl border border-line text-accent">
-                    <svg viewBox="0 0 24 24" fill="none" class="h-5 w-5"><rect x="4" y="5.5" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M4 9.5h16M8 3.5v4M16 3.5v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" class="icon h-5 w-5"><rect x="4" y="5.5" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M4 9.5h16M8 3.5v4M16 3.5v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
                 </span>
                 <div>
                     <span class="kicker block text-xs font-bold uppercase text-primary">{{ __('football.team.schedule') }}</span>
@@ -232,7 +232,7 @@
                     @endphp
                     <a href="{{ route('football.player', $p['id']) }}" class="group relative p-4 rounded-xl border border-line bg-ink hover:bg-surface hover:border-line hover: transition-all flex items-center gap-3.5">
                         @if($isCaptain)
-                            <span title="{{ __('football.team.captain') }}" class="absolute top-2.5 right-2.5 flex h-5 w-5 items-center justify-center rounded-lg bg-gold text-muted text-xs font-bold shadow">C</span>
+                            <span title="{{ __('football.team.captain') }}" class="absolute top-2.5 right-2.5 flex h-5 w-5 items-center justify-center rounded-lg bg-gold text-ink text-xs font-bold shadow">C</span>
                         @endif
 
                         <div class="relative flex-shrink-0">

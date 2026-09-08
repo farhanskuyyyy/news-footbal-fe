@@ -7,7 +7,7 @@
         <div class="rounded-xl border border-line bg-surface p-8">
             <div class="mb-6 text-center">
                 <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-surface text-muted">
-                    <svg viewBox="0 0 24 24" fill="none" class="h-7 w-7"><rect x="5" y="11" width="14" height="9" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M8 11V8a4 4 0 018 0v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" class="icon h-7 w-7"><rect x="5" y="11" width="14" height="9" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M8 11V8a4 4 0 018 0v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
                 </div>
                 <span class="kicker block text-xs font-bold uppercase text-primary mb-1">{{ __('auth.kicker') }}</span>
                 <h1 class="text-xl font-bold text-white">{{ __('auth.heading') }}</h1>

@@ -56,7 +56,7 @@
             @else
                 <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-surface text-xs"><x-icon name="shield" class="h-4 w-4" /></div>
             @endif
-            <span class="truncate text-sm transition-colors group-hover:text-accent {{ $homeWon ? 'font-bold text-white' : ($awayWon ? 'font-medium text-body' : 'font-bold text-white') }}">{{ $home['name'] ?? __('football.card.home') }}</span>
+            <span class="truncate text-sm transition-colors group-hover:text-accent {{ $awayWon ? 'font-medium text-body line-through decoration-line' : 'font-bold text-white' }}">{{ $home['name'] ?? __('football.card.home') }}</span>
             @if($homeWon)
                 <x-icon name="check" class="h-3.5 w-3.5 shrink-0 text-accent" />
             @endif
@@ -74,7 +74,7 @@
             @if($awayWon)
                 <x-icon name="check" class="h-3.5 w-3.5 shrink-0 text-accent" />
             @endif
-            <span class="truncate text-sm transition-colors group-hover:text-accent {{ $awayWon ? 'font-bold text-white' : ($homeWon ? 'font-medium text-body' : 'font-bold text-white') }}">{{ $away['name'] ?? __('football.card.away') }}</span>
+            <span class="truncate text-sm transition-colors group-hover:text-accent {{ $homeWon ? 'font-medium text-body line-through decoration-line' : 'font-bold text-white' }}">{{ $away['name'] ?? __('football.card.away') }}</span>
             @if(!empty($away['image_path']))
                 <img src="{{ $away['image_path'] }}" alt="{{ $away['name'] ?? '' }}" class="h-8 w-8 object-contain">
             @else
@@ -83,10 +83,11 @@
         </div>
     </div>
 
-    {{-- Kickoff date/time in WIB (only when not finished) --}}
-    @if($kick && !$isFinished)
+    {{-- Kick-off date/time in WIB. Shown for finished matches too, so a list
+         ordered by date can actually be read as one. --}}
+    @if($kick)
         <div class="mt-2.5 flex items-center justify-center gap-1.5 border-t border-line pt-2 text-xs text-muted">
-            <svg viewBox="0 0 24 24" fill="none" class="h-3.5 w-3.5"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" class="icon h-3.5 w-3.5"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
             <span class="font-mono">{{ $kick->locale(app()->getLocale())->translatedFormat('D, d M Y • H:i') }} WIB</span>
         </div>
     @endif

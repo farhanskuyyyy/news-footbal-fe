@@ -38,7 +38,7 @@
     <div class="space-y-8">
         <div class="flex items-center gap-3">
             <span class="flex h-10 w-10 items-center justify-center rounded-xl border border-line text-accent">
-                <svg viewBox="0 0 24 24" fill="none" class="h-6 w-6"><path d="M8 3v4M16 17v4M4 5h8M12 19h8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="16" cy="5" r="2.5" stroke="currentColor" stroke-width="1.6"/><circle cx="8" cy="19" r="2.5" stroke="currentColor" stroke-width="1.6"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" class="icon h-6 w-6"><path d="M8 3v4M16 17v4M4 5h8M12 19h8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="16" cy="5" r="2.5" stroke="currentColor" stroke-width="1.6"/><circle cx="8" cy="19" r="2.5" stroke="currentColor" stroke-width="1.6"/></svg>
             </span>
             <div>
                 <span class="kicker block text-xs font-bold uppercase text-primary">{{ __('football.compare.kicker') }}</span>

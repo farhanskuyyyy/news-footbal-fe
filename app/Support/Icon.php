@@ -30,8 +30,7 @@ final class Icon
         'arrow-left' => '<path d="M19 12H5M11 18l-6-6 6-6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>',
         'check' => '<path d="M5 12.5l4.5 4.5L19 7.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>',
         'cross' => '<path d="M6.5 6.5l11 11M17.5 6.5l-11 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
-        'in' => '<path d="M11 8l4 4-4 4M15 12H4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 4h4a2 2 0 012 2v12a2 2 0 01-2 2h-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
-        'out' => '<path d="M13 8l-4 4 4 4M9 12h11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 4H6a2 2 0 00-2 2v12a2 2 0 002 2h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
+        'signal' => '<circle cx="12" cy="12" r="2.2" fill="currentColor"/><path d="M7.8 7.8a6 6 0 000 8.4M16.2 7.8a6 6 0 010 8.4M4.9 4.9a10 10 0 000 14.2M19.1 4.9a10 10 0 010 14.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
         'gloves' => '<path d="M7 21V9a2 2 0 014 0V4.5a1.5 1.5 0 013 0V9a2 2 0 014 0v7a5 5 0 01-5 5H7z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>',
         'gear' => '<circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.6"/><path d="M12 3v2.5M12 18.5V21M21 12h-2.5M5.5 12H3M18.4 5.6l-1.8 1.8M7.4 16.6l-1.8 1.8M18.4 18.4l-1.8-1.8M7.4 7.4L5.6 5.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
         'bolt' => '<path d="M13 3L5 13h6l-1 8 8-10h-6l1-8z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>',
@@ -39,6 +38,8 @@ final class Icon
         'coach' => '<circle cx="12" cy="7.5" r="3.2" stroke="currentColor" stroke-width="1.6"/><path d="M5.5 20c0-3.4 2.9-5.4 6.5-5.4s6.5 2 6.5 5.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M9.5 14.8L12 18l2.5-3.2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>',
         'card-yellow' => '<rect x="7" y="3.5" width="10" height="17" rx="1.6" fill="#F4D35E"/>',
         'card-red' => '<rect x="7" y="3.5" width="10" height="17" rx="1.6" fill="#E63946"/>',
+        'sub-in' => '<path d="M4 12h11m0 0l-4-4m4 4l-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M18 5v14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
+        'sub-out' => '<path d="M20 12H9m0 0l4-4m-4 4l4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 5v14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
     ];
 
     /** Raw <svg> markup for one icon, or an empty string for an unknown name. */
@@ -50,6 +51,8 @@ final class Icon
             return '';
         }
 
-        return '<svg viewBox="0 0 24 24" fill="none" class="'.e($class).'" aria-hidden="true">'.$body.'</svg>';
+        // The `icon` class restores inline flow: Tailwind's preflight sets
+        // `svg { display: block }`, which stacks an icon above the text it labels.
+        return '<svg viewBox="0 0 24 24" fill="none" class="icon '.e($class).'" aria-hidden="true">'.$body.'</svg>';
     }
 }

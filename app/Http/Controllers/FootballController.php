@@ -60,6 +60,7 @@ class FootballController extends Controller
         $selectedStatus = trim((string) $request->query('status', ''));
         $fixtureTeams = [];
         $selectedTeamId = $request->integer('team_id') ?: null;
+        $selectedSort = in_array($request->query('sort'), ['asc', 'desc'], true) ? $request->query('sort') : null;
         $bracket = [];
 
         if ($selectedSeasonId) {
@@ -68,7 +69,7 @@ class FootballController extends Controller
             switch ($activeTab) {
                 case 'fixtures':
                     $rounds = $this->footballService->getSeasonRounds($selectedSeasonId) ?? [];
-                    $payload = $this->footballService->getSeasonFixtures($selectedSeasonId, $selectedRoundId, $selectedStatus ?: null, $selectedTeamId);
+                    $payload = $this->footballService->getSeasonFixtures($selectedSeasonId, $selectedRoundId, $selectedStatus ?: null, $selectedTeamId, $selectedSort);
                     $fixtures = $payload['data'];
                     $fixtureStatuses = $payload['available_statuses'];
                     $fixtureTeams = $payload['available_teams'];
@@ -76,6 +77,9 @@ class FootballController extends Controller
                     // mirror its verdict instead of keeping a bogus filter shown.
                     $selectedStatus = $payload['selected_status'];
                     $selectedTeamId = $payload['selected_team_id'] ?: null;
+                    // The status sets the default direction, so read back what
+                    // the backend actually applied.
+                    $selectedSort = $payload['sort'];
                     break;
                 case 'teams':
                     $teams = $this->footballService->getSeasonTeams($selectedSeasonId) ?? [];
@@ -115,6 +119,7 @@ class FootballController extends Controller
             'selectedStatus',
             'fixtureTeams',
             'selectedTeamId',
+            'selectedSort',
             'teams',
             'topscorers',
             'availableTypes',

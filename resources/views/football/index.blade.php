@@ -150,16 +150,19 @@
                 if ($selectedStatus) { $fxKeep['status'] = $selectedStatus; }
                 if ($selectedRoundId) { $fxKeep['round_id'] = $selectedRoundId; }
                 if ($selectedTeamId) { $fxKeep['team_id'] = $selectedTeamId; }
+                if ($selectedSort) { $fxKeep['sort'] = $selectedSort; }
 
                 // Each control keeps the other two filters and replaces only its own.
                 $fxRoundBase = collect($fxKeep)->except('round_id')->all();
                 $fxStatusBase = collect($fxKeep)->except('status')->all();
                 $fxClubBase = collect($fxKeep)->except('team_id')->all();
+                $fxSortBase = collect($fxKeep)->except('sort')->all();
             @endphp
 
-            {{-- Round Select Dropdown --}}
+            {{-- Round + Club pickers share one row. --}}
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-stretch">
             @if(count($rounds) > 0)
-                <div class="bg-surface border border-line p-4 rounded-xl flex items-center gap-3 max-w-sm">
+                <div class="bg-surface border border-line p-4 rounded-xl flex flex-1 items-center gap-3 sm:max-w-sm">
                     <label for="roundSelect" class="text-xs font-bold text-body uppercase tracking-wider whitespace-nowrap">{{ __('football.portal.round_label') }}</label>
                     <select id="roundSelect"
                             onchange="location.href='{{ route('football.index', $fxRoundBase) }}' + (this.value ? '&round_id=' + this.value : '')"
@@ -175,7 +178,7 @@
             @endif
 
             @if(count($fixtureTeams) > 0)
-                <div class="flex max-w-sm items-center gap-3 rounded-xl border border-line bg-surface p-4">
+                <div class="flex flex-1 items-center gap-3 rounded-xl border border-line bg-surface p-4 sm:max-w-sm">
                     <label for="clubSelect" class="whitespace-nowrap text-xs font-semibold uppercase tracking-wider text-body">{{ __('football.portal.club_label') }}</label>
                     <select id="clubSelect"
                             onchange="location.href='{{ route('football.index', $fxClubBase) }}' + (this.value ? '&team_id=' + this.value : '')"
@@ -188,36 +191,49 @@
                 </div>
             @endif
 
+                <div class="flex flex-1 items-center gap-3 rounded-xl border border-line bg-surface p-4 sm:max-w-xs">
+                    <label for="sortSelect" class="whitespace-nowrap text-xs font-semibold uppercase tracking-wider text-body">{{ __('football.portal.sort_label') }}</label>
+                    <select id="sortSelect"
+                            onchange="location.href='{{ route('football.index', $fxSortBase) }}' + '&sort=' + this.value"
+                            class="w-full cursor-pointer rounded-lg border border-line bg-ink px-3.5 py-2 text-sm font-semibold text-white transition-all focus:outline-none focus:ring-2 focus:ring-primary">
+                        <option value="asc" {{ $selectedSort === 'desc' ? '' : 'selected' }}>{{ __('football.portal.sort_asc') }}</option>
+                        <option value="desc" {{ $selectedSort === 'desc' ? 'selected' : '' }}>{{ __('football.portal.sort_desc') }}</option>
+                    </select>
+                </div>
+            </div>
+
             {{-- Match status filter (FT / NS / …). Built from the states this
                  season actually has, so new ones appear without a code change. --}}
             @if(count($fixtureStatuses) > 0)
                 <div class="bg-surface border border-line p-3 rounded-xl flex items-center gap-2 overflow-x-auto">
                     <span class="text-xs font-bold text-muted uppercase tracking-wider px-2 whitespace-nowrap">{{ __('football.portal.status_label') }}</span>
 
-                    <a href="{{ route('football.index', $fxStatusBase) }}"
+                    <a href="{{ route('football.index', collect($fxStatusBase)->except('sort')->all()) }}"
                        class="px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all {{ $selectedStatus === '' ? 'bg-primary text-white font-bold' : 'bg-ink text-white hover:bg-surface hover:text-white border border-line' }}">
                         {{ __('football.portal.status_all') }}
                     </a>
 
                     @foreach($fixtureStatuses as $st)
                         @php
-                            $code = strtoupper($st['short_name'] ?? '');
-                            $isActive = strtoupper($selectedStatus) === $code;
-                            // Friendly label for the states we know; otherwise the
-                            // name Sportmonks gave us.
-                            $statusKey = 'football.portal.status.'.strtolower($code);
+                            $key = $st['key'] ?? '';
+                            $isActive = $selectedStatus === $key;
+                            // Friendly label for the groups we know; otherwise the
+                            // state name Sportmonks gave us.
+                            $statusKey = 'football.portal.status.'.strtolower($key);
                             $statusLabel = __($statusKey);
                             if ($statusLabel === $statusKey) {
-                                $statusLabel = $st['name'] ?? $code;
+                                $statusLabel = $st['name'] ?? $key;
                             }
-                            $statusIcon = match (true) {
-                                in_array($code, ['FT', 'AET', 'FTP']) => \App\Support\Icon::svg('check', 'h-3.5 w-3.5'),
-                                in_array($code, ['NS', 'TBA']) => \App\Support\Icon::svg('clock', 'h-3.5 w-3.5'),
-                                in_array($code, ['1st', '2nd', 'HT', 'BRK', 'et', 'ETB', '2et', 'PEN', 'PENB']) => \App\Support\Icon::svg('out', 'h-3.5 w-3.5'),
+                            $statusIcon = match ($key) {
+                                'finished' => \App\Support\Icon::svg('check', 'h-3.5 w-3.5'),
+                                'upcoming' => \App\Support\Icon::svg('clock', 'h-3.5 w-3.5'),
+                                'live' => \App\Support\Icon::svg('signal', 'h-3.5 w-3.5'),
                                 default => \App\Support\Icon::svg('pin', 'h-3.5 w-3.5'),
                             };
                         @endphp
-                        <a href="{{ route('football.index', $fxStatusBase + ['status' => $code]) }}"
+                        {{-- Dropping `sort` lets the status pick its own reading
+                             order: newest first for finished, soonest first otherwise. --}}
+                        <a href="{{ route('football.index', collect($fxStatusBase)->except('sort')->all() + ['status' => $key]) }}"
                            class="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all {{ $isActive ? 'bg-primary text-white font-bold scale-105' : 'bg-ink text-white hover:bg-surface hover:text-white border border-line' }}">
                             <span class="shrink-0">{!! $statusIcon !!}</span>
                             <span>{{ $statusLabel }}</span>
@@ -272,8 +288,9 @@
                                 </div>
 
                                 @if(!empty($f['venue']))
-                                    <span class="text-muted text-xs truncate max-w-[150px]">
-                                        <x-icon name="location" class="h-4 w-4" /> {{ $f['venue']['name'] }}
+                                    <span class="flex min-w-0 max-w-[170px] items-center gap-1.5 text-xs text-muted">
+                                        <x-icon name="location" class="h-3.5 w-3.5" />
+                                        <span class="truncate">{{ $f['venue']['name'] }}</span>
                                     </span>
                                 @endif
                             </div>
@@ -287,7 +304,7 @@
                                     @else
                                         <div class="w-9 h-9 rounded-xl bg-surface flex items-center justify-center text-sm"><x-icon name="shield" class="h-4 w-4" /></div>
                                     @endif
-                                    <span class="line-clamp-1 text-sm transition-colors group-hover:text-accent {{ $awayWon ? 'font-medium text-body' : 'font-bold text-white' }}">
+                                    <span class="line-clamp-1 text-sm transition-colors group-hover:text-accent {{ $awayWon ? 'font-medium text-body line-through decoration-line' : 'font-bold text-white' }}">
                                         {{ $homeName }}
                                     </span>
                                     @if($homeWon)
@@ -313,7 +330,7 @@
                                     @if($awayWon)
                                         <x-icon name="check" class="h-3.5 w-3.5 shrink-0 text-accent" />
                                     @endif
-                                    <span class="line-clamp-1 text-sm transition-colors group-hover:text-accent {{ $homeWon ? 'font-medium text-body' : 'font-bold text-white' }}">
+                                    <span class="line-clamp-1 text-sm transition-colors group-hover:text-accent {{ $homeWon ? 'font-medium text-body line-through decoration-line' : 'font-bold text-white' }}">
                                         {{ $awayName }}
                                     </span>
                                     @if($awayLogo)
@@ -708,7 +725,7 @@
                             <div>
                                 <h4 class="font-semibold text-base text-white group-hover:text-accent transition-colors">{{ $t['name'] }}</h4>
                                 @if(!empty($t['venue']))
-                                    <p class="text-xs text-body mt-1"><x-icon name="location" class="h-4 w-4" /> {{ $t['venue']['name'] }}</p>
+                                    <p class="mt-1 flex items-center justify-center gap-1.5 text-xs text-body"><x-icon name="location" class="h-3.5 w-3.5" /> <span class="truncate">{{ $t['venue']['name'] }}</span></p>
                                 @endif
                             </div>
                             <span class="px-4 py-1.5 rounded-lg bg-surface text-xs font-bold text-white border border-line">

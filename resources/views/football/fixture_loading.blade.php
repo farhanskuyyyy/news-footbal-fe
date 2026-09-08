@@ -8,7 +8,7 @@
 
         {{-- Spinner --}}
         <div class="mx-auto mb-6 flex h-20 w-20 items-center justify-center">
-            <svg viewBox="0 0 24 24" fill="none" class="h-16 w-16 animate-spin text-accent">
+            <svg viewBox="0 0 24 24" fill="none" class="icon h-16 w-16 animate-spin text-accent">
                 <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" opacity="0.2"/>
                 <path d="M21 12a9 9 0 00-9-9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>

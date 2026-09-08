@@ -47,6 +47,9 @@
         [x-cloak] { display: none !important; }
         /* Small uppercase eyebrow above section headings */
         .kicker { letter-spacing: 0.18em; }
+        /* Tailwind preflight makes every svg display:block, which drops an inline
+           icon onto its own line. Icons sit next to their label instead. */
+        .icon { display: inline-block; vertical-align: -0.125em; flex-shrink: 0; }
     </style>
 
 </head>
@@ -59,7 +62,7 @@
                 {{-- Logo / Crest --}}
                 <a href="{{ route('home') }}" class="flex items-center gap-2.5 group">
                     <div class="flex h-9 w-9 items-center justify-center rounded-lg ">
-                        <svg viewBox="0 0 24 24" fill="none" class="h-5 w-5 text-white">
+                        <svg viewBox="0 0 24 24" fill="none" class="icon h-5 w-5 text-white">
                             <circle cx="12" cy="12" r="9" fill="currentColor" opacity="0.15"/>
                             <path d="M12 3l1.9 1.4-.7 2.2h-2.4l-.7-2.2L12 3zM4.8 8.6l2.3.1.7 2.2-1.9 1.4-1.9-1.4.8-2.3zm14.4 0l.8 2.3-1.9 1.4-1.9-1.4.7-2.2 2.3-.1zM8.2 18.4l-.7-2.2 1.9-1.4 1.9 1.4-.7 2.2H8.2zm7.6 0h-2.4l-.7-2.2 1.9-1.4 1.9 1.4-.7 2.2z" fill="currentColor"/>
                         </svg>
@@ -97,7 +100,7 @@
                             @if(!empty($n['live']))
                                 <span class="h-2 w-2 rounded-full bg-accent"></span>
                             @else
-                                <svg viewBox="0 0 24 24" fill="none" class="h-4 w-4 {{ $active ? 'text-accent' : 'text-muted group-hover:text-body' }}">{!! $n['icon'] !!}</svg>
+                                <svg viewBox="0 0 24 24" fill="none" class="icon h-4 w-4 {{ $active ? 'text-accent' : 'text-muted group-hover:text-body' }}">{!! $n['icon'] !!}</svg>
                             @endif
                             <span class="whitespace-nowrap">{{ $n['label'] }}</span>
                         </a>
@@ -112,7 +115,7 @@
                     <button @click="open = !open" @click.outside="open = false" type="button"
                             aria-label="{{ __('common.locale.label') }}"
                             class="flex h-9 items-center gap-1.5 rounded-lg border border-line px-3 text-xs font-medium uppercase tracking-wider text-body transition-colors hover:text-white">
-                        <svg viewBox="0 0 24 24" fill="none" class="h-3.5 w-3.5"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 12h17M12 3.5c2.2 2.4 3.3 5.4 3.3 8.5s-1.1 6.1-3.3 8.5c-2.2-2.4-3.3-5.4-3.3-8.5S9.8 5.9 12 3.5z" stroke="currentColor" stroke-width="1.4"/></svg>
+                        <svg viewBox="0 0 24 24" fill="none" class="icon h-3.5 w-3.5"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 12h17M12 3.5c2.2 2.4 3.3 5.4 3.3 8.5s-1.1 6.1-3.3 8.5c-2.2-2.4-3.3-5.4-3.3-8.5S9.8 5.9 12 3.5z" stroke="currentColor" stroke-width="1.4"/></svg>
                         {{ app()->getLocale() }}
                     </button>
                     <div x-show="open" x-cloak x-transition.opacity
@@ -129,12 +132,12 @@
 
                 <a href="{{ route('football.search') }}" title="{{ __('common.nav.search_title') }}"
                    class="flex h-9 w-9 items-center justify-center rounded-lg border border-line text-body transition-colors hover:text-white">
-                    <svg viewBox="0 0 24 24" fill="none" class="h-4 w-4"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M20 20l-3.5-3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" class="icon h-4 w-4"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M20 20l-3.5-3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
                 </a>
                 @auth
                     <a href="{{ route('admin.dashboard') }}" title="{{ __('common.nav.admin_panel') }}"
                        class="flex h-9 w-9 items-center justify-center rounded-lg border border-line text-accent transition-colors hover:text-white">
-                        <svg viewBox="0 0 24 24" fill="none" class="h-4 w-4"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z" stroke="currentColor" stroke-width="1.6"/><path d="M19.4 15a1.7 1.7 0 00.3 1.9l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-2.9 1.2V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-2.9-1.2l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00-1.2-2.9H2a2 2 0 110-4h.1a1.7 1.7 0 001.2-2.9l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.9.3H8a1.7 1.7 0 001-1.6V2a2 2 0 114 0v.1a1.7 1.7 0 001 1.6 1.7 1.7 0 001.9-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.9V8a1.7 1.7 0 001.6 1H22a2 2 0 110 4h-.1a1.7 1.7 0 00-1.6 1z" stroke="currentColor" stroke-width="1.2"/></svg>
+                        <svg viewBox="0 0 24 24" fill="none" class="icon h-4 w-4"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z" stroke="currentColor" stroke-width="1.6"/><path d="M19.4 15a1.7 1.7 0 00.3 1.9l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-2.9 1.2V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-2.9-1.2l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00-1.2-2.9H2a2 2 0 110-4h.1a1.7 1.7 0 001.2-2.9l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.9.3H8a1.7 1.7 0 001-1.6V2a2 2 0 114 0v.1a1.7 1.7 0 001 1.6 1.7 1.7 0 001.9-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.9V8a1.7 1.7 0 001.6 1H22a2 2 0 110 4h-.1a1.7 1.7 0 00-1.6 1z" stroke="currentColor" stroke-width="1.2"/></svg>
                     </a>
                 @endauth
                 <div class="hidden items-center gap-2 rounded-lg border border-line px-3 py-1.5 sm:flex">
@@ -160,7 +163,7 @@
                         @if(!empty($n['live']))
                             <span class="h-2 w-2 rounded-full bg-accent"></span>
                         @else
-                            <svg viewBox="0 0 24 24" fill="none" class="h-4 w-4 {{ $mActive ? 'text-accent' : 'text-muted' }}">{!! $n['icon'] !!}</svg>
+                            <svg viewBox="0 0 24 24" fill="none" class="icon h-4 w-4 {{ $mActive ? 'text-accent' : 'text-muted' }}">{!! $n['icon'] !!}</svg>
                         @endif
                         {{ $n['label'] }}
                     </a>

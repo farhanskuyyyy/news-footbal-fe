@@ -25,7 +25,7 @@
                     @csrf
                     <button type="submit"
                             class="inline-flex items-center gap-2 rounded-xl bg-primary hover:bg-accent px-4 py-2.5 text-sm font-bold text-white transition-all disabled:opacity-50 disabled:cursor-wait">
-                        <svg viewBox="0 0 24 24" fill="none" class="w-4 h-4"><path d="M4 12a8 8 0 0113.7-5.6M20 12a8 8 0 01-13.7 5.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M17 3v3.5h-3.5M7 21v-3.5h3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <svg viewBox="0 0 24 24" fill="none" class="icon w-4 h-4"><path d="M4 12a8 8 0 0113.7-5.6M20 12a8 8 0 01-13.7 5.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M17 3v3.5h-3.5M7 21v-3.5h3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
                         {{ __('news.refresh') }}
                     </button>
                 </form>
@@ -48,7 +48,7 @@
         @if ($news->isEmpty())
             <div class="rounded-xl border border-dashed border-line bg-surface p-12 text-center">
                 <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-ink border border-line text-accent">
-                    <svg viewBox="0 0 24 24" fill="none" class="h-7 w-7"><rect x="4" y="5" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M7.5 9h6M7.5 12h6M7.5 15h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" class="icon h-7 w-7"><rect x="4" y="5" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M7.5 9h6M7.5 12h6M7.5 15h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
                 </div>
                 <p class="text-base font-bold text-white">{{ __('news.empty') }}</p>
                 <p class="text-xs text-muted mt-1">{{ __('news.empty_hint') }}</p>
@@ -87,7 +87,7 @@
 
                             <a href="{{ route('news.show', $item['id']) }}" class="mt-auto inline-flex items-center gap-1.5 text-sm font-bold text-accent hover:gap-2.5 transition-all">
                                 {{ __('news.read_more') }}
-                                <svg viewBox="0 0 24 24" fill="none" class="w-4 h-4"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                <svg viewBox="0 0 24 24" fill="none" class="icon w-4 h-4"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
                             </a>
                         </div>
                     </article>
