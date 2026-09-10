@@ -52,15 +52,22 @@
         $awayBench = $awayLineup['bench'] ?? [];
         $awayFormation = $awayLineup['formation'] ?? '4-3-3';
 
+        // Sportmonks numbers `col` from one fixed touchline, the same one for both
+        // teams: the home side attacks right so its col 1 is right-sided, the away
+        // side attacks left so its col 1 is left-sided — and both sit on the LOWER
+        // touchline on screen. Rendering a column top-to-bottom therefore has to
+        // walk col descending, otherwise every full-back swaps flanks.
+        $pitchColumn = fn ($players) => collect($players)->sortByDesc(fn ($p) => $p['col'] ?? 0)->values();
+
         // Home: row 1 (GK) leftmost, rising to the forwards at the halfway line.
         $homeRows = collect($homeXI)->groupBy(function($item) {
             return $item['row'] ?? 1;
-        })->sortKeys();
+        })->sortKeys()->map($pitchColumn);
 
         // Away mirrored: forwards nearest the halfway line, keeper furthest right.
         $awayRows = collect($awayXI)->groupBy(function($item) {
             return $item['row'] ?? 1;
-        })->sortKeysDesc();
+        })->sortKeysDesc()->map($pitchColumn);
 
         // Aggregate Match Events per Player for Badges on Pitch & Bench
         $playerEventsMap = [];
