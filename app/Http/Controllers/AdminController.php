@@ -26,6 +26,7 @@ class AdminController extends Controller
             'running' => $this->admin->runningJobs(),
             'sync' => $this->admin->syncStatus(),
             'leagues' => $this->football->getLeagues(false) ?? [],
+            'adminUnavailable' => $this->admin->unavailable,
         ]);
     }
 
@@ -78,6 +79,7 @@ class AdminController extends Controller
         return response()->json([
             'running' => $this->admin->runningJobs(),
             'sync' => $this->admin->syncStatus(),
+            'unavailable' => $this->admin->unavailable,
         ]);
     }
 

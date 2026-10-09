@@ -11,13 +11,7 @@
 
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
             <div>
-                <div class="flex items-center gap-2 mb-2">
-                    <span class="kicker inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold uppercase text-primary border border-line">
-                        <span class="w-1.5 h-1.5 rounded-lg "></span> {{ __('football.portal.kicker') }}
-                    </span>
-                    <span class="text-xs text-body">{{ __('football.portal.realtime_db') }}</span>
-                </div>
-                <h1 class="text-2xl sm:text-3xl font-semibold tracking-tight text-white flex items-center gap-3">
+                <h1 class="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground flex items-center gap-3">
                     @if($selectedLeague && !empty($selectedLeague['image_path']))
                         <img src="{{ $selectedLeague['image_path'] }}" alt="{{ $selectedLeague['name'] }}" class="w-9 h-9 object-contain">
                     @endif
@@ -29,13 +23,13 @@
             </div>
 
             {{-- Select Dropdown Inputs (League & Season) --}}
-            <div class="flex flex-wrap items-center gap-3 bg-ink p-3 rounded-xl border border-line self-start md:self-auto">
+            <div class="flex w-full min-w-0 flex-wrap items-center gap-3 bg-ink p-3 rounded-xl border border-line md:w-auto">
                 {{-- League Select --}}
-                <div class="flex items-center gap-2">
+                <div class="flex min-w-0 flex-wrap items-center gap-2">
                     <label for="leagueSelect" class="text-xs font-bold uppercase tracking-wider text-body">{{ __('football.portal.league_label') }}</label>
                     <select id="leagueSelect"
                             onchange="location.href='{{ route('football.index') }}?league_id=' + this.value"
-                            class="bg-surface border border-line text-white font-bold text-xs sm:text-sm rounded-xl px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-line focus:border-line transition-all cursor-pointer">
+                            class="bg-surface border border-line text-foreground font-bold text-xs sm:text-sm rounded-xl px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-line focus:border-line transition-all cursor-pointer">
                         @foreach($leagues as $l)
                             <option value="{{ $l['id'] }}" {{ $selectedLeagueId == $l['id'] ? 'selected' : '' }}>
                                 {{ $l['name'] }}
@@ -46,11 +40,11 @@
 
                 {{-- Season Select --}}
                 @if(count($seasons) > 0)
-                    <div class="flex items-center gap-2">
+                    <div class="flex min-w-0 flex-wrap items-center gap-2">
                         <label for="seasonSelect" class="text-xs font-bold uppercase tracking-wider text-body">{{ __('football.portal.season_label') }}</label>
                         <select id="seasonSelect"
                                 onchange="location.href='{{ route('football.index', ['league_id' => $selectedLeagueId]) }}&season_id=' + this.value + '&tab={{ $activeTab }}'"
-                                class="bg-surface border border-line text-white font-bold text-xs sm:text-sm rounded-xl px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-line focus:border-line transition-all cursor-pointer">
+                                class="bg-surface border border-line text-foreground font-bold text-xs sm:text-sm rounded-xl px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-line focus:border-line transition-all cursor-pointer">
                             @foreach($seasons as $s)
                                 <option value="{{ $s['id'] }}" {{ $selectedSeasonId == $s['id'] ? 'selected' : '' }}>
                                     {{ $s['name'] }} {{ !empty($s['is_current']) ? __('football.portal.current_season') : '' }}
@@ -66,43 +60,43 @@
     {{-- SEASON STATS TICKER SUMMARY --}}
     @if($overview)
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div class="bg-surface border border-line rounded-xl p-4 flex items-center gap-4">
+            <div class="bg-surface border border-line rounded-xl p-4 flex min-w-0 flex-wrap items-center gap-2">
                 <div class="w-12 h-12 rounded-xl text-steel flex items-center justify-center text-xl font-bold border border-line">
                     <x-icon name="shield" class="h-4 w-4" />
                 </div>
                 <div>
                     <span class="text-xs text-body font-bold uppercase tracking-wider">{{ __('football.portal.stats.teams') }}</span>
-                    <h3 class="text-xl font-semibold text-white font-mono">{{ $overview['total_teams'] ?? 0 }}</h3>
+                    <h3 class="text-xl font-semibold text-foreground font-mono">{{ $overview['total_teams'] ?? 0 }}</h3>
                 </div>
             </div>
 
-            <div class="bg-surface border border-line rounded-xl p-4 flex items-center gap-4">
-                <div class="w-12 h-12 rounded-xl text-accent flex items-center justify-center text-xl font-bold border border-line">
+            <div class="bg-surface border border-line rounded-xl p-4 flex min-w-0 flex-wrap items-center gap-2">
+                <div class="w-12 h-12 rounded-xl text-link flex items-center justify-center text-xl font-bold border border-line">
                     <x-icon name="ball" class="h-4 w-4" />
                 </div>
                 <div>
                     <span class="text-xs text-body font-bold uppercase tracking-wider">{{ __('football.portal.stats.fixtures') }}</span>
-                    <h3 class="text-xl font-semibold text-white font-mono">{{ $overview['total_fixtures'] ?? 0 }}</h3>
+                    <h3 class="text-xl font-semibold text-foreground font-mono">{{ $overview['total_fixtures'] ?? 0 }}</h3>
                 </div>
             </div>
 
-            <div class="bg-surface border border-line rounded-xl p-4 flex items-center gap-4">
+            <div class="bg-surface border border-line rounded-xl p-4 flex min-w-0 flex-wrap items-center gap-2">
                 <div class="w-12 h-12 rounded-xl text-steel flex items-center justify-center text-xl font-bold border border-purple-500/20">
                     <x-icon name="swap" class="h-4 w-4" />
                 </div>
                 <div>
                     <span class="text-xs text-body font-bold uppercase tracking-wider">{{ __('football.portal.stats.rounds') }}</span>
-                    <h3 class="text-xl font-semibold text-white font-mono">{{ $overview['total_rounds'] ?? 0 }}</h3>
+                    <h3 class="text-xl font-semibold text-foreground font-mono">{{ $overview['total_rounds'] ?? 0 }}</h3>
                 </div>
             </div>
 
-            <div class="bg-surface border border-line rounded-xl p-4 flex items-center gap-4">
+            <div class="bg-surface border border-line rounded-xl p-4 flex min-w-0 flex-wrap items-center gap-2">
                 <div class="w-12 h-12 rounded-xl text-gold flex items-center justify-center text-xl font-bold border border-line">
                     <x-icon name="crown" class="h-4 w-4" />
                 </div>
                 <div>
                     <span class="text-xs text-body font-bold uppercase tracking-wider">{{ __('football.portal.stats.season') }}</span>
-                    <h3 class="text-base font-semibold text-white truncate max-w-[130px]">{{ $overview['season']['name'] ?? '-' }}</h3>
+                    <h3 class="text-base font-semibold text-foreground truncate max-w-[130px]">{{ $overview['season']['name'] ?? '-' }}</h3>
                 </div>
             </div>
         </div>
@@ -131,8 +125,8 @@
             <a href="{{ route('football.index', ['league_id' => $selectedLeagueId, 'season_id' => $selectedSeasonId, 'tab' => $tabKey]) }}"
                class="px-5 py-3 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all whitespace-nowrap
  {{ $activeTab === $tabKey 
-                          ? 'bg-surface text-accent border border-line font-semibold' 
-                          : 'text-body hover:text-white hover:bg-surface' }}">
+                          ? 'bg-surface text-link border border-line font-semibold'
+                          : 'text-body hover:text-foreground hover:bg-surface' }}">
                 <span class="shrink-0">{!! $tabInfo['icon'] !!}</span>
                 <span>{{ $tabInfo['label'] }}</span>
             </a>
@@ -166,7 +160,7 @@
                     <label for="roundSelect" class="text-xs font-bold text-body uppercase tracking-wider whitespace-nowrap">{{ __('football.portal.round_label') }}</label>
                     <select id="roundSelect"
                             onchange="location.href='{{ route('football.index', $fxRoundBase) }}' + (this.value ? '&round_id=' + this.value : '')"
-                            class="bg-ink border border-line text-white font-bold text-xs sm:text-sm rounded-xl px-3.5 py-2 w-full focus:outline-none focus:ring-2 focus:ring-line focus:border-line transition-all cursor-pointer">
+                            class="bg-ink border border-line text-foreground font-bold text-xs sm:text-sm rounded-xl px-3.5 py-2 w-full focus:outline-none focus:ring-2 focus:ring-line focus:border-line transition-all cursor-pointer">
                         <option value="">{{ __('football.portal.all_rounds') }}</option>
                         @foreach($rounds as $r)
                             <option value="{{ $r['id'] }}" {{ $selectedRoundId == $r['id'] ? 'selected' : '' }}>
@@ -182,7 +176,7 @@
                     <label for="clubSelect" class="whitespace-nowrap text-xs font-semibold uppercase tracking-wider text-body">{{ __('football.portal.club_label') }}</label>
                     <select id="clubSelect"
                             onchange="location.href='{{ route('football.index', $fxClubBase) }}' + (this.value ? '&team_id=' + this.value : '')"
-                            class="w-full cursor-pointer rounded-lg border border-line bg-ink px-3.5 py-2 text-sm font-semibold text-white transition-all focus:outline-none focus:ring-2 focus:ring-primary">
+                            class="w-full cursor-pointer rounded-lg border border-line bg-ink px-3.5 py-2 text-sm font-semibold text-foreground transition-all focus:outline-none focus:ring-2 focus:ring-primary">
                         <option value="">{{ __('football.portal.all_clubs') }}</option>
                         @foreach($fixtureTeams as $t)
                             <option value="{{ $t['id'] }}" {{ $selectedTeamId == $t['id'] ? 'selected' : '' }}>{{ $t['name'] }}</option>
@@ -195,7 +189,7 @@
                     <label for="sortSelect" class="whitespace-nowrap text-xs font-semibold uppercase tracking-wider text-body">{{ __('football.portal.sort_label') }}</label>
                     <select id="sortSelect"
                             onchange="location.href='{{ route('football.index', $fxSortBase) }}' + '&sort=' + this.value"
-                            class="w-full cursor-pointer rounded-lg border border-line bg-ink px-3.5 py-2 text-sm font-semibold text-white transition-all focus:outline-none focus:ring-2 focus:ring-primary">
+                            class="w-full cursor-pointer rounded-lg border border-line bg-ink px-3.5 py-2 text-sm font-semibold text-foreground transition-all focus:outline-none focus:ring-2 focus:ring-primary">
                         <option value="asc" {{ $selectedSort === 'desc' ? '' : 'selected' }}>{{ __('football.portal.sort_asc') }}</option>
                         <option value="desc" {{ $selectedSort === 'desc' ? 'selected' : '' }}>{{ __('football.portal.sort_desc') }}</option>
                     </select>
@@ -209,7 +203,7 @@
                     <span class="text-xs font-bold text-muted uppercase tracking-wider px-2 whitespace-nowrap">{{ __('football.portal.status_label') }}</span>
 
                     <a href="{{ route('football.index', collect($fxStatusBase)->except('sort')->all()) }}"
-                       class="px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all {{ $selectedStatus === '' ? 'bg-primary text-white font-bold' : 'bg-ink text-white hover:bg-surface hover:text-white border border-line' }}">
+                       class="px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all {{ $selectedStatus === '' ? 'bg-primary text-on-primary font-bold' : 'bg-ink text-foreground hover:bg-surface hover:text-foreground border border-line' }}">
                         {{ __('football.portal.status_all') }}
                     </a>
 
@@ -234,7 +228,7 @@
                         {{-- Dropping `sort` lets the status pick its own reading
                              order: newest first for finished, soonest first otherwise. --}}
                         <a href="{{ route('football.index', collect($fxStatusBase)->except('sort')->all() + ['status' => $key]) }}"
-                           class="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all {{ $isActive ? 'bg-primary text-white font-bold scale-105' : 'bg-ink text-white hover:bg-surface hover:text-white border border-line' }}">
+                           class="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all {{ $isActive ? 'bg-primary text-on-primary font-bold scale-105' : 'bg-ink text-foreground hover:bg-surface hover:text-foreground border border-line' }}">
                             <span class="shrink-0">{!! $statusIcon !!}</span>
                             <span>{{ $statusLabel }}</span>
                             <span class="font-mono {{ $isActive ? 'text-muted' : 'text-muted' }}">{{ $st['count'] ?? 0 }}</span>
@@ -245,109 +239,9 @@
 
             {{-- Fixtures Cards Grid --}}
             @if(count($fixtures) > 0)
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="overflow-hidden rounded-xl border border-divider bg-surface">
                     @foreach($fixtures as $f)
-                        @php
-                            $stateCode = $f['state']['short_name'] ?? $f['state']['state'] ?? '';
-                            // Live short_names as the `states` table stores them — '1H'/'2H'/'LIVE' are not real codes.
-                            $isLive = in_array($stateCode, ['1st', '2nd', 'HT', 'BRK', 'et', 'ETB', '2et', 'PEN', 'PENB']);
-                            $isFinished = in_array($stateCode, ['FT', 'AET', 'FTP']);
-                            $hasScores = ($f['current_home_score'] !== null && $f['current_away_score'] !== null);
-
-                            $homeName = $f['home_team']['name'] ?? explode(' vs ', $f['name'])[0] ?? __('football.card.home');
-                            $awayName = $f['away_team']['name'] ?? explode(' vs ', $f['name'])[1] ?? __('football.card.away');
-                            $homeLogo = $f['home_team']['image_path'] ?? null;
-                            $awayLogo = $f['away_team']['image_path'] ?? null;
-
-                            // Winner, once the match is over and the score is not
-                            // level. A drawn league match has no winner, so neither
-                            // side gets marked.
-                            $homeWon = $isFinished && $hasScores && $f['current_home_score'] > $f['current_away_score'];
-                            $awayWon = $isFinished && $hasScores && $f['current_away_score'] > $f['current_home_score'];
-                        @endphp
-
-                        <a href="{{ route('football.fixture', $f['id']) }}" 
-                           class="group bg-surface hover:bg-surface border border-line hover:border-line rounded-xl p-5 transition-all flex flex-col justify-between gap-4 relative overflow-hidden">
-                            
-                            {{-- Top Meta (Date & State Badge) --}}
-                            <div class="flex items-center justify-between text-xs pb-3 border-b border-line">
-                                <div class="flex items-center gap-2">
-                                    @if($stateCode)
-                                        <span class="font-mono font-bold text-xs px-2 py-0.5 rounded-lg uppercase tracking-wider
- {{ $isLive ? 'bg-accent text-white' : '' }}
-                                            {{ $isFinished ? 'bg-surface text-white border border-line' : '' }}
-                                            {{ in_array($stateCode, ['NS', 'TBA']) ? 'text-steel border border-line' : '' }}
-                                            {{ !in_array($stateCode, ['1st', '2nd', 'HT', 'BRK', 'et', 'ETB', '2et', 'PEN', 'PENB', 'FT', 'AET', 'FTP', 'NS', 'TBA']) ? 'bg-surface text-white' : '' }}
-                                        ">
-                                            {{ $stateCode }}
-                                        </span>
-                                    @endif
-                                    <span class="text-body font-medium">
-                                        {{ $f['starting_at'] ? \Illuminate\Support\Carbon::parse($f['starting_at'], 'UTC')->setTimezone('Asia/Jakarta')->locale(app()->getLocale())->translatedFormat('d M Y • H:i') . ' WIB' : __('football.portal.tbd') }}
-                                    </span>
-                                </div>
-
-                                @if(!empty($f['venue']))
-                                    <span class="flex min-w-0 max-w-[170px] items-center gap-1.5 text-xs text-muted">
-                                        <x-icon name="location" class="h-3.5 w-3.5" />
-                                        <span class="truncate">{{ $f['venue']['name'] }}</span>
-                                    </span>
-                                @endif
-                            </div>
-
-                            {{-- Teams & Center Current Score Box --}}
-                            <div class="flex items-center justify-between gap-4 py-2">
-                                {{-- Home Team --}}
-                                <div class="flex-1 flex items-center gap-3">
-                                    @if($homeLogo)
-                                        <img src="{{ $homeLogo }}" alt="{{ $homeName }}" class="w-9 h-9 object-contain">
-                                    @else
-                                        <div class="w-9 h-9 rounded-xl bg-surface flex items-center justify-center text-sm"><x-icon name="shield" class="h-4 w-4" /></div>
-                                    @endif
-                                    <span class="line-clamp-1 text-sm transition-colors group-hover:text-accent {{ $awayWon ? 'font-medium text-body line-through decoration-line' : 'font-bold text-white' }}">
-                                        {{ $homeName }}
-                                    </span>
-                                    @if($homeWon)
-                                        <x-icon name="check" class="h-3.5 w-3.5 shrink-0 text-accent" />
-                                    @endif
-                                </div>
-
-                                {{-- Score / Kickoff Box --}}
-                                <div class="flex-shrink-0 px-4 py-2 bg-ink border border-line rounded-xl flex items-center justify-center font-mono min-w-[75px]">
-                                    @if($hasScores)
-                                        <span class="text-lg font-bold text-white {{ $isLive ? 'text-accent' : '' }}">
-                                            {{ $f['current_home_score'] }} - {{ $f['current_away_score'] }}
-                                        </span>
-                                    @else
-                                        <span class="text-xs font-bold text-body">
-                                            {{ $f['starting_at'] ? \Illuminate\Support\Carbon::parse($f['starting_at'], 'UTC')->setTimezone('Asia/Jakarta')->format('H:i') : 'VS' }}
-                                        </span>
-                                    @endif
-                                </div>
-
-                                {{-- Away Team --}}
-                                <div class="flex-1 flex items-center justify-end gap-3 text-right">
-                                    @if($awayWon)
-                                        <x-icon name="check" class="h-3.5 w-3.5 shrink-0 text-accent" />
-                                    @endif
-                                    <span class="line-clamp-1 text-sm transition-colors group-hover:text-accent {{ $homeWon ? 'font-medium text-body line-through decoration-line' : 'font-bold text-white' }}">
-                                        {{ $awayName }}
-                                    </span>
-                                    @if($awayLogo)
-                                        <img src="{{ $awayLogo }}" alt="{{ $awayName }}" class="w-9 h-9 object-contain">
-                                    @else
-                                        <div class="w-9 h-9 rounded-xl bg-surface flex items-center justify-center text-sm"><x-icon name="shield" class="h-4 w-4" /></div>
-                                    @endif
-                                </div>
-                            </div>
-
-                            {{-- Bottom Action Link --}}
-                            <div class="pt-2 text-right">
-                                <span class="text-xs font-bold text-accent group-hover:underline inline-flex items-center gap-1">
-                                    {{ __('football.portal.match_center') }}
-                                </span>
-                            </div>
-                        </a>
+                        @include('football.partials.live-card', ['f' => $f])
                     @endforeach
                 </div>
             @else
@@ -356,10 +250,10 @@
                     @if($selectedStatus || $selectedRoundId || $selectedTeamId)
                         {{-- Empty because of the active, not because the
                              season has no data — say so, and offer a way out. --}}
-                        <p class="text-base font-bold text-white">{{ __('football.portal.fixtures_empty_filtered') }}</p>
-                        <a href="{{ route('football.index', $fxBase) }}" class="mt-3 inline-block text-xs font-bold text-accent hover:underline">{{ __('football.portal.clear_') }}</a>
+                        <p class="text-base font-bold text-foreground">{{ __('football.portal.fixtures_empty_filtered') }}</p>
+                        <a href="{{ route('football.index', $fxBase) }}" class="mt-3 inline-block text-xs font-bold text-link hover:underline">{{ __('football.portal.clear_') }}</a>
                     @else
-                        <p class="text-base font-bold text-white">{{ __('football.portal.fixtures_empty') }}</p>
+                        <p class="text-base font-bold text-foreground">{{ __('football.portal.fixtures_empty') }}</p>
                         <p class="text-xs text-muted mt-1">{{ __('football.portal.fixtures_empty_hint') }}</p>
                     @endif
                 </div>
@@ -372,7 +266,7 @@
         <div class="bg-surface border border-line rounded-xl p-6">
             <div class="flex items-center justify-between mb-6 pb-4 border-b border-line">
                 <div>
-                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <h3 class="text-lg font-bold text-foreground flex items-center gap-2">
                         <x-icon name="chart" class="h-4 w-4" /> {{ __('football.portal.standings_heading', ['season' => $overview['season']['name'] ?? '']) }}
                     </h3>
                     <p class="text-xs text-body mt-0.5">{{ __('football.portal.standings_sub') }}</p>
@@ -380,7 +274,7 @@
                 <div class="hidden sm:flex items-center gap-4 text-xs font-bold">
                     <span class="flex items-center gap-1 text-steel"><span class="w-2 h-2 rounded-full text-ink"></span> {{ __('football.portal.legend.ucl') }}</span>
                     <span class="flex items-center gap-1 text-gold"><span class="w-2 h-2 rounded-full text-ink"></span> {{ __('football.portal.legend.uel') }}</span>
-                    <span class="flex items-center gap-1 text-accent"><span class="w-2 h-2 rounded-full "></span> {{ __('football.portal.legend.relegation') }}</span>
+                    <span class="flex items-center gap-1 text-link"><span class="w-2 h-2 rounded-full "></span> {{ __('football.portal.legend.relegation') }}</span>
                 </div>
             </div>
 
@@ -392,17 +286,17 @@
                                 <th class="py-3.5 px-3 text-center w-12">{{ __('football.portal.table.pos') }}</th>
                                 <th class="py-3.5 px-4 min-w-[200px]">{{ __('football.portal.table.club') }}</th>
                                 <th class="py-3.5 px-3 text-center" title="{{ __('football.portal.table.played_title') }}">{{ __('football.portal.table.played') }}</th>
-                                <th class="py-3.5 px-3 text-center text-accent" title="{{ __('football.portal.table.won_title') }}">{{ __('football.portal.table.won') }}</th>
+                                <th class="py-3.5 px-3 text-center text-link" title="{{ __('football.portal.table.won_title') }}">{{ __('football.portal.table.won') }}</th>
                                 <th class="py-3.5 px-3 text-center text-gold" title="{{ __('football.portal.table.drawn_title') }}">{{ __('football.portal.table.drawn') }}</th>
-                                <th class="py-3.5 px-3 text-center text-accent" title="{{ __('football.portal.table.lost_title') }}">{{ __('football.portal.table.lost') }}</th>
+                                <th class="py-3.5 px-3 text-center text-link" title="{{ __('football.portal.table.lost_title') }}">{{ __('football.portal.table.lost') }}</th>
                                 <th class="py-3.5 px-3 text-center" title="{{ __('football.portal.table.goals_title') }}">{{ __('football.portal.table.goals') }}</th>
                                 <th class="py-3.5 px-3 text-center" title="{{ __('football.portal.table.gd_title') }}">{{ __('football.portal.table.gd') }}</th>
-                                <th class="py-3.5 px-4 text-center font-bold text-accent" title="{{ __('football.portal.table.points_title') }}">{{ __('football.portal.table.points') }}</th>
+                                <th class="py-3.5 px-4 text-center font-bold text-link" title="{{ __('football.portal.table.points_title') }}">{{ __('football.portal.table.points') }}</th>
                                 <th class="py-3.5 px-3 text-center" title="{{ __('football.portal.table.form_title') }}">{{ __('football.portal.table.form') }}</th>
                                 <th class="py-3.5 px-3 text-center">{{ __('football.portal.table.detail') }}</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-line font-medium text-white">
+                        <tbody class="divide-y divide-line font-medium text-foreground">
                             @foreach($standings as $st)
                                 @php
                                     $pos = $st['position'] ?? $loop->iteration;
@@ -425,7 +319,7 @@
                                         <span class="inline-flex items-center justify-center w-7 h-7 rounded-lg text-xs font-bold
  {{ $isTop4 ? 'text-steel border border-line' : '' }}
                                             {{ $isEuropa ? 'text-gold border border-line' : '' }}
-                                            {{ $isBottom ? 'text-accent border border-line' : '' }}
+                                            {{ $isBottom ? 'text-link border border-line' : '' }}
                                             {{ !$isTop4 && !$isEuropa && !$isBottom ? 'text-body' : '' }}
                                         ">
                                             {{ $pos }}
@@ -433,9 +327,9 @@
                                     </td>
 
                                     {{-- Club Logo & Name --}}
-                                    <td class="py-3.5 px-4 font-bold text-white">
+                                    <td class="py-3.5 px-4 font-bold text-foreground">
                                         @if(!empty($team['id']))
-                                            <a href="{{ route('football.team', $team['id']) }}?season_id={{ $selectedSeasonId }}" class="flex items-center gap-3 hover:text-accent transition-colors">
+                                            <a href="{{ route('football.team', $team['id']) }}?season_id={{ $selectedSeasonId }}" class="flex items-center gap-3 hover:text-link transition-colors">
                                                 @if(!empty($team['image_path']))
                                                     <img src="{{ $team['image_path'] }}" alt="{{ $team['name'] }}" class="w-6 h-6 object-contain">
                                                 @else
@@ -449,12 +343,12 @@
                                     </td>
 
                                     {{-- Played --}}
-                                    <td class="py-3.5 px-3 text-center font-mono font-bold text-white">
+                                    <td class="py-3.5 px-3 text-center font-mono font-bold text-foreground">
                                         {{ $played }}
                                     </td>
 
                                     {{-- Won --}}
-                                    <td class="py-3.5 px-3 text-center font-mono font-bold text-accent">
+                                    <td class="py-3.5 px-3 text-center font-mono font-bold text-link">
                                         {{ $won }}
                                     </td>
 
@@ -464,22 +358,22 @@
                                     </td>
 
                                     {{-- Lost --}}
-                                    <td class="py-3.5 px-3 text-center font-mono font-bold text-accent">
+                                    <td class="py-3.5 px-3 text-center font-mono font-bold text-link">
                                         {{ $lost }}
                                     </td>
 
                                     {{-- Goals For - Goals Against --}}
-                                    <td class="py-3.5 px-3 text-center font-mono text-white">
+                                    <td class="py-3.5 px-3 text-center font-mono text-foreground">
                                         {{ $gf }}:{{ $ga }}
                                     </td>
 
                                     {{-- Goal Difference --}}
-                                    <td class="py-3.5 px-3 text-center font-mono font-bold {{ $gd > 0 ? 'text-accent' : ($gd < 0 ? 'text-accent' : 'text-body') }}">
+                                    <td class="py-3.5 px-3 text-center font-mono font-bold {{ $gd > 0 ? 'text-link' : ($gd < 0 ? 'text-link' : 'text-body') }}">
                                         {{ $gd > 0 ? '+' . $gd : $gd }}
                                     </td>
 
                                     {{-- Points --}}
-                                    <td class="py-3.5 px-4 text-center font-mono font-bold text-base text-accent bg-ink">
+                                    <td class="py-3.5 px-4 text-center font-mono font-bold text-base text-link bg-ink">
                                         {{ $st['points'] ?? 0 }}
                                     </td>
 
@@ -492,9 +386,9 @@
                                                     @php
                                                         $r = strtoupper($r);
                                                         $cls = match($r) {
-                                                            'W' => 'bg-primary text-white',
-                                                            'D' => 'bg-line text-white',
-                                                            'L' => 'bg-accent text-white',
+                                                            'W' => 'bg-primary text-on-primary',
+                                                            'D' => 'bg-line text-foreground',
+                                                            'L' => 'bg-danger-fill text-on-primary',
                                                             default => 'bg-surface text-body',
                                                         };
                                                         $label = match($r) { 'W' => __('football.portal.form.won'), 'D' => __('football.portal.form.drawn'), 'L' => __('football.portal.form.lost'), default => '' };
@@ -510,7 +404,7 @@
                                     {{-- Detail Squad Button --}}
                                     <td class="py-3.5 px-3 text-center">
                                         @if(!empty($team['id']))
-                                            <a href="{{ route('football.team', $team['id']) }}?season_id={{ $selectedSeasonId }}" class="text-xs font-bold text-body hover:text-white px-2.5 py-1 bg-surface rounded-lg border border-line hover:border-line transition-all">
+                                            <a href="{{ route('football.team', $team['id']) }}?season_id={{ $selectedSeasonId }}" class="text-xs font-bold text-body hover:text-foreground px-2.5 py-1 bg-surface rounded-lg border border-line hover:border-line transition-all">
                                                 {{ __('football.portal.squad_btn') }}
                                             </a>
                                         @endif
@@ -551,7 +445,7 @@
                         @endphp
                         <a href="{{ route('football.index', ['league_id' => $selectedLeagueId, 'season_id' => $selectedSeasonId, 'tab' => 'topscorers', 'type_id' => $tp['id']]) }}"
                            class="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all
- {{ $isTypeSelected ? 'bg-primary text-white font-bold scale-105' : 'bg-ink text-white hover:bg-surface hover:text-white border border-line' }}">
+ {{ $isTypeSelected ? 'bg-primary text-on-primary font-bold scale-105' : 'bg-ink text-foreground hover:bg-surface hover:text-foreground border border-line' }}">
                             <span class="shrink-0">{!! $typeIcon !!}</span>
                             <span>{{ $tp['name'] }}</span>
                         </a>
@@ -570,7 +464,7 @@
                     @php $second = $topscorers[1] ?? null; @endphp
                     @if($second)
                         <div class="bg-surface border border-line rounded-xl p-6 text-center flex flex-col items-center justify-between relative order-2 md:order-1">
-                            <div class="w-8 h-8 rounded-lg bg-line text-white font-bold text-sm flex items-center justify-center absolute -top-3">2</div>
+                            <div class="w-8 h-8 rounded-lg bg-line text-foreground font-bold text-sm flex items-center justify-center absolute -top-3">2</div>
                             <div class="my-4">
                                 <a href="{{ route('football.player', $second['player']['id'] ?? $second['player_id']) }}" class="group block">
                                     @if(!empty($second['player']['image_path']))
@@ -578,11 +472,11 @@
                                     @else
                                         <div class="w-20 h-20 rounded-lg bg-surface flex items-center justify-center text-3xl mx-auto"><x-icon name="user" class="h-4 w-4" /></div>
                                     @endif
-                                    <h4 class="font-semibold text-base text-white mt-3 group-hover:text-accent transition-colors">{{ $second['player']['display_name'] ?? $second['player']['name'] ?? __('football.portal.player') }}</h4>
+                                    <h4 class="font-semibold text-base text-foreground mt-3 group-hover:text-link transition-colors">{{ $second['player']['display_name'] ?? $second['player']['name'] ?? __('football.portal.player') }}</h4>
                                 </a>
                                 <p class="text-xs text-body font-semibold mt-0.5">{{ $second['team']['name'] ?? 'Klub' }}</p>
                             </div>
-                            <div class="bg-ink border border-line px-6 py-2 rounded-xl font-mono font-bold text-xl text-white">
+                            <div class="bg-ink border border-line px-6 py-2 rounded-xl font-mono font-bold text-xl text-foreground">
                                 {{ $second['total'] ?? 0 }} <span class="text-xs font-sans text-body font-bold">{{ $second['type']['name'] ?? $activeTypeName }}</span>
                             </div>
                         </div>
@@ -600,7 +494,7 @@
                                     @else
                                         <div class="w-24 h-24 rounded-lg flex items-center justify-center text-4xl mx-auto"><x-icon name="user" class="h-4 w-4" /></div>
                                     @endif
-                                    <h4 class="font-bold text-lg text-white mt-3 group-hover:text-gold transition-colors">{{ $first['player']['display_name'] ?? $first['player']['name'] ?? __('football.portal.player') }}</h4>
+                                    <h4 class="font-bold text-lg text-foreground mt-3 group-hover:text-gold transition-colors">{{ $first['player']['display_name'] ?? $first['player']['name'] ?? __('football.portal.player') }}</h4>
                                 </a>
                                 <p class="text-xs text-gold font-bold mt-0.5">{{ $first['team']['name'] ?? 'Klub' }}</p>
                             </div>
@@ -614,7 +508,7 @@
                     @php $third = $topscorers[2] ?? null; @endphp
                     @if($third)
                         <div class="bg-surface border border-line rounded-xl p-6 text-center flex flex-col items-center justify-between relative order-3">
-                            <div class="w-8 h-8 rounded-lg bg-gold text-white font-bold text-sm flex items-center justify-center absolute -top-3">3</div>
+                            <div class="w-8 h-8 rounded-lg bg-gold text-foreground font-bold text-sm flex items-center justify-center absolute -top-3">3</div>
                             <div class="my-4">
                                 <a href="{{ route('football.player', $third['player']['id'] ?? $third['player_id']) }}" class="group block">
                                     @if(!empty($third['player']['image_path']))
@@ -622,11 +516,11 @@
                                     @else
                                         <div class="w-20 h-20 rounded-lg bg-surface flex items-center justify-center text-3xl mx-auto"><x-icon name="user" class="h-4 w-4" /></div>
                                     @endif
-                                    <h4 class="font-semibold text-base text-white mt-3 group-hover:text-accent transition-colors">{{ $third['player']['display_name'] ?? $third['player']['name'] ?? __('football.portal.player') }}</h4>
+                                    <h4 class="font-semibold text-base text-foreground mt-3 group-hover:text-link transition-colors">{{ $third['player']['display_name'] ?? $third['player']['name'] ?? __('football.portal.player') }}</h4>
                                 </a>
                                 <p class="text-xs text-body font-semibold mt-0.5">{{ $third['team']['name'] ?? 'Klub' }}</p>
                             </div>
-                            <div class="bg-ink border border-line px-6 py-2 rounded-xl font-mono font-bold text-xl text-white">
+                            <div class="bg-ink border border-line px-6 py-2 rounded-xl font-mono font-bold text-xl text-foreground">
                                 {{ $third['total'] ?? 0 }} <span class="text-xs font-sans text-body font-bold">{{ $third['type']['name'] ?? $activeTypeName }}</span>
                             </div>
                         </div>
@@ -637,7 +531,7 @@
             {{-- Full Topscorers Table --}}
             <div class="bg-surface border border-line rounded-xl p-6">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-base font-bold text-white"><x-icon name="trophy" class="h-4 w-4" /> {{ __('football.portal.ranking', ['type' => $activeTypeName]) }}</h3>
+                    <h3 class="text-base font-bold text-foreground"><x-icon name="trophy" class="h-4 w-4" /> {{ __('football.portal.ranking', ['type' => $activeTypeName]) }}</h3>
                     <span class="text-xs text-body font-bold">{{ trans_choice('football.portal.players_count', count($topscorers), ['count' => count($topscorers)]) }}</span>
                 </div>
                 @if(count($topscorers) > 0)
@@ -652,7 +546,7 @@
                                     <th class="py-3 px-3 text-center">{{ __('football.portal.th.total') }}</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-line font-medium text-white">
+                            <tbody class="divide-y divide-line font-medium text-foreground">
                                 @foreach($topscorers as $ts)
                                     @php
                                         $pl = $ts['player'] ?? [];
@@ -664,8 +558,8 @@
                                         <td class="py-3 px-3 text-center font-mono font-bold text-body">
                                             {{ $ts['position'] ?? $loop->iteration }}
                                         </td>
-                                        <td class="py-3 px-4 font-bold text-white">
-                                            <a href="{{ route('football.player', $plId) }}" class="flex items-center gap-3 hover:text-accent transition-colors">
+                                        <td class="py-3 px-4 font-bold text-foreground">
+                                            <a href="{{ route('football.player', $plId) }}" class="flex items-center gap-3 hover:text-link transition-colors">
                                                 @if(!empty($pl['image_path']))
                                                     <img src="{{ $pl['image_path'] }}" alt="{{ $pl['name'] }}" class="w-8 h-8 rounded-lg object-cover border border-line">
                                                 @else
@@ -674,9 +568,9 @@
                                                 <span>{{ $pl['display_name'] ?? $pl['name'] ?? __('football.portal.player_fallback', ['id' => $ts['player_id']]) }}</span>
                                             </a>
                                         </td>
-                                        <td class="py-3 px-4 text-white">
+                                        <td class="py-3 px-4 text-foreground">
                                             @if(!empty($tm['name']))
-                                                <span class="flex items-center gap-2">
+                                                <span class="flex min-w-0 flex-wrap items-center gap-2">
                                                     @if(!empty($tm['image_path']))
                                                         <img src="{{ $tm['image_path'] }}" alt="{{ $tm['name'] }}" class="w-4 h-4 object-contain">
                                                     @endif
@@ -687,11 +581,11 @@
                                             @endif
                                         </td>
                                         <td class="py-3 px-3 text-center text-body text-xs">
-                                            <span class="px-2 py-0.5 rounded-lg bg-surface text-white font-semibold border border-line">
+                                            <span class="px-2 py-0.5 rounded-lg bg-surface text-foreground font-semibold border border-line">
                                                 {{ $tp['name'] ?? __('football.portal.top_stat') }}
                                             </span>
                                         </td>
-                                        <td class="py-3 px-3 text-center font-mono font-bold text-base text-accent">
+                                        <td class="py-3 px-3 text-center font-mono font-bold text-base text-link">
                                             {{ $ts['total'] }}
                                         </td>
                                     </tr>
@@ -709,7 +603,7 @@
     {{-- TAB 4: KLUB & SQUAD --}}
     @if($activeTab === 'teams')
         <div class="space-y-6">
-            <h3 class="text-base font-bold text-white"><x-icon name="shield" class="h-4 w-4" /> {{ __('football.portal.teams_heading', ['season' => $overview['season']['name'] ?? '']) }}</h3>
+            <h3 class="text-base font-bold text-foreground"><x-icon name="shield" class="h-4 w-4" /> {{ __('football.portal.teams_heading', ['season' => $overview['season']['name'] ?? '']) }}</h3>
             @if(count($teams) > 0)
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
                     @foreach($teams as $t)
@@ -723,12 +617,12 @@
                                 @endif
                             </div>
                             <div>
-                                <h4 class="font-semibold text-base text-white group-hover:text-accent transition-colors">{{ $t['name'] }}</h4>
+                                <h4 class="font-semibold text-base text-foreground group-hover:text-link transition-colors">{{ $t['name'] }}</h4>
                                 @if(!empty($t['venue']))
                                     <p class="mt-1 flex items-center justify-center gap-1.5 text-xs text-body"><x-icon name="location" class="h-3.5 w-3.5" /> <span class="truncate">{{ $t['venue']['name'] }}</span></p>
                                 @endif
                             </div>
-                            <span class="px-4 py-1.5 rounded-lg bg-surface text-xs font-bold text-white border border-line">
+                            <span class="px-4 py-1.5 rounded-lg bg-surface text-xs font-bold text-foreground border border-line">
                                 {{ trans_choice('football.portal.squad_registered', $t['squad_count'] ?? 0, ['count' => $t['squad_count'] ?? 0]) }}
                             </span>
                         </a>
@@ -743,7 +637,7 @@
     {{-- TAB 5: BURSA TRANSFER --}}
     @if($activeTab === 'transfers')
         <div class="bg-surface border border-line rounded-xl p-6 space-y-6">
-            <h3 class="text-base font-bold text-white flex items-center gap-2">
+            <h3 class="text-base font-bold text-foreground flex items-center gap-2">
                 <x-icon name="transfer" class="h-4 w-4" /> {{ __('football.portal.transfers_heading') }}
             </h3>
             @if(count($transfers) > 0)
@@ -766,7 +660,7 @@
                                     </a>
                                 @endif
                                 <div>
-                                    <a href="{{ route('football.player', $pl['id'] ?? $tr['player_id']) }}" class="font-semibold text-sm text-white hover:text-accent transition-colors">
+                                    <a href="{{ route('football.player', $pl['id'] ?? $tr['player_id']) }}" class="font-semibold text-sm text-foreground hover:text-link transition-colors">
                                         {{ $pl['display_name'] ?? $pl['name'] ?? __('football.portal.player_fallback', ['id' => $tr['player_id']]) }}
                                     </a>
                                     <p class="text-xs text-muted">{{ $tr['date'] ? \Illuminate\Support\Carbon::parse($tr['date'])->locale(app()->getLocale())->translatedFormat('d F Y') : __('football.transfers.official') }}</p>
@@ -778,8 +672,8 @@
                                 <span class="text-body bg-surface px-3 py-1.5 rounded-lg border border-line">
                                     {{ $from['name'] ?? __('football.transfers.from_club') }}
                                 </span>
-                                <span class="text-accent font-mono font-bold">&rarr;</span>
-                                <span class="text-accent px-3 py-1.5 rounded-lg border border-line">
+                                <span class="text-link font-mono font-bold">&rarr;</span>
+                                <span class="text-link px-3 py-1.5 rounded-lg border border-line">
                                     {{ $to['name'] ?? __('football.transfers.to_club') }}
                                 </span>
                             </div>
@@ -796,7 +690,7 @@
     @if($activeTab === 'bracket')
         <div class="space-y-6">
             <div>
-                <h3 class="text-lg font-bold text-white flex items-center gap-2"><x-icon name="trophy" class="h-4 w-4" /> {{ __('football.portal.bracket.heading') }}</h3>
+                <h3 class="text-lg font-bold text-foreground flex items-center gap-2"><x-icon name="trophy" class="h-4 w-4" /> {{ __('football.portal.bracket.heading') }}</h3>
                 <p class="text-xs text-body mt-0.5">{{ __('football.portal.bracket.sub') }}</p>
             </div>
 
@@ -845,11 +739,11 @@
                                                                     @else
                                                                         <span class="h-4 w-4 shrink-0"></span>
                                                                     @endif
-                                                                    <a href="{{ !empty($team['id']) ? route('football.team', $team['id']) : '#' }}"
-                                                                       class="flex-1 truncate text-xs {{ $isWinner ? 'font-bold text-white' : 'font-semibold text-muted' }} hover:text-accent transition-colors">
+                                                                    <x-entity-link :href="!empty($team['id']) ? route('football.team', $team['id']) : null"
+                                                                       class="flex-1 truncate text-xs {{ $isWinner ? 'font-bold text-foreground' : 'font-semibold text-muted' }} hover:text-link transition-colors">
                                                                         {{ $team['name'] ?? __('football.portal.bracket.tbd') }}
-                                                                    </a>
-                                                                    <span class="w-4 shrink-0 text-right font-mono text-xs {{ $isWinner ? 'font-bold text-accent' : 'font-bold text-muted' }}">
+                                                                    </x-entity-link>
+                                                                    <span class="w-4 shrink-0 text-right font-mono text-xs {{ $isWinner ? 'font-bold text-link' : 'font-bold text-muted' }}">
                                                                         {{ !empty($tie['played']) ? ($side['aggregate'] ?? 0) : '–' }}
                                                                     </span>
                                                                 </div>
@@ -909,11 +803,11 @@
                     {{-- Stage header --}}
                     <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-line">
                         <div class="flex items-center gap-3 min-w-0">
-                            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-ink border border-line font-mono text-xs font-bold text-accent">
+                            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-ink border border-line font-mono text-xs font-bold text-link">
                                 {{ $stage['sort_order'] ?? $loop->iteration }}
                             </span>
                             <div class="min-w-0">
-                                <h4 class="truncate text-base font-bold text-white">{{ $stage['name'] }}</h4>
+                                <h4 class="truncate text-base font-bold text-foreground">{{ $stage['name'] }}</h4>
                                 <span class="text-xs font-bold uppercase tracking-wider text-muted">{{ $stage['type_name'] ?: '—' }}</span>
                             </div>
                         </div>
@@ -922,7 +816,7 @@
                              neither finished nor current while its matches are being
                              played, so "not played yet" would simply be wrong. --}}
                         @if(!empty($stage['finished']) || !empty($stage['is_current']))
-                            <span class="rounded-lg px-2 py-0.5 text-xs font-bold uppercase tracking-wider {{ !empty($stage['finished']) ? 'bg-surface text-white border border-line' : 'text-accent border border-line' }}">
+                            <span class="rounded-lg px-2 py-0.5 text-xs font-bold uppercase tracking-wider {{ !empty($stage['finished']) ? 'bg-surface text-foreground border border-line' : 'text-link border border-line' }}">
                                 {{ !empty($stage['finished']) ? __('football.portal.bracket.finished') : __('football.portal.bracket.in_progress') }}
                             </span>
                         @endif
@@ -947,14 +841,14 @@
                                                 @else
                                                     <div class="flex h-6 w-6 items-center justify-center rounded-lg bg-surface text-xs shrink-0"><x-icon name="shield" class="h-4 w-4" /></div>
                                                 @endif
-                                                <a href="{{ !empty($team['id']) ? route('football.team', $team['id']) : '#' }}"
-                                                   class="flex-1 truncate text-sm {{ $isWinner ? 'font-bold text-white' : 'font-bold text-body' }} hover:text-accent transition-colors">
+                                                <x-entity-link :href="!empty($team['id']) ? route('football.team', $team['id']) : null"
+                                                   class="flex-1 truncate text-sm {{ $isWinner ? 'font-bold text-foreground' : 'font-bold text-body' }} hover:text-link transition-colors">
                                                     {{ $team['name'] ?? __('football.portal.bracket.tbd') }}
-                                                </a>
+                                                </x-entity-link>
                                                 @if($isWinner)
-                                                    <span class="text-accent text-xs font-bold"><x-icon name="check" class="h-4 w-4" /></span>
+                                                    <span class="text-link text-xs font-bold"><x-icon name="check" class="h-4 w-4" /></span>
                                                 @endif
-                                                <span class="w-7 text-right font-mono text-sm {{ $isWinner ? 'font-bold text-accent' : 'font-bold text-body' }}">
+                                                <span class="w-7 text-right font-mono text-sm {{ $isWinner ? 'font-bold text-link' : 'font-bold text-body' }}">
                                                     {{ !empty($tie['played']) ? ($side['aggregate'] ?? 0) : '–' }}
                                                 </span>
                                             </div>
@@ -970,7 +864,7 @@
                                                     {{ count($tie['legs']) > 1 ? __('football.portal.bracket.leg', ['number' => $loop->iteration]) : __('football.portal.bracket.single_leg') }}
                                                 </span>
                                                 <span class="truncate text-muted">{{ $leg['name'] }}</span>
-                                                <span class="font-mono font-bold text-white shrink-0">
+                                                <span class="font-mono font-bold text-foreground shrink-0">
                                                     {{ $leg['home_goals'] !== null ? $leg['home_goals'].'-'.$leg['away_goals'] : ($leg['state']['short_name'] ?? 'NS') }}
                                                 </span>
                                             </a>
@@ -999,30 +893,30 @@
                                             <th class="py-3 px-3 text-center w-12">{{ __('football.portal.table.pos') }}</th>
                                             <th class="py-3 px-4 min-w-[180px]">{{ __('football.portal.table.club') }}</th>
                                             <th class="py-3 px-3 text-center" title="{{ __('football.portal.table.played_title') }}">{{ __('football.portal.table.played') }}</th>
-                                            <th class="py-3 px-3 text-center text-accent" title="{{ __('football.portal.table.won_title') }}">{{ __('football.portal.table.won') }}</th>
+                                            <th class="py-3 px-3 text-center text-link" title="{{ __('football.portal.table.won_title') }}">{{ __('football.portal.table.won') }}</th>
                                             <th class="py-3 px-3 text-center text-gold" title="{{ __('football.portal.table.drawn_title') }}">{{ __('football.portal.table.drawn') }}</th>
-                                            <th class="py-3 px-3 text-center text-accent" title="{{ __('football.portal.table.lost_title') }}">{{ __('football.portal.table.lost') }}</th>
+                                            <th class="py-3 px-3 text-center text-link" title="{{ __('football.portal.table.lost_title') }}">{{ __('football.portal.table.lost') }}</th>
                                             <th class="py-3 px-3 text-center" title="{{ __('football.portal.table.gd_title') }}">{{ __('football.portal.table.gd') }}</th>
-                                            <th class="py-3 px-4 text-center font-bold text-accent" title="{{ __('football.portal.table.points_title') }}">{{ __('football.portal.table.points') }}</th>
+                                            <th class="py-3 px-4 text-center font-bold text-link" title="{{ __('football.portal.table.points_title') }}">{{ __('football.portal.table.points') }}</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="divide-y divide-line font-medium text-white">
+                                    <tbody class="divide-y divide-line font-medium text-foreground">
                                         @foreach($stage['standings'] as $st)
                                             @php $team = $st['team'] ?? []; @endphp
                                             <tr class="hover:bg-surface transition-colors">
                                                 <td class="py-2.5 px-3 text-center font-mono font-bold text-body">{{ $st['position'] ?? $loop->iteration }}</td>
                                                 <td class="py-2.5 px-4">
-                                                    <a href="{{ !empty($team['id']) ? route('football.team', $team['id']) : '#' }}" class="flex items-center gap-2.5 font-bold text-white hover:text-accent transition-colors">
+                                                    <x-entity-link :href="!empty($team['id']) ? route('football.team', $team['id']) : null" class="flex items-center gap-2.5 font-bold text-foreground hover:text-link transition-colors">
                                                         @if(!empty($team['image_path']))<img src="{{ $team['image_path'] }}" alt="" class="h-5 w-5 object-contain">@endif
                                                         <span class="truncate">{{ $team['name'] ?? '-' }}</span>
-                                                    </a>
+                                                    </x-entity-link>
                                                 </td>
                                                 <td class="py-2.5 px-3 text-center font-mono text-body">{{ $st['played'] ?? 0 }}</td>
-                                                <td class="py-2.5 px-3 text-center font-mono text-accent">{{ $st['won'] ?? 0 }}</td>
+                                                <td class="py-2.5 px-3 text-center font-mono text-link">{{ $st['won'] ?? 0 }}</td>
                                                 <td class="py-2.5 px-3 text-center font-mono text-gold">{{ $st['draw'] ?? 0 }}</td>
-                                                <td class="py-2.5 px-3 text-center font-mono text-accent">{{ $st['lost'] ?? 0 }}</td>
-                                                <td class="py-2.5 px-3 text-center font-mono text-white">{{ $st['goal_difference'] ?? 0 }}</td>
-                                                <td class="py-2.5 px-4 text-center font-mono font-bold text-base text-accent bg-ink">{{ $st['points'] ?? 0 }}</td>
+                                                <td class="py-2.5 px-3 text-center font-mono text-link">{{ $st['lost'] ?? 0 }}</td>
+                                                <td class="py-2.5 px-3 text-center font-mono text-foreground">{{ $st['goal_difference'] ?? 0 }}</td>
+                                                <td class="py-2.5 px-4 text-center font-mono font-bold text-base text-link bg-ink">{{ $st['points'] ?? 0 }}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -1036,7 +930,7 @@
             @empty
                 <div class="bg-surface border border-dashed border-line rounded-xl p-12 text-center">
                     <div class="text-5xl mb-3"><x-icon name="trophy" class="h-4 w-4" /></div>
-                    <p class="text-base font-bold text-white">{{ __('football.portal.bracket.empty') }}</p>
+                    <p class="text-base font-bold text-foreground">{{ __('football.portal.bracket.empty') }}</p>
                 </div>
             @endforelse
         </div>

@@ -7,6 +7,7 @@ use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\View;
 
 class FootballPortalService
 {
@@ -15,6 +16,8 @@ class FootballPortalService
     protected int $timeout;
 
     protected int $cacheTtl;
+
+    public bool $unavailable = false;
 
     public function __construct()
     {
@@ -43,6 +46,8 @@ class FootballPortalService
                 return $response->throw()->json();
             });
         } catch (ConnectionException|RequestException $e) {
+            $this->unavailable = true;
+            View::share('footballUnavailable', true);
             Log::warning("Football API error on /portal/{$endpoint}", ['error' => $e->getMessage()]);
 
             return null;
@@ -208,6 +213,8 @@ class FootballPortalService
                 return $response->throw()->json();
             });
         } catch (ConnectionException|RequestException $e) {
+            $this->unavailable = true;
+            View::share('footballUnavailable', true);
             Log::warning("Sportmonks proxy error on /sportmonks/{$path}", ['error' => $e->getMessage()]);
 
             return null;

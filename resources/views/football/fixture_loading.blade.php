@@ -3,32 +3,28 @@
 @section('title', __('football.loading.title'))
 
 @section('content')
-    <div class="mx-auto max-w-lg py-16 text-center"
+    <div class="space-y-6"
          x-data="fixtureLoader({{ $fixtureId }})" x-init="start()">
 
-        {{-- Spinner --}}
-        <div class="mx-auto mb-6 flex h-20 w-20 items-center justify-center">
-            <svg viewBox="0 0 24 24" fill="none" class="icon h-16 w-16 animate-spin text-accent">
-                <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" opacity="0.2"/>
-                <path d="M21 12a9 9 0 00-9-9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-        </div>
-
         <template x-if="!failed">
-            <div>
-                <span class="kicker block text-xs font-bold uppercase text-primary mb-2">{{ __('football.loading.kicker') }}</span>
-                <h1 class="text-2xl font-bold text-white">{{ __('football.loading.heading') }}</h1>
-                <p class="mt-2 text-sm text-body" x-text="statusText">{{ __('football.loading.status_start') }}</p>
+            <div class="text-center">
+                <span class="kicker block text-xs font-bold uppercase text-link mb-2">{{ __('football.loading.kicker') }}</span>
+                <h1 class="text-2xl font-bold text-foreground">{{ __('football.loading.heading') }}</h1>
+                <p role="status" class="mt-2 text-sm text-body" x-text="statusText">{{ __('football.loading.status_start') }}</p>
             </div>
         </template>
 
+        <div x-show="!failed" :aria-busy="!failed" id="fixture-skeleton">
+            <x-skeleton variant="fixture" />
+        </div>
+
         <template x-if="failed">
-            <div>
-                <h1 class="text-2xl font-bold text-white">{{ __('football.loading.failed_heading') }}</h1>
+            <div class="mx-auto max-w-lg py-16 text-center">
+                <h1 class="text-2xl font-bold text-foreground">{{ __('football.loading.failed_heading') }}</h1>
                 <p class="mt-2 text-sm text-body">{{ __('football.loading.failed_text') }}</p>
                 <div class="mt-6 flex items-center justify-center gap-3">
-                    <button @click="failed=false; start()" class="rounded-xl bg-primary hover:bg-accent px-4 py-2.5 text-sm font-bold text-white transition-colors">{{ __('football.loading.retry') }}</button>
-                    <a href="{{ route('football.index') }}" class="rounded-xl border border-line bg-surface px-4 py-2.5 text-sm font-bold text-white hover:text-white transition-colors">{{ __('football.loading.back') }}</a>
+                    <button @click="failed=false; start()" class="rounded-xl bg-primary hover:bg-primary-hover px-4 py-2.5 text-sm font-bold text-on-primary transition-colors">{{ __('football.loading.retry') }}</button>
+                    <a href="{{ route('football.index') }}" class="rounded-xl border border-line bg-surface px-4 py-2.5 text-sm font-bold text-foreground hover:text-foreground transition-colors">{{ __('football.loading.back') }}</a>
                 </div>
             </div>
         </template>
@@ -50,6 +46,7 @@
                                 'Accept': 'application/json',
                             },
                         });
+                        if (!res.ok) throw new Error(res.status);
                         const data = await res.json();
                         if (data.ready) {
                             this.statusText = @json(__('football.loading.status_done'));

@@ -7,7 +7,7 @@
 
     {{-- Breadcrumb & Back --}}
     <div class="flex items-center justify-between">
-        <a href="{{ url()->previous() ?? route('football.index') }}" class="group text-xs font-bold text-body hover:text-accent transition-colors flex items-center gap-2 bg-surface border border-line hover:border-line px-3.5 py-2 rounded-xl">
+        <a href="{{ url()->previous() ?? route('football.index') }}" class="group text-xs font-bold text-body hover:text-link transition-colors flex items-center gap-2 bg-surface border border-line hover:border-line px-3.5 py-2 rounded-xl">
             <svg viewBox="0 0 24 24" fill="none" class="icon w-4 h-4 -ml-0.5">
                 <path d="M14 7l-5 5 5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
@@ -16,7 +16,7 @@
         <div class="flex items-center gap-2 text-xs text-body font-semibold">
             <span>{{ $league['name'] ?? 'Liga' }}</span>
             <span class="w-1 h-1 rounded-lg bg-surface"></span>
-            <span class="text-accent">{{ $season['name'] ?? 'Musim' }}</span>
+            <span class="text-link">{{ $season['name'] ?? 'Musim' }}</span>
         </div>
     </div>
 
@@ -32,8 +32,8 @@
         $homeGoals = $currentScore['home_goals'] ?? '-';
         $awayGoals = $currentScore['away_goals'] ?? '-';
 
-        $homeName = $homeTeam['name'] ?? explode(' vs ', $fixture['name'])[0] ?? 'Home';
-        $awayName = $awayTeam['name'] ?? explode(' vs ', $fixture['name'])[1] ?? 'Away';
+        $homeName = $homeTeam['name'] ?? (explode(' vs ', $fixture['name'] ?? '')[0] ?: __('football.card.home'));
+        $awayName = $awayTeam['name'] ?? explode(' vs ', $fixture['name'] ?? '')[1] ?? __('football.card.away');
 
         $matchState = $fixture['state'] ?? $state ?? [];
         $stateCode = $matchState['short_name'] ?? $matchState['state'] ?? '';
@@ -46,11 +46,11 @@
 
         $homeXI = $homeLineup['starting_xi'] ?? [];
         $homeBench = $homeLineup['bench'] ?? [];
-        $homeFormation = $homeLineup['formation'] ?? '4-3-3';
+        $homeFormation = $homeLineup['formation'] ?? '—';
 
         $awayXI = $awayLineup['starting_xi'] ?? [];
         $awayBench = $awayLineup['bench'] ?? [];
-        $awayFormation = $awayLineup['formation'] ?? '4-3-3';
+        $awayFormation = $awayLineup['formation'] ?? '—';
 
         // Sportmonks numbers `col` from one fixed touchline, the same one for both
         // teams: the home side attacks right so its col 1 is right-sided, the away
@@ -118,7 +118,7 @@
     @endphp
 
     {{-- BROADCAST SCOREBOARD HERO --}}
-    <div class="bg-surface rounded-xl p-6 sm:p-10 text-white border border-line relative overflow-hidden">
+    <div class="bg-surface rounded-xl p-6 sm:p-10 text-foreground border border-line relative overflow-hidden">
         {{-- Ambient Backlight --}}
 
         <div class="relative z-10">
@@ -127,22 +127,21 @@
                 <div class="inline-flex items-center gap-2">
                     @if($stateCode)
                         <span class="inline-flex items-center gap-1.5 font-mono font-bold text-xs px-4 py-1.5 rounded-lg uppercase tracking-wider
- {{ $isLive ? 'text-white ring-2 ring-red-400/50' : '' }}
-                            {{ in_array($stateCode, ['FT', 'AET', 'FTP']) ? 'bg-surface text-white border border-line' : '' }}
+ {{ $isLive ? 'text-danger' : '' }}
+                            {{ in_array($stateCode, ['FT', 'AET', 'FTP']) ? 'bg-surface text-foreground border border-line' : '' }}
                             {{ in_array($stateCode, ['NS', 'TBA']) ? 'text-steel border border-line' : '' }}
-                            {{ !in_array($stateCode, ['1st', '2nd', 'HT', 'BRK', 'et', 'ETB', '2et', 'PEN', 'PENB', 'FT', 'AET', 'FTP', 'NS', 'TBA']) ? 'bg-surface text-white' : '' }}
+                            {{ !in_array($stateCode, ['1st', '2nd', 'HT', 'BRK', 'et', 'ETB', '2et', 'PEN', 'PENB', 'FT', 'AET', 'FTP', 'NS', 'TBA']) ? 'bg-surface text-foreground' : '' }}
                         ">
-                            <span class="w-2 h-2 rounded-full {{ $isLive ? 'bg-white' : 'bg-primary' }}"></span>
                             {{ $stateCode }} • {{ $stateName }}
                         </span>
                     @else
-                        <span class="inline-block bg-surface text-xs font-bold px-3 py-1 rounded-lg uppercase tracking-wider text-white">
+                        <span class="inline-block bg-surface text-xs font-bold px-3 py-1 rounded-lg uppercase tracking-wider text-foreground">
                             {{ $fixture['result_info'] ?? __('football.fixture.fallback') }}
                         </span>
                     @endif
                 </div>
                 <p class="text-xs text-body mt-2.5 font-medium">
-                    {{ $fixture['starting_at'] ? \Illuminate\Support\Carbon::parse($fixture['starting_at'], 'UTC')->setTimezone('Asia/Jakarta')->locale(app()->getLocale())->translatedFormat('l, d F Y • H:i') . ' WIB' : __('football.fixture.tbd') }}
+                    {{ !empty($fixture['starting_at']) ? \Illuminate\Support\Carbon::parse($fixture['starting_at'], 'UTC')->setTimezone('Asia/Jakarta')->locale(app()->getLocale())->translatedFormat('l, d F Y • H:i') . ' WIB' : __('football.fixture.tbd') }}
                 </p>
             </div>
 
@@ -155,26 +154,26 @@
                             @if(!empty($homeTeam['image_path']))
                                 <img src="{{ $homeTeam['image_path'] }}" alt="{{ $homeName }}" class="w-20 h-20 sm:w-24 sm:h-24 object-contain drop- group- mx-auto">
                             @else
-                                <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-surface flex items-center justify-center text-accent mx-auto">
+                                <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-surface flex items-center justify-center text-link mx-auto">
                                     <svg viewBox="0 0 24 24" fill="none" class="icon w-10 h-10"><path d="M12 3l7 2.4v5.4c0 4.5-3 8.2-7 9.5-4-1.3-7-5-7-9.5V5.4L12 3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
                                 </div>
                             @endif
-                            <h2 class="text-xl sm:text-2xl font-bold tracking-tight mt-3 text-white group-hover:text-accent transition-colors">{{ $homeName }}</h2>
+                            <h2 class="text-xl sm:text-2xl font-bold tracking-tight mt-3 text-foreground group-hover:text-link transition-colors">{{ $homeName }}</h2>
                         </a>
                     @else
-                        <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-surface flex items-center justify-center text-accent mx-auto">
+                        <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-surface flex items-center justify-center text-link mx-auto">
                             <svg viewBox="0 0 24 24" fill="none" class="icon w-10 h-10"><path d="M12 3l7 2.4v5.4c0 4.5-3 8.2-7 9.5-4-1.3-7-5-7-9.5V5.4L12 3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
                         </div>
-                        <h2 class="text-xl sm:text-2xl font-bold tracking-tight mt-3 text-white">{{ $homeName }}</h2>
+                        <h2 class="text-xl sm:text-2xl font-bold tracking-tight mt-3 text-foreground">{{ $homeName }}</h2>
                     @endif
-                    <span class="text-xs text-accent font-bold uppercase tracking-wider px-3 py-0.5 rounded-lg border border-line">{{ __('football.fixture.home_label') }}</span>
+                    <span class="text-xs text-link font-bold uppercase tracking-wider px-3 py-0.5 rounded-lg border border-line">{{ __('football.fixture.home_label') }}</span>
                 </div>
 
                 {{-- Center Scoreboard Box --}}
                 <div class="bg-ink px-10 py-5 rounded-xl border border-line flex items-center gap-6">
-                    <span class="text-6xl sm:text-7xl font-bold font-mono tracking-tight text-white">{{ $homeGoals }}</span>
+                    <span class="text-6xl sm:text-7xl font-bold font-mono tracking-tight text-foreground">{{ $homeGoals }}</span>
                     <span class="text-3xl text-muted font-bold">:</span>
-                    <span class="text-6xl sm:text-7xl font-bold font-mono tracking-tight text-white">{{ $awayGoals }}</span>
+                    <span class="text-6xl sm:text-7xl font-bold font-mono tracking-tight text-foreground">{{ $awayGoals }}</span>
                 </div>
 
                 {{-- Away Team --}}
@@ -188,13 +187,13 @@
                                     <svg viewBox="0 0 24 24" fill="none" class="icon w-10 h-10"><path d="M12 3l7 2.4v5.4c0 4.5-3 8.2-7 9.5-4-1.3-7-5-7-9.5V5.4L12 3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
                                 </div>
                             @endif
-                            <h2 class="text-xl sm:text-2xl font-bold tracking-tight mt-3 text-white group-hover:text-accent transition-colors">{{ $awayName }}</h2>
+                            <h2 class="text-xl sm:text-2xl font-bold tracking-tight mt-3 text-foreground group-hover:text-link transition-colors">{{ $awayName }}</h2>
                         </a>
                     @else
                         <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-surface flex items-center justify-center text-steel mx-auto">
                             <svg viewBox="0 0 24 24" fill="none" class="icon w-10 h-10"><path d="M12 3l7 2.4v5.4c0 4.5-3 8.2-7 9.5-4-1.3-7-5-7-9.5V5.4L12 3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
                         </div>
-                        <h2 class="text-xl sm:text-2xl font-bold tracking-tight mt-3 text-white">{{ $awayName }}</h2>
+                        <h2 class="text-xl sm:text-2xl font-bold tracking-tight mt-3 text-foreground">{{ $awayName }}</h2>
                     @endif
                     <span class="text-xs text-steel font-bold uppercase tracking-wider px-3 py-0.5 rounded-lg border border-line">{{ __('football.fixture.away_label') }}</span>
                 </div>
@@ -226,13 +225,13 @@
                     $line = null;
                     $side = $isHome;
                     if ($isMissed) {
-                        $line = ['icon' => \App\Support\Icon::svg('cross', 'h-3.5 w-3.5'), 'name' => $nm, 'min' => $fmtMin($ev), 'note' => __('football.fixture.missed_penalty'), 'cls' => 'text-accent', 'sort' => (int)($ev['minute'] ?? 0)];
+                        $line = ['icon' => \App\Support\Icon::svg('cross', 'h-3.5 w-3.5'), 'name' => $nm, 'min' => $fmtMin($ev), 'note' => __('football.fixture.missed_penalty'), 'cls' => 'text-link', 'sort' => (int)($ev['minute'] ?? 0)];
                     } elseif ($isGoal) {
                         $tag = $isOwn ? 'OG' : ($isPen ? 'P' : '');
-                        $line = ['icon' => \App\Support\Icon::svg('ball', 'h-3.5 w-3.5'), 'name' => $nm, 'min' => $fmtMin($ev), 'note' => $tag, 'cls' => 'text-white', 'sort' => (int)($ev['minute'] ?? 0)];
+                        $line = ['icon' => \App\Support\Icon::svg('ball', 'h-3.5 w-3.5'), 'name' => $nm, 'min' => $fmtMin($ev), 'note' => $tag, 'cls' => 'text-foreground', 'sort' => (int)($ev['minute'] ?? 0)];
                         $side = $isOwn ? !$isHome : $isHome; // own goals credited to the opponent
                     } elseif ($isRed) {
-                        $line = ['icon' => \App\Support\Icon::svg('card-red', 'h-3.5 w-3.5'), 'name' => $nm, 'min' => $fmtMin($ev), 'note' => '', 'cls' => 'text-accent', 'sort' => (int)($ev['minute'] ?? 0)];
+                        $line = ['icon' => \App\Support\Icon::svg('card-red', 'h-3.5 w-3.5'), 'name' => $nm, 'min' => $fmtMin($ev), 'note' => '', 'cls' => 'text-link', 'sort' => (int)($ev['minute'] ?? 0)];
                     }
                     if ($line) {
                         if ($side) $homeScorers[] = $line; else $awayScorers[] = $line;
@@ -271,14 +270,14 @@
                 <div class="mt-10 pt-5 border-t border-line flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-xs text-body font-medium">
                     @if($venue)
                         <span class="flex items-center gap-2">
-                            <svg viewBox="0 0 24 24" fill="none" class="icon w-4 h-4 text-accent shrink-0"><path d="M12 21s6-5.3 6-10a6 6 0 10-12 0c0 4.7 6 10 6 10z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="11" r="2.2" stroke="currentColor" stroke-width="1.6"/></svg>
-                            <span><strong class="text-white">{{ __('football.fixture.venue') }}</strong> {{ $venue['name'] }} ({{ $venue['city_name'] ?? '' }})</span>
+                            <svg viewBox="0 0 24 24" fill="none" class="icon w-4 h-4 text-link shrink-0"><path d="M12 21s6-5.3 6-10a6 6 0 10-12 0c0 4.7 6 10 6 10z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="11" r="2.2" stroke="currentColor" stroke-width="1.6"/></svg>
+                            <span><strong class="text-foreground">{{ __('football.fixture.venue') }}</strong> {{ $venue['name'] }} ({{ $venue['city_name'] ?? '' }})</span>
                         </span>
                     @endif
                     @if(count($referees) > 0)
                         <span class="flex items-center gap-2">
-                            <svg viewBox="0 0 24 24" fill="none" class="icon w-4 h-4 text-accent shrink-0"><circle cx="10" cy="13.5" r="4.5" stroke="currentColor" stroke-width="1.6"/><path d="M14.2 11.4H21v2.3a1 1 0 01-1 1h-3.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 9V6.2h3.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                            <span><strong class="text-white">{{ __('football.fixture.referee') }}</strong> {{ $referees[0]['name'] ?? __('football.fixture.referee_fallback') }}</span>
+                            <svg viewBox="0 0 24 24" fill="none" class="icon w-4 h-4 text-link shrink-0"><circle cx="10" cy="13.5" r="4.5" stroke="currentColor" stroke-width="1.6"/><path d="M14.2 11.4H21v2.3a1 1 0 01-1 1h-3.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 9V6.2h3.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            <span><strong class="text-foreground">{{ __('football.fixture.referee') }}</strong> {{ $referees[0]['name'] ?? __('football.fixture.referee_fallback') }}</span>
                         </span>
                     @endif
                 </div>
@@ -300,7 +299,7 @@
             @endphp
             @foreach($mcTabs as $key => $label)
                 <button type="button" @click="show('{{ $key }}')"
-                        :class="tab === '{{ $key }}' ? 'border-accent text-white' : 'border-transparent text-body hover:text-white'"
+                        :class="tab === '{{ $key }}' ? 'border-accent text-foreground' : 'border-transparent text-body hover:text-foreground'"
                         class="whitespace-nowrap border-b-2 px-4 py-3 text-sm font-semibold transition-colors">
                     {{ $label }}
                 </button>
@@ -311,23 +310,23 @@
             <div class="bg-surface border border-line rounded-xl p-6 space-y-6">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-line">
                     <div class="flex items-center gap-3">
-                        <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-line text-accent">
+                        <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-line text-link">
                             <svg viewBox="0 0 24 24" fill="none" class="icon w-5 h-5"><rect x="3.5" y="4.5" width="17" height="15" rx="1.5" stroke="currentColor" stroke-width="1.6"/><path d="M12 4.5v15M3.5 9.5H6M3.5 14.5H6M20.5 9.5H18M20.5 14.5H18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="12" r="2.4" stroke="currentColor" stroke-width="1.6"/></svg>
                         </span>
                         <div>
-                            <span class="kicker block text-xs font-bold uppercase text-primary">{{ __('football.fixture.lineup_kicker') }}</span>
-                            <h3 class="text-lg font-bold text-white leading-tight">{{ __('football.fixture.lineup_heading') }}</h3>
+                            <span class="kicker block text-xs font-bold uppercase text-link">{{ __('football.fixture.lineup_kicker') }}</span>
+                            <h3 class="text-lg font-bold text-foreground leading-tight">{{ __('football.fixture.lineup_heading') }}</h3>
                         </div>
                     </div>
 
                     {{-- Formations Indicator --}}
-                    <div class="flex items-center gap-3 text-xs font-bold">
-                        <span class="px-3 py-1.5 rounded-lg border border-line text-white flex items-center gap-1.5">
+                    <div class="flex flex-wrap items-center gap-3 text-xs font-bold">
+                        <span class="px-3 py-1.5 rounded-lg border border-line text-foreground flex items-center gap-1.5">
                             <svg viewBox="0 0 24 24" fill="none" class="icon w-3.5 h-3.5 shrink-0"><path d="M12 3l7 2.4v5.4c0 4.5-3 8.2-7 9.5-4-1.3-7-5-7-9.5V5.4L12 3z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
                             <span class="truncate max-w-[110px]">{{ $homeName }}</span>
                             <span class="font-mono font-bold">{{ $homeFormation }}</span>
                         </span>
-                        <span class="px-3 py-1.5 rounded-lg border border-line text-white flex items-center gap-1.5">
+                        <span class="px-3 py-1.5 rounded-lg border border-line text-foreground flex items-center gap-1.5">
                             <svg viewBox="0 0 24 24" fill="none" class="icon w-3.5 h-3.5 shrink-0"><path d="M12 3l7 2.4v5.4c0 4.5-3 8.2-7 9.5-4-1.3-7-5-7-9.5V5.4L12 3z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
                             <span class="truncate max-w-[110px]">{{ $awayName }}</span>
                             <span class="font-mono font-bold">{{ $awayFormation }}</span>
@@ -357,7 +356,7 @@
                     {{-- LEFT HALF: HOME TEAM STARTING XI --}}
                     <div class="relative z-10 flex flex-1 flex-col justify-between pr-2 sm:pr-4">
                         <div class="mb-4 text-left">
-                            <span class="inline-flex items-center gap-2 rounded-lg border border-line bg-ink px-3 py-1 font-mono text-xs font-bold uppercase tracking-widest text-accent">
+                            <span class="inline-flex items-center gap-2 rounded-lg border border-line bg-ink px-3 py-1 font-mono text-xs font-bold uppercase tracking-widest text-link">
                                 {{ $homeName }} ({{ $homeFormation }})
                             </span>
                         </div>
@@ -382,13 +381,13 @@
                                                     @if(!empty($p['player_image']))
                                                         <img src="{{ $p['player_image'] }}" alt="{{ $p['player_name'] }}" class="h-12 w-12 rounded-lg border border-line bg-surface object-cover transition-all group-hover:ring-2 group-hover:ring-accent">
                                                     @else
-                                                        <div class="flex h-12 w-12 items-center justify-center rounded-lg border border-line bg-surface text-xs font-bold text-accent">
+                                                        <div class="flex h-12 w-12 items-center justify-center rounded-lg border border-line bg-surface text-xs font-bold text-link">
                                                             {{ $p['jersey_number'] ?? '#' }}
                                                         </div>
                                                     @endif
 
                                                     {{-- Jersey Number Badge --}}
-                                                    <span class="absolute -bottom-1 -right-1 w-5 h-5 rounded-lg bg-ink text-accent font-mono font-bold text-xs flex items-center justify-center border border-line">
+                                                    <span class="absolute -bottom-1 -right-1 w-5 h-5 rounded-lg bg-ink text-link font-mono font-bold text-xs flex items-center justify-center border border-line">
                                                         {{ $p['jersey_number'] ?? '•' }}
                                                     </span>
 
@@ -396,7 +395,7 @@
                                                     @if(!empty($p['rating']))
                                                         @php
                                                             $rt = (float) $p['rating'];
-                                                            $rtCls = $rt >= 8.5 ? 'bg-steel text-white' : ($rt >= 7 ? 'bg-primary text-white' : ($rt >= 6 ? 'bg-gold text-ink' : 'bg-accent text-white'));
+                                                            $rtCls = $rt >= 8.5 ? 'bg-primary text-on-primary' : ($rt >= 7 ? 'bg-primary text-on-primary' : ($rt >= 6 ? 'bg-accent text-on-accent' : 'bg-danger-fill text-on-primary'));
                                                         @endphp
                                                         <span class="absolute -bottom-1 -left-1 h-5 min-w-[22px] px-1 rounded-lg {{ $rtCls }} font-mono font-bold text-xs flex items-center justify-center border border-line z-20" title="Rating {{ number_format($rt, 2) }}">
                                                             {{ number_format($rt, 1) }}
@@ -408,12 +407,12 @@
                                                         {{-- Top-Right: Goal & Assist Badges --}}
                                                         <div class="absolute -top-2.5 -right-2.5 flex items-center gap-0.5 z-20">
                                                             @if(!empty($evStats['goals']))
-                                                                <span class="inline-flex h-[20px] min-w-[20px] items-center justify-center gap-0.5 rounded-lg bg-primary px-1 text-xs font-bold text-white ring-2 ring-ink" title="{{ __('football.fixture.event.goal') }} ({{ $evStats['goals'] }})">
+                                                                <span class="inline-flex h-[20px] min-w-[20px] items-center justify-center gap-0.5 rounded-lg bg-primary px-1 text-xs font-bold text-on-primary ring-2 ring-ink" title="{{ __('football.fixture.event.goal') }} ({{ $evStats['goals'] }})">
                                                                     <x-icon name="ball" class="h-3 w-3" />{{ $evStats['goals'] > 1 ? $evStats['goals'] : '' }}
                                                                 </span>
                                                             @endif
                                                             @if(!empty($evStats['assists']))
-                                                                <span class="inline-flex h-[20px] min-w-[20px] items-center justify-center gap-0.5 rounded-lg bg-steel px-1 text-xs font-bold text-white ring-2 ring-ink" title="{{ __('football.fixture.event.assist') }} ({{ $evStats['assists'] }})">
+                                                                <span class="inline-flex h-[20px] min-w-[20px] items-center justify-center gap-0.5 rounded-lg bg-steel px-1 text-xs font-bold text-foreground ring-2 ring-ink" title="{{ __('football.fixture.event.assist') }} ({{ $evStats['assists'] }})">
                                                                     <x-icon name="boot" class="h-3 w-3" />{{ $evStats['assists'] > 1 ? $evStats['assists'] : '' }}
                                                                 </span>
                                                             @endif
@@ -422,18 +421,18 @@
                                                         {{-- Top-Left: Cards & Sub Badges --}}
                                                         <div class="absolute -top-2.5 -left-2.5 flex items-center gap-0.5 z-20">
                                                             @if(!empty($evStats['red_cards']))
-                                                                <span class="inline-flex h-[17px] w-[12px] items-center justify-center rounded-[3px] bg-accent ring-2 ring-ink" title="{{ __('football.fixture.red_card') }}">
+                                                                <span class="inline-flex h-[17px] w-[12px] items-center justify-center rounded-[3px] bg-danger-fill ring-2 ring-ink" title="{{ __('football.fixture.red_card') }}">
                                                                 </span>
                                                             @elseif(!empty($evStats['yellow_cards']))
-                                                                <span class="inline-flex h-[17px] w-[12px] items-center justify-center rounded-[3px] bg-gold text-xs font-bold leading-none text-ink ring-2 ring-ink" title="{{ __('football.fixture.yellow_card', ['count' => $evStats['yellow_cards']]) }}">{{ $evStats['yellow_cards'] > 1 ? '2' : '' }}
+                                                                <span class="inline-flex h-[17px] w-[12px] items-center justify-center rounded-[3px] bg-accent text-xs font-bold leading-none text-on-accent ring-2 ring-ink" title="{{ __('football.fixture.yellow_card', ['count' => $evStats['yellow_cards']]) }}">{{ $evStats['yellow_cards'] > 1 ? '2' : '' }}
                                                                 </span>
                                                             @endif
                                                             @if(!empty($evStats['sub_out']))
-                                                                <span class="inline-flex h-[18px] w-[18px] items-center justify-center rounded-lg bg-accent text-white ring-2 ring-ink" title="{{ __('football.fixture.sub_out_at', ['minute' => $evStats['sub_out']]) }}">
+                                                                <span class="inline-flex h-[18px] w-[18px] items-center justify-center rounded-lg bg-danger-fill text-on-primary ring-2 ring-ink" title="{{ __('football.fixture.sub_out_at', ['minute' => $evStats['sub_out']]) }}">
                                                                     <x-icon name="sub-out" class="h-3 w-3" />
                                                                 </span>
                                                             @elseif(!empty($evStats['sub_in']))
-                                                                <span class="inline-flex h-[18px] w-[18px] items-center justify-center rounded-lg bg-primary text-white ring-2 ring-ink" title="{{ __('football.fixture.sub_in_at', ['minute' => $evStats['sub_in']]) }}">
+                                                                <span class="inline-flex h-[18px] w-[18px] items-center justify-center rounded-lg bg-primary text-on-primary ring-2 ring-ink" title="{{ __('football.fixture.sub_in_at', ['minute' => $evStats['sub_in']]) }}">
                                                                     <x-icon name="sub-in" class="h-3 w-3" />
                                                                 </span>
                                                             @endif
@@ -441,7 +440,7 @@
                                                     @endif
                                                 </div>
 
-                                                <span class="mt-1 px-2 py-0.5 rounded-lg bg-ink text-white font-bold text-xs border border-line group-hover:bg-primary group-hover:text-white transition-colors max-w-[90px] truncate">
+                                                <span class="mt-1 px-2 py-0.5 rounded-lg bg-ink text-foreground font-bold text-xs border border-line group-hover:bg-primary group-hover:text-on-primary transition-colors max-w-[90px] truncate">
                                                     {{ $p['player_name'] ?: __('football.fixture.player_fallback', ['id' => $p['player_id']]) }}
                                                 </span>
                                             </button>
@@ -450,7 +449,7 @@
                                 @endforeach
                             </div>
                         @else
-                            <p class="text-xs text-white text-center py-4">{{ __('football.fixture.lineup_home_empty') }}</p>
+                            <p class="text-xs text-foreground text-center py-4">{{ __('football.fixture.lineup_home_empty') }}</p>
                         @endif
                     </div>
 
@@ -491,7 +490,7 @@
                                                     @if(!empty($p['rating']))
                                                         @php
                                                             $rt = (float) $p['rating'];
-                                                            $rtCls = $rt >= 8.5 ? 'bg-steel text-white' : ($rt >= 7 ? 'bg-primary text-white' : ($rt >= 6 ? 'bg-gold text-ink' : 'bg-accent text-white'));
+                                                            $rtCls = $rt >= 8.5 ? 'bg-primary text-on-primary' : ($rt >= 7 ? 'bg-primary text-on-primary' : ($rt >= 6 ? 'bg-accent text-on-accent' : 'bg-danger-fill text-on-primary'));
                                                         @endphp
                                                         <span class="absolute -bottom-1 -left-1 h-5 min-w-[22px] px-1 rounded-lg {{ $rtCls }} font-mono font-bold text-xs flex items-center justify-center border border-line z-20" title="Rating {{ number_format($rt, 2) }}">
                                                             {{ number_format($rt, 1) }}
@@ -503,12 +502,12 @@
                                                         {{-- Top-Right: Goal & Assist Badges --}}
                                                         <div class="absolute -top-2.5 -right-2.5 flex items-center gap-0.5 z-20">
                                                             @if(!empty($evStats['goals']))
-                                                                <span class="inline-flex h-[20px] min-w-[20px] items-center justify-center gap-0.5 rounded-lg bg-primary px-1 text-xs font-bold text-white ring-2 ring-ink" title="{{ __('football.fixture.event.goal') }} ({{ $evStats['goals'] }})">
+                                                                <span class="inline-flex h-[20px] min-w-[20px] items-center justify-center gap-0.5 rounded-lg bg-primary px-1 text-xs font-bold text-on-primary ring-2 ring-ink" title="{{ __('football.fixture.event.goal') }} ({{ $evStats['goals'] }})">
                                                                     <x-icon name="ball" class="h-3 w-3" />{{ $evStats['goals'] > 1 ? $evStats['goals'] : '' }}
                                                                 </span>
                                                             @endif
                                                             @if(!empty($evStats['assists']))
-                                                                <span class="inline-flex h-[20px] min-w-[20px] items-center justify-center gap-0.5 rounded-lg bg-steel px-1 text-xs font-bold text-white ring-2 ring-ink" title="{{ __('football.fixture.event.assist') }} ({{ $evStats['assists'] }})">
+                                                                <span class="inline-flex h-[20px] min-w-[20px] items-center justify-center gap-0.5 rounded-lg bg-steel px-1 text-xs font-bold text-foreground ring-2 ring-ink" title="{{ __('football.fixture.event.assist') }} ({{ $evStats['assists'] }})">
                                                                     <x-icon name="boot" class="h-3 w-3" />{{ $evStats['assists'] > 1 ? $evStats['assists'] : '' }}
                                                                 </span>
                                                             @endif
@@ -517,18 +516,18 @@
                                                         {{-- Top-Left: Cards & Sub Badges --}}
                                                         <div class="absolute -top-2.5 -left-2.5 flex items-center gap-0.5 z-20">
                                                             @if(!empty($evStats['red_cards']))
-                                                                <span class="inline-flex h-[17px] w-[12px] items-center justify-center rounded-[3px] bg-accent ring-2 ring-ink" title="{{ __('football.fixture.red_card') }}">
+                                                                <span class="inline-flex h-[17px] w-[12px] items-center justify-center rounded-[3px] bg-danger-fill ring-2 ring-ink" title="{{ __('football.fixture.red_card') }}">
                                                                 </span>
                                                             @elseif(!empty($evStats['yellow_cards']))
-                                                                <span class="inline-flex h-[17px] w-[12px] items-center justify-center rounded-[3px] bg-gold text-xs font-bold leading-none text-ink ring-2 ring-ink" title="{{ __('football.fixture.yellow_card', ['count' => $evStats['yellow_cards']]) }}">{{ $evStats['yellow_cards'] > 1 ? '2' : '' }}
+                                                                <span class="inline-flex h-[17px] w-[12px] items-center justify-center rounded-[3px] bg-accent text-xs font-bold leading-none text-on-accent ring-2 ring-ink" title="{{ __('football.fixture.yellow_card', ['count' => $evStats['yellow_cards']]) }}">{{ $evStats['yellow_cards'] > 1 ? '2' : '' }}
                                                                 </span>
                                                             @endif
                                                             @if(!empty($evStats['sub_out']))
-                                                                <span class="inline-flex h-[18px] w-[18px] items-center justify-center rounded-lg bg-accent text-white ring-2 ring-ink" title="{{ __('football.fixture.sub_out_at', ['minute' => $evStats['sub_out']]) }}">
+                                                                <span class="inline-flex h-[18px] w-[18px] items-center justify-center rounded-lg bg-danger-fill text-on-primary ring-2 ring-ink" title="{{ __('football.fixture.sub_out_at', ['minute' => $evStats['sub_out']]) }}">
                                                                     <x-icon name="sub-out" class="h-3 w-3" />
                                                                 </span>
                                                             @elseif(!empty($evStats['sub_in']))
-                                                                <span class="inline-flex h-[18px] w-[18px] items-center justify-center rounded-lg bg-primary text-white ring-2 ring-ink" title="{{ __('football.fixture.sub_in_at', ['minute' => $evStats['sub_in']]) }}">
+                                                                <span class="inline-flex h-[18px] w-[18px] items-center justify-center rounded-lg bg-primary text-on-primary ring-2 ring-ink" title="{{ __('football.fixture.sub_in_at', ['minute' => $evStats['sub_in']]) }}">
                                                                     <x-icon name="sub-in" class="h-3 w-3" />
                                                                 </span>
                                                             @endif
@@ -536,7 +535,7 @@
                                                     @endif
                                                 </div>
 
-                                                <span class="mt-1 px-2 py-0.5 rounded-lg bg-ink text-white font-bold text-xs border border-line group-hover:bg-steel group-hover:text-white transition-colors max-w-[90px] truncate">
+                                                <span class="mt-1 px-2 py-0.5 rounded-lg bg-ink text-foreground font-bold text-xs border border-line group-hover:bg-steel group-hover:text-on-primary transition-colors max-w-[90px] truncate">
                                                     {{ $p['player_name'] ?: __('football.fixture.player_fallback', ['id' => $p['player_id']]) }}
                                                 </span>
                                             </button>
@@ -545,7 +544,7 @@
                                 @endforeach
                             </div>
                         @else
-                            <p class="text-xs text-white text-center py-4">{{ __('football.fixture.lineup_away_empty') }}</p>
+                            <p class="text-xs text-foreground text-center py-4">{{ __('football.fixture.lineup_away_empty') }}</p>
                         @endif
 
                         <div class="mt-4 text-right">
@@ -562,7 +561,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
                     {{-- Home Bench --}}
                     <div class="bg-ink border border-line rounded-xl p-4 space-y-3">
-                        <span class="text-xs font-bold uppercase tracking-wider text-accent flex items-center gap-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-link flex items-center gap-2">
                             <svg viewBox="0 0 24 24" fill="none" class="icon w-4 h-4 shrink-0"><path d="M4 8.5h13l-3-3M20 15.5H7l3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
                             {{ __('football.fixture.bench', ['team' => $homeName]) }}
                         </span>
@@ -585,13 +584,13 @@
                                         </div>
                                     @endif
                                     <div class="min-w-0 flex-1">
-                                        <span class="text-xs font-bold text-white block truncate hover:text-accent">{{ $p['player_name'] }}</span>
+                                        <span class="text-xs font-bold text-foreground block truncate hover:text-link">{{ $p['player_name'] }}</span>
                                         <div class="flex items-center gap-1">
                                             <span class="text-xs text-muted font-mono">No. {{ $p['jersey_number'] ?? '-' }}</span>
                                             @if(!empty($p['rating']))
                                                 @php
                                                     $rt = (float) $p['rating'];
-                                                    $rtCls = $rt >= 8.5 ? 'text-steel border-line' : ($rt >= 7 ? 'text-accent border-line' : ($rt >= 6 ? 'text-gold border-line' : 'text-accent border-line'));
+                                                    $rtCls = $rt >= 8.5 ? 'text-steel border-line' : ($rt >= 7 ? 'text-link border-line' : ($rt >= 6 ? 'text-gold border-line' : 'text-link border-line'));
                                                 @endphp
                                                 <span class="text-xs font-mono font-bold px-1 rounded-lg border {{ $rtCls }}" title="Rating {{ number_format($rt, 2) }}">{{ number_format($rt, 1) }}</span>
                                             @endif
@@ -640,13 +639,13 @@
                                         </div>
                                     @endif
                                     <div class="min-w-0 flex-1">
-                                        <span class="text-xs font-bold text-white block truncate hover:text-steel">{{ $p['player_name'] }}</span>
+                                        <span class="text-xs font-bold text-foreground block truncate hover:text-steel">{{ $p['player_name'] }}</span>
                                         <div class="flex items-center gap-1">
                                             <span class="text-xs text-muted font-mono">No. {{ $p['jersey_number'] ?? '-' }}</span>
                                             @if(!empty($p['rating']))
                                                 @php
                                                     $rt = (float) $p['rating'];
-                                                    $rtCls = $rt >= 8.5 ? 'text-steel border-line' : ($rt >= 7 ? 'text-accent border-line' : ($rt >= 6 ? 'text-gold border-line' : 'text-accent border-line'));
+                                                    $rtCls = $rt >= 8.5 ? 'text-steel border-line' : ($rt >= 7 ? 'text-link border-line' : ($rt >= 6 ? 'text-gold border-line' : 'text-link border-line'));
                                                 @endphp
                                                 <span class="text-xs font-mono font-bold px-1 rounded-lg border {{ $rtCls }}" title="Rating {{ number_format($rt, 2) }}">{{ number_format($rt, 1) }}</span>
                                             @endif
@@ -680,12 +679,12 @@
                 {{-- PERIOD SCORES BREAKDOWN (1ST_HALF, 2ND_HALF, CURRENT) --}}
                 <div class="bg-surface border border-line rounded-xl p-6 lg:col-span-1">
                     <div class="flex items-center gap-3 mb-4">
-                        <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-line text-accent">
+                        <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-line text-link">
                             <svg viewBox="0 0 24 24" fill="none" class="icon w-5 h-5"><rect x="4" y="5" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M4 9.5h16M12 9.5V19" stroke="currentColor" stroke-width="1.6"/></svg>
                         </span>
                         <div>
-                            <span class="kicker block text-xs font-bold uppercase text-primary">{{ __('football.fixture.scores_kicker') }}</span>
-                            <h3 class="text-base font-bold text-white leading-tight">{{ __('football.fixture.scores_heading') }}</h3>
+                            <span class="kicker block text-xs font-bold uppercase text-link">{{ __('football.fixture.scores_kicker') }}</span>
+                            <h3 class="text-base font-bold text-foreground leading-tight">{{ __('football.fixture.scores_heading') }}</h3>
                         </div>
                     </div>
 
@@ -694,15 +693,15 @@
                             <table class="w-full text-center text-xs font-semibold">
                                 <thead class="bg-surface text-body font-bold uppercase tracking-wider border-b border-line text-xs">
                                     <tr>
-                                        <th class="py-3 px-3 text-accent">{{ $homeTeam['short_code'] ?? __('football.card.home') }}</th>
+                                        <th class="py-3 px-3 text-link">{{ $homeTeam['short_code'] ?? __('football.card.home') }}</th>
                                         <th class="py-3 px-3 text-body">{{ __('football.fixture.period') }}</th>
                                         <th class="py-3 px-3 text-steel">{{ $awayTeam['short_code'] ?? __('football.card.away') }}</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-line text-white font-medium">
+                                <tbody class="divide-y divide-line text-foreground font-medium">
                                     @foreach($scores as $sc)
                                         <tr class="hover:bg-surface transition-colors {{ $sc['description'] === 'CURRENT' ? 'bg-surface font-bold' : '' }}">
-                                            <td class="py-3 px-3 text-sm font-mono font-bold text-white">{{ $sc['home_goals'] }}</td>
+                                            <td class="py-3 px-3 text-sm font-mono font-bold text-foreground">{{ $sc['home_goals'] }}</td>
                                             <td class="py-3 px-3 text-body font-bold text-xs">
                                                 @if($sc['description'] === '1ST_HALF') {{ __('football.fixture.first_half') }}
                                                 @elseif($sc['description'] === '2ND_HALF') {{ __('football.fixture.second_half') }}
@@ -710,7 +709,7 @@
                                                 @else {{ $sc['description'] }}
                                                 @endif
                                             </td>
-                                            <td class="py-3 px-3 text-sm font-mono font-bold text-white">{{ $sc['away_goals'] }}</td>
+                                            <td class="py-3 px-3 text-sm font-mono font-bold text-foreground">{{ $sc['away_goals'] }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -724,12 +723,12 @@
                 {{-- MATCH STATISTICS COMPARISON --}}
                 <div class="bg-surface border border-line rounded-xl p-6 lg:col-span-2">
                     <div class="flex items-center gap-3 mb-6 pb-3 border-b border-line">
-                        <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-line text-accent">
+                        <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-line text-link">
                             <svg viewBox="0 0 24 24" fill="none" class="icon w-5 h-5"><path d="M5 19V11M12 19V6M19 19v-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
                         </span>
                         <div>
-                            <span class="kicker block text-xs font-bold uppercase text-primary">{{ __('football.fixture.stats_kicker') }}</span>
-                            <h3 class="text-base font-bold text-white leading-tight">{{ __('football.fixture.stats_heading') }}</h3>
+                            <span class="kicker block text-xs font-bold uppercase text-link">{{ __('football.fixture.stats_kicker') }}</span>
+                            <h3 class="text-base font-bold text-foreground leading-tight">{{ __('football.fixture.stats_heading') }}</h3>
                         </div>
                     </div>
 
@@ -745,19 +744,19 @@
                                 @endphp
                                 <div class="space-y-1.5">
                                     <div class="flex justify-between items-center text-xs font-bold">
-                                        <span class="text-accent font-mono text-sm font-bold">{{ $st['home_text'] }}</span>
+                                        <span class="text-link font-mono text-sm font-bold">{{ $st['home_text'] }}</span>
                                         <span class="text-body text-xs uppercase tracking-wider">{{ $st['type_name'] }}</span>
                                         <span class="text-steel font-mono text-sm font-bold">{{ $st['away_text'] }}</span>
                                     </div>
                                     <div class="h-2 w-full bg-ink rounded-lg flex overflow-hidden border border-line">
                                         <div class="bg-primary h-full transition-all" style="width: {{ $hPct }}%"></div>
-                                        <div class="bg-steel h-full transition-all text-white" style="width: {{ $aPct }}%"></div>
+                                        <div class="bg-steel h-full transition-all text-foreground" style="width: {{ $aPct }}%"></div>
                                     </div>
                                 </div>
                             @endforeach
                         </div>
                     @else
-                        <p class="text-xs text-white text-center py-8">{{ __('football.fixture.stats_empty') }}</p>
+                        <p class="text-xs text-foreground text-center py-8">{{ __('football.fixture.stats_empty') }}</p>
                     @endif
                 </div>
 
@@ -768,16 +767,16 @@
             <div class="bg-surface border border-line rounded-xl p-6 space-y-6">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-line">
                     <div class="flex items-center gap-3">
-                        <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-line text-accent">
+                        <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-line text-link">
                             <svg viewBox="0 0 24 24" fill="none" class="icon w-5 h-5"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.6"/><path d="M12 7.5V12l3 1.7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
                         </span>
                         <div>
-                            <span class="kicker block text-xs font-bold uppercase text-primary">{{ __('football.fixture.timeline_kicker') }}</span>
-                            <h3 class="text-lg font-bold text-white leading-tight">{{ __('football.fixture.timeline_heading') }}</h3>
+                            <span class="kicker block text-xs font-bold uppercase text-link">{{ __('football.fixture.timeline_kicker') }}</span>
+                            <h3 class="text-lg font-bold text-foreground leading-tight">{{ __('football.fixture.timeline_heading') }}</h3>
                         </div>
                     </div>
                     <div class="flex items-center gap-3 text-xs font-bold">
-                        <span class="inline-flex items-center gap-1.5 text-accent">
+                        <span class="inline-flex items-center gap-1.5 text-link">
                             <span class="w-2 h-2 rounded-full "></span>{{ $homeName }}
                         </span>
                         <span class="text-muted">/</span>
@@ -807,7 +806,7 @@
                                         <div class="bg-ink border border-line hover:border-line rounded-xl p-4 text-left transition-all">
                                             <div class="flex items-start justify-between gap-3">
                                                 <div class="space-y-2 flex-1">
-                                                    <div class="flex items-center gap-2 text-xs font-semibold text-accent uppercase tracking-wider">
+                                                    <div class="flex items-center gap-2 text-xs font-semibold text-link uppercase tracking-wider">
                                                         @if($isGoal) <x-icon name="ball" class="h-4 w-4" /> {{ __('football.fixture.event.goal') }}
                                                         @elseif($isSub) <x-icon name="swap" class="h-4 w-4" /> {{ __('football.fixture.event.substitution') }}
                                                         @elseif($ev['type_id'] == 19) <x-icon name="card-yellow" class="h-4 w-4" /> {{ __('football.fixture.event.yellow') }}
@@ -823,11 +822,11 @@
                                                                 @if(!empty($ev['player_image']))
                                                                     <img src="{{ $ev['player_image'] }}" alt="{{ $ev['player_name'] }}" class="w-8 h-8 rounded-lg object-cover border-2 border-line flex-shrink-0">
                                                                 @else
-                                                                    <div class="w-8 h-8 rounded-lg bg-surface text-accent text-xs font-bold flex items-center justify-center flex-shrink-0"><x-icon name="sub-in" class="h-3 w-3" /></div>
+                                                                    <div class="w-8 h-8 rounded-lg bg-surface text-link text-xs font-bold flex items-center justify-center flex-shrink-0"><x-icon name="sub-in" class="h-3 w-3" /></div>
                                                                 @endif
                                                                 <div>
-                                                                    <span class="text-xs font-bold text-accent uppercase">{{ __('football.fixture.event.in') }}</span>
-                                                                    <span class="text-xs font-bold text-white block truncate">{{ $ev['player_name'] ?: __('football.fixture.event.sub_in_fallback') }}</span>
+                                                                    <span class="text-xs font-bold text-link uppercase">{{ __('football.fixture.event.in') }}</span>
+                                                                    <span class="text-xs font-bold text-foreground block truncate">{{ $ev['player_name'] ?: __('football.fixture.event.sub_in_fallback') }}</span>
                                                                 </div>
                                                             </div>
                                                             @if(!empty($ev['related_player_name']))
@@ -835,11 +834,11 @@
                                                                     @if(!empty($ev['related_player_image']))
                                                                         <img src="{{ $ev['related_player_image'] }}" alt="{{ $ev['related_player_name'] }}" class="w-7 h-7 rounded-lg object-cover border border-line flex-shrink-0">
                                                                     @else
-                                                                        <div class="w-7 h-7 rounded-lg bg-surface text-accent text-xs font-bold flex items-center justify-center flex-shrink-0"><x-icon name="sub-out" class="h-3 w-3" /></div>
+                                                                        <div class="w-7 h-7 rounded-lg bg-surface text-link text-xs font-bold flex items-center justify-center flex-shrink-0"><x-icon name="sub-out" class="h-3 w-3" /></div>
                                                                     @endif
                                                                     <div>
-                                                                        <span class="text-xs font-bold text-accent uppercase">{{ __('football.fixture.event.out') }}</span>
-                                                                        <span class="text-xs font-semibold text-white block truncate">{{ $ev['related_player_name'] }}</span>
+                                                                        <span class="text-xs font-bold text-link uppercase">{{ __('football.fixture.event.out') }}</span>
+                                                                        <span class="text-xs font-semibold text-foreground block truncate">{{ $ev['related_player_name'] }}</span>
                                                                     </div>
                                                                 </div>
                                                             @endif
@@ -850,24 +849,24 @@
                                                             @if(!empty($ev['player_image']))
                                                                 <img src="{{ $ev['player_image'] }}" alt="{{ $ev['player_name'] }}" class="w-10 h-10 rounded-lg object-cover border-2 border-line flex-shrink-0">
                                                             @else
-                                                                <div class="w-10 h-10 rounded-lg bg-surface text-white flex items-center justify-center text-base flex-shrink-0"><x-icon name="ball" class="h-4 w-4" /></div>
+                                                                <div class="w-10 h-10 rounded-lg bg-surface text-foreground flex items-center justify-center text-base flex-shrink-0"><x-icon name="ball" class="h-4 w-4" /></div>
                                                             @endif
                                                             <div>
-                                                                <span class="text-sm font-semibold text-white block">{{ $ev['player_name'] ?: __('football.fixture.event.scorer_fallback') }}</span>
+                                                                <span class="text-sm font-semibold text-foreground block">{{ $ev['player_name'] ?: __('football.fixture.event.scorer_fallback') }}</span>
                                                                 @if(!empty($ev['related_player_name']))
                                                                     <p class="text-xs text-body mt-0.5">
-                                                                        {{ __('football.fixture.event.assist') }} <strong class="text-white">{{ $ev['related_player_name'] }}</strong>
+                                                                        {{ __('football.fixture.event.assist') }} <strong class="text-foreground">{{ $ev['related_player_name'] }}</strong>
                                                                     </p>
                                                                 @endif
                                                             </div>
                                                         </div>
                                                     {{-- Cards --}}
                                                     @else
-                                                        <span class="text-xs font-bold text-white block">{{ $ev['player_name'] ?: __('football.fixture.player_fallback', ['id' => $ev['player_id'] ?? '']) }}</span>
+                                                        <span class="text-xs font-bold text-foreground block">{{ $ev['player_name'] ?: __('football.fixture.player_fallback', ['id' => $ev['player_id'] ?? '']) }}</span>
                                                     @endif
 
                                                     @if(!empty($ev['info']))
-                                                        <span class="inline-flex items-center gap-1 text-xs font-bold bg-surface text-white px-2.5 py-0.5 rounded-lg border border-line mt-1">
+                                                        <span class="inline-flex items-center gap-1 text-xs font-bold bg-surface text-foreground px-2.5 py-0.5 rounded-lg border border-line mt-1">
                                                             <svg viewBox="0 0 24 24" fill="none" class="icon w-3 h-3 text-body shrink-0"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.6"/><path d="M12 11v5M12 8h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
                                                             {{ $ev['info'] }}
                                                         </span>
@@ -875,7 +874,7 @@
                                                 </div>
 
                                                 @if(!empty($ev['result']))
-                                                    <span class="font-mono font-bold text-xs bg-primary text-white px-2.5 py-1 rounded-lg">
+                                                    <span class="font-mono font-bold text-xs bg-primary text-on-primary px-2.5 py-1 rounded-lg">
                                                         {{ $ev['result'] }}
                                                     </span>
                                                 @endif
@@ -885,7 +884,7 @@
                                 </div>
 
                                 {{-- CENTER MINUTE BADGE --}}
-                                <div class="z-10 flex-shrink-0 mx-2 hidden sm:flex items-center justify-center w-9 h-9 rounded-lg bg-ink text-white font-mono font-bold text-xs border-2 border-line">
+                                <div class="z-10 flex-shrink-0 mx-2 hidden sm:flex items-center justify-center w-9 h-9 rounded-lg bg-ink text-foreground font-mono font-bold text-xs border-2 border-line">
                                     {{ $ev['minute'] ?? 0 }}'
                                 </div>
 
@@ -911,11 +910,11 @@
                                                                 @if(!empty($ev['player_image']))
                                                                     <img src="{{ $ev['player_image'] }}" alt="{{ $ev['player_name'] }}" class="w-8 h-8 rounded-lg object-cover border-2 border-line flex-shrink-0">
                                                                 @else
-                                                                    <div class="w-8 h-8 rounded-lg bg-surface text-accent text-xs font-bold flex items-center justify-center flex-shrink-0"><x-icon name="sub-in" class="h-3 w-3" /></div>
+                                                                    <div class="w-8 h-8 rounded-lg bg-surface text-link text-xs font-bold flex items-center justify-center flex-shrink-0"><x-icon name="sub-in" class="h-3 w-3" /></div>
                                                                 @endif
                                                                 <div>
-                                                                    <span class="text-xs font-bold text-accent uppercase">{{ __('football.fixture.event.in') }}</span>
-                                                                    <span class="text-xs font-bold text-white block truncate">{{ $ev['player_name'] ?: __('football.fixture.event.sub_in_fallback') }}</span>
+                                                                    <span class="text-xs font-bold text-link uppercase">{{ __('football.fixture.event.in') }}</span>
+                                                                    <span class="text-xs font-bold text-foreground block truncate">{{ $ev['player_name'] ?: __('football.fixture.event.sub_in_fallback') }}</span>
                                                                 </div>
                                                             </div>
                                                             @if(!empty($ev['related_player_name']))
@@ -923,11 +922,11 @@
                                                                     @if(!empty($ev['related_player_image']))
                                                                         <img src="{{ $ev['related_player_image'] }}" alt="{{ $ev['related_player_name'] }}" class="w-7 h-7 rounded-lg object-cover border border-line flex-shrink-0">
                                                                     @else
-                                                                        <div class="w-7 h-7 rounded-lg bg-surface text-accent text-xs font-bold flex items-center justify-center flex-shrink-0"><x-icon name="sub-out" class="h-3 w-3" /></div>
+                                                                        <div class="w-7 h-7 rounded-lg bg-surface text-link text-xs font-bold flex items-center justify-center flex-shrink-0"><x-icon name="sub-out" class="h-3 w-3" /></div>
                                                                     @endif
                                                                     <div>
-                                                                        <span class="text-xs font-bold text-accent uppercase">{{ __('football.fixture.event.out') }}</span>
-                                                                        <span class="text-xs font-semibold text-white block truncate">{{ $ev['related_player_name'] }}</span>
+                                                                        <span class="text-xs font-bold text-link uppercase">{{ __('football.fixture.event.out') }}</span>
+                                                                        <span class="text-xs font-semibold text-foreground block truncate">{{ $ev['related_player_name'] }}</span>
                                                                     </div>
                                                                 </div>
                                                             @endif
@@ -938,24 +937,24 @@
                                                             @if(!empty($ev['player_image']))
                                                                 <img src="{{ $ev['player_image'] }}" alt="{{ $ev['player_name'] }}" class="w-10 h-10 rounded-lg object-cover border-2 border-line flex-shrink-0">
                                                             @else
-                                                                <div class="w-10 h-10 rounded-lg bg-surface text-white flex items-center justify-center text-base flex-shrink-0"><x-icon name="ball" class="h-4 w-4" /></div>
+                                                                <div class="w-10 h-10 rounded-lg bg-surface text-foreground flex items-center justify-center text-base flex-shrink-0"><x-icon name="ball" class="h-4 w-4" /></div>
                                                             @endif
                                                             <div>
-                                                                <span class="text-sm font-semibold text-white block">{{ $ev['player_name'] ?: __('football.fixture.event.scorer_fallback') }}</span>
+                                                                <span class="text-sm font-semibold text-foreground block">{{ $ev['player_name'] ?: __('football.fixture.event.scorer_fallback') }}</span>
                                                                 @if(!empty($ev['related_player_name']))
                                                                     <p class="text-xs text-body mt-0.5">
-                                                                        {{ __('football.fixture.event.assist') }} <strong class="text-white">{{ $ev['related_player_name'] }}</strong>
+                                                                        {{ __('football.fixture.event.assist') }} <strong class="text-foreground">{{ $ev['related_player_name'] }}</strong>
                                                                     </p>
                                                                 @endif
                                                             </div>
                                                         </div>
                                                     {{-- Cards --}}
                                                     @else
-                                                        <span class="text-xs font-bold text-white block">{{ $ev['player_name'] ?: __('football.fixture.player_fallback', ['id' => $ev['player_id'] ?? '']) }}</span>
+                                                        <span class="text-xs font-bold text-foreground block">{{ $ev['player_name'] ?: __('football.fixture.player_fallback', ['id' => $ev['player_id'] ?? '']) }}</span>
                                                     @endif
 
                                                     @if(!empty($ev['info']))
-                                                        <span class="inline-flex items-center gap-1 text-xs font-bold bg-surface text-white px-2.5 py-0.5 rounded-lg border border-line mt-1">
+                                                        <span class="inline-flex items-center gap-1 text-xs font-bold bg-surface text-foreground px-2.5 py-0.5 rounded-lg border border-line mt-1">
                                                             <svg viewBox="0 0 24 24" fill="none" class="icon w-3 h-3 text-body shrink-0"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.6"/><path d="M12 11v5M12 8h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
                                                             {{ $ev['info'] }}
                                                         </span>
@@ -963,7 +962,7 @@
                                                 </div>
 
                                                 @if(!empty($ev['result']))
-                                                    <span class="font-mono font-bold text-xs bg-steel text-white px-2.5 py-1 rounded-lg">
+                                                    <span class="font-mono font-bold text-xs bg-steel text-foreground px-2.5 py-1 rounded-lg">
                                                         {{ $ev['result'] }}
                                                     </span>
                                                 @endif
@@ -986,12 +985,12 @@
         @if(!empty($h2h))
             <div class="bg-surface border border-line rounded-xl p-6 space-y-4">
                 <div class="flex items-center gap-3">
-                    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-line text-accent">
+                    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-line text-link">
                         <svg viewBox="0 0 24 24" fill="none" class="icon w-5 h-5"><path d="M14.5 4H20v5.5M20 4l-8.5 8.5M9.5 20H4v-5.5M4 20l8.5-8.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 14l5 5M9 14l-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
                     </span>
                     <div>
-                        <span class="kicker block text-xs font-bold uppercase text-primary">{{ __('football.fixture.h2h_kicker') }}</span>
-                        <h3 class="text-base font-bold text-white leading-tight">{{ __('football.fixture.h2h_heading') }}</h3>
+                        <span class="kicker block text-xs font-bold uppercase text-link">{{ __('football.fixture.h2h_kicker') }}</span>
+                        <h3 class="text-base font-bold text-foreground leading-tight">{{ __('football.fixture.h2h_heading') }}</h3>
                     </div>
                 </div>
                 <div class="grid gap-3 md:grid-cols-2">
@@ -1016,12 +1015,12 @@
         @if($pHome !== null && $pAway !== null)
             <div class="bg-surface border border-line rounded-xl p-6">
                 <div class="flex items-center gap-3 mb-4">
-                    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-line text-accent">
+                    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-line text-link">
                         <svg viewBox="0 0 24 24" fill="none" class="icon w-5 h-5"><path d="M4 15l5-5 3.5 3.5L20 6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 6h5v5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     </span>
                     <div>
-                        <span class="kicker block text-xs font-bold uppercase text-primary">{{ __('football.fixture.prediction_kicker') }}</span>
-                        <h3 class="text-base font-bold text-white leading-tight">{{ __('football.fixture.prediction_heading') }}</h3>
+                        <span class="kicker block text-xs font-bold uppercase text-link">{{ __('football.fixture.prediction_kicker') }}</span>
+                        <h3 class="text-base font-bold text-foreground leading-tight">{{ __('football.fixture.prediction_heading') }}</h3>
                         <p class="text-xs text-body mt-0.5">{{ __('football.fixture.prediction_sub') }}</p>
                     </div>
                 </div>
@@ -1031,9 +1030,9 @@
                     <div class="bg-accent h-full" style="width: {{ $pAway }}%" title="{{ __('football.fixture.win', ['team' => $away_team['name'] ?? __('football.card.away')]) }}"></div>
                 </div>
                 <div class="mt-3 flex items-center justify-between text-xs font-bold">
-                    <span class="text-accent">{{ $home_team['name'] ?? __('football.card.home') }} <span class="font-mono">{{ round($pHome) }}%</span></span>
+                    <span class="text-link">{{ $home_team['name'] ?? __('football.card.home') }} <span class="font-mono">{{ round($pHome) }}%</span></span>
                     <span class="text-body">{{ __('football.fixture.draw') }} <span class="font-mono">{{ round($pDraw ?? 0) }}%</span></span>
-                    <span class="text-accent"><span class="font-mono">{{ round($pAway) }}%</span> {{ $away_team['name'] ?? __('football.card.away') }}</span>
+                    <span class="text-link"><span class="font-mono">{{ round($pAway) }}%</span> {{ $away_team['name'] ?? __('football.card.away') }}</span>
                 </div>
             </div>
         @endif
@@ -1063,12 +1062,12 @@
             <div class="bg-surface border border-line rounded-xl p-6">
                 <div class="flex items-center justify-between mb-4">
                     <div class="flex items-center gap-3">
-                        <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-line text-accent">
+                        <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-line text-link">
                             <svg viewBox="0 0 24 24" fill="none" class="icon w-5 h-5"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.6"/><path d="M12 7v10M14.5 9.3c0-1.2-1.1-1.9-2.5-1.9s-2.5.7-2.5 1.8c0 2.5 5 1.3 5 3.9 0 1.2-1.1 2-2.5 2s-2.5-.8-2.5-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
                         </span>
                         <div>
-                            <span class="kicker block text-xs font-bold uppercase text-primary">{{ __('football.fixture.odds_kicker') }}</span>
-                            <h3 class="text-base font-bold text-white leading-tight">{{ __('football.fixture.odds_heading') }}</h3>
+                            <span class="kicker block text-xs font-bold uppercase text-link">{{ __('football.fixture.odds_kicker') }}</span>
+                            <h3 class="text-base font-bold text-foreground leading-tight">{{ __('football.fixture.odds_heading') }}</h3>
                         </div>
                     </div>
                     @if($bookName)
@@ -1078,15 +1077,15 @@
                 <div class="grid grid-cols-3 gap-3">
                     <div class="rounded-xl border border-line bg-ink p-4 text-center">
                         <span class="block text-xs uppercase font-bold text-muted truncate">{{ $home_team['name'] ?? '1' }}</span>
-                        <span class="mt-1 block text-xl font-bold font-mono text-accent">{{ $oHome ?? '-' }}</span>
+                        <span class="mt-1 block text-xl font-bold font-mono text-link">{{ $oHome ?? '-' }}</span>
                     </div>
                     <div class="rounded-xl border border-line bg-ink p-4 text-center">
                         <span class="block text-xs uppercase font-bold text-muted">{{ __('football.fixture.draw') }}</span>
-                        <span class="mt-1 block text-xl font-bold font-mono text-white">{{ $oDraw ?? '-' }}</span>
+                        <span class="mt-1 block text-xl font-bold font-mono text-foreground">{{ $oDraw ?? '-' }}</span>
                     </div>
                     <div class="rounded-xl border border-line bg-ink p-4 text-center">
                         <span class="block text-xs uppercase font-bold text-muted truncate">{{ $away_team['name'] ?? '2' }}</span>
-                        <span class="mt-1 block text-xl font-bold font-mono text-accent">{{ $oAway ?? '-' }}</span>
+                        <span class="mt-1 block text-xl font-bold font-mono text-link">{{ $oAway ?? '-' }}</span>
                     </div>
                 </div>
                 <p class="mt-3 text-xs text-muted">{{ __('football.fixture.odds_note') }}</p>
@@ -1119,13 +1118,13 @@
                         <img :src="selectedPlayer.player_image" :alt="selectedPlayer.player_name" class="w-16 h-16 rounded-xl object-cover border-2 border-line bg-ink flex-shrink-0">
                     </template>
                     <template x-if="!selectedPlayer.player_image">
-                        <div class="w-16 h-16 rounded-xl bg-ink border-2 border-line flex items-center justify-center text-accent flex-shrink-0">
+                        <div class="w-16 h-16 rounded-xl bg-ink border-2 border-line flex items-center justify-center text-link flex-shrink-0">
                             <svg viewBox="0 0 24 24" fill="none" class="icon w-8 h-8"><circle cx="12" cy="8.5" r="3.8" stroke="currentColor" stroke-width="1.6"/><path d="M5 19.5c0-3.6 3.1-5.5 7-5.5s7 1.9 7 5.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
                         </div>
                     </template>
                     <div>
                         <div class="flex items-center gap-2">
-                            <span class="text-xs font-mono font-bold px-2 py-0.5 rounded-lg text-accent border border-line" x-text="@js(__('football.fixture.modal.number', ['number' => '__N__'])).replace('__N__', selectedPlayer.jersey_number || '-')"></span>
+                            <span class="text-xs font-mono font-bold px-2 py-0.5 rounded-lg text-link border border-line" x-text="@js(__('football.fixture.modal.number', ['number' => '__N__'])).replace('__N__', selectedPlayer.jersey_number || '-')"></span>
                             <span class="text-xs text-body font-bold" x-text="selectedPlayer.team_name"></span>
                         </div>
                         <template x-if="selectedPlayer.country_flag">
@@ -1135,12 +1134,12 @@
                                 <span class="text-xs font-medium text-body" x-text="selectedPlayer.country_name"></span>
                             </span>
                         </template>
-                        <h3 class="text-lg font-bold text-white mt-1" x-text="selectedPlayer.player_name"></h3>
+                        <h3 class="text-lg font-bold text-foreground mt-1" x-text="selectedPlayer.player_name"></h3>
                         <span class="text-xs text-body font-semibold" x-text="@js(__('football.fixture.modal.position', ['position' => '__P__'])).replace('__P__', selectedPlayer.detailed_position_name || selectedPlayer.position_name || @js(__('football.fixture.player')))"></span>
                     </div>
                 </div>
 
-                <button @click="showModal = false" class="text-muted hover:text-white p-2 rounded-xl bg-ink border border-line hover:border-line transition-colors">
+                <button @click="showModal = false" class="text-muted hover:text-foreground p-2 rounded-xl bg-ink border border-line hover:border-line transition-colors">
                     <svg viewBox="0 0 24 24" fill="none" class="icon w-5 h-5"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
                 </button>
             </div>
@@ -1148,10 +1147,10 @@
             {{-- Match Incidents Badges List in Modal --}}
             <template x-if="selectedPlayer.events && selectedPlayer.events.length > 0">
                 <div class="space-y-2 relative z-10">
-                    <h4 class="text-xs font-bold uppercase tracking-wider text-accent">{{ __('football.fixture.modal.incidents') }}</h4>
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-link">{{ __('football.fixture.modal.incidents') }}</h4>
                     <div class="flex flex-wrap items-center gap-2">
                         <template x-for="evText in selectedPlayer.events" :key="evText">
-                            <span class="px-3 py-1 rounded-xl bg-ink text-white font-bold text-xs border border-line flex items-center gap-1" x-text="evText"></span>
+                            <span class="px-3 py-1 rounded-xl bg-ink text-foreground font-bold text-xs border border-line flex items-center gap-1" x-text="evText"></span>
                         </template>
                     </div>
                 </div>
@@ -1163,7 +1162,7 @@
                     <h4 class="text-xs font-bold uppercase tracking-wider text-body">{{ __('football.fixture.modal.stats') }}</h4>
                     <template x-if="selectedPlayer.rating">
                         <span class="flex items-center gap-1.5 rounded-xl border border-line px-2.5 py-1 font-mono text-xs font-bold"
-                              :class="selectedPlayer.rating >= 8.5 ? 'text-steel' : (selectedPlayer.rating >= 7 ? 'text-accent' : (selectedPlayer.rating >= 6 ? 'text-gold' : 'text-accent'))">
+                              :class="selectedPlayer.rating >= 8.5 ? 'text-steel' : (selectedPlayer.rating >= 7 ? 'text-link' : (selectedPlayer.rating >= 6 ? 'text-gold' : 'text-link'))">
                             <svg viewBox="0 0 24 24" fill="currentColor" class="w-3.5 h-3.5"><path d="M12 3.5l2.5 5.1 5.6.8-4.05 3.95.96 5.6L12 16.9l-5.01 2.65.96-5.6L3.9 9.4l5.6-.8L12 3.5z"/></svg>
                             {{ __('football.fixture.modal.rating') }} <span x-text="selectedPlayer.rating"></span>
                         </span>
@@ -1175,7 +1174,7 @@
                         <template x-for="stat in selectedPlayer.stats" :key="stat.type_id">
                             <div class="bg-ink border border-line p-3 rounded-xl flex flex-col justify-between">
                                 <span class="text-xs text-body font-semibold uppercase tracking-wider truncate" x-text="stat.type_name"></span>
-                                <span class="text-base font-mono font-bold text-accent mt-1" x-text="stat.value"></span>
+                                <span class="text-base font-mono font-bold text-link mt-1" x-text="stat.value"></span>
                             </div>
                         </template>
                     </div>
@@ -1190,11 +1189,11 @@
 
             {{-- Modal Action Link to Full Player Profile --}}
             <div class="pt-2 flex items-center justify-end gap-3 relative z-10">
-                <button @click="showModal = false" class="px-4 py-2.5 rounded-xl bg-ink text-white font-bold text-xs hover:bg-surface transition-colors">
+                <button @click="showModal = false" class="px-4 py-2.5 rounded-xl bg-ink text-foreground font-bold text-xs hover:bg-surface transition-colors">
                     {{ __('football.fixture.modal.close') }}
                 </button>
                 <a :href="'{{ url('/football/players') }}/' + selectedPlayer.player_id" 
-                   class="px-5 py-2.5 rounded-xl bg-primary text-white font-semibold text-xs hover:bg-primary transition-colors flex items-center gap-1.5">
+                   class="px-5 py-2.5 rounded-xl bg-primary text-on-primary font-semibold text-xs hover:bg-primary transition-colors flex items-center gap-1.5">
                     <span>{{ __('football.fixture.modal.full_profile') }}</span> &rarr;
                 </a>
             </div>

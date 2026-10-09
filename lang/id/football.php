@@ -3,7 +3,7 @@
 return [
 
     'live' => [
-        'title' => 'Skor Langsung - KREASIBALL',
+        'title' => 'Skor Langsung - PitchTicker',
         'kicker' => 'LIVE NOW',
         'heading' => 'Skor Langsung',
         'subheading' => 'Pertandingan yang sedang berlangsung — otomatis diperbarui tiap 30 detik.',
@@ -13,7 +13,7 @@ return [
     ],
 
     'matchday' => [
-        'title' => 'Jadwal Pertandingan - KREASIBALL',
+        'title' => 'Jadwal Pertandingan - PitchTicker',
         'kicker' => 'MATCHDAY',
         'today' => 'Pertandingan Hari Ini',
         'count' => ':count pertandingan terjadwal.',
@@ -23,7 +23,7 @@ return [
     ],
 
     'transfers' => [
-        'title' => 'Bursa Transfer - KREASIBALL',
+        'title' => 'Bursa Transfer - PitchTicker',
         'kicker' => 'Bursa Transfer',
         'heading' => 'Transfer Terkini',
         'subheading' => 'Kepindahan pemain terbaru lintas liga — langsung dari sumber.',
@@ -42,7 +42,7 @@ return [
     ],
 
     'search' => [
-        'title' => 'Cari - KREASIBALL',
+        'title' => 'Cari - PitchTicker',
         'placeholder' => 'Cari klub, pemain, atau liga...',
         'submit' => 'Cari',
         'teams' => 'Klub',
@@ -54,7 +54,7 @@ return [
     ],
 
     'compare' => [
-        'title' => 'Bandingkan Pemain - KREASIBALL',
+        'title' => 'Bandingkan Pemain - PitchTicker',
         'kicker' => 'Head-to-Head',
         'heading' => 'Bandingkan Pemain',
         'submit' => 'Bandingkan',
@@ -90,7 +90,7 @@ return [
     ],
 
     'portal' => [
-        'title' => 'KREASIBALL - Pusat Jadwal, Skor Langsung & Klasemen',
+        'title' => 'PitchTicker - Pusat Jadwal, Skor Langsung & Klasemen',
         'kicker' => 'MATCHDAY PORTAL',
         'realtime_db' => 'Database Real-time Football',
         'choose_league' => 'Pilih Liga Sepak Bola',
@@ -247,7 +247,7 @@ return [
 
     'player' => [
         'not_found' => 'Data pemain tidak ditemukan.',
-        'title' => ':name - KREASIBALL',
+        'title' => ':name - PitchTicker',
         'fallback_title' => 'Profil Pemain',
         'back' => '← Kembali',
         'compare' => 'Bandingkan',

@@ -27,20 +27,26 @@ class HomeController extends Controller
         // so most page loads are a single cache hit instead of ~6 backend calls.
         $live = collect($this->football->getLiveInplay())->take(8)->values()->all();
 
-        $rest = Cache::remember('home:dashboard', 120, fn () => $this->buildRest());
+        $rest = Cache::remember('home:pitchticker:dashboard', 120, fn () => $this->buildRest());
+        if ($rest['newsUnavailable'] || $rest['footballUnavailable']) {
+            Cache::forget('home:pitchticker:dashboard');
+        }
 
         return view('home.index', [
             'live' => $live,
             'today' => $rest['today'],
             'featuredLeagues' => $rest['featuredLeagues'],
             'news' => $rest['news'],
+            'leagues' => $rest['leagues'],
+            'newsUnavailable' => $rest['newsUnavailable'],
         ]);
     }
 
     /** Builds the cacheable part of the dashboard (today, featured, news). */
     private function buildRest(): array
     {
-        $news = collect($this->news->all() ?? [])->take(6)->values()->all();
+        $newsData = $this->news->all();
+        $news = collect($newsData ?? [])->take(6)->values()->all();
 
         // Only CMS-enabled leagues (status = true) feed the standings/topscorer
         // cards, and their fixtures are pushed to the top of today's list.
@@ -48,7 +54,7 @@ class HomeController extends Controller
         $enabledIds = array_values(array_map(static fn ($l) => (int) $l['id'], $leagues));
 
         $today = $this->football->prioritizeEnabledLeagues(
-            $this->football->getFixturesByDate(date('Y-m-d')),
+            $this->football->getFixturesByDate(now('Asia/Jakarta')->format('Y-m-d')),
             $enabledIds
         );
 
@@ -60,7 +66,7 @@ class HomeController extends Controller
             }
         }
 
-        return ['today' => $today, 'featuredLeagues' => $featuredLeagues, 'news' => $news];
+        return ['today' => $today, 'featuredLeagues' => $featuredLeagues, 'news' => $news, 'leagues' => $leagues, 'newsUnavailable' => $newsData === null, 'footballUnavailable' => $this->football->unavailable];
     }
 
     /**

@@ -3,7 +3,7 @@
 return [
 
     'live' => [
-        'title' => 'Live Scores - KREASIBALL',
+        'title' => 'Live Scores - PitchTicker',
         'kicker' => 'LIVE NOW',
         'heading' => 'Live Scores',
         'subheading' => 'Matches in play — refreshed automatically every 30 seconds.',
@@ -13,7 +13,7 @@ return [
     ],
 
     'matchday' => [
-        'title' => 'Fixtures - KREASIBALL',
+        'title' => 'Fixtures - PitchTicker',
         'kicker' => 'MATCHDAY',
         'today' => "Today's Matches",
         'count' => ':count match scheduled.|:count matches scheduled.',
@@ -23,7 +23,7 @@ return [
     ],
 
     'transfers' => [
-        'title' => 'Transfer Market - KREASIBALL',
+        'title' => 'Transfer Market - PitchTicker',
         'kicker' => 'Transfer Market',
         'heading' => 'Latest Transfers',
         'subheading' => 'The newest player moves across leagues — straight from the source.',
@@ -42,7 +42,7 @@ return [
     ],
 
     'search' => [
-        'title' => 'Search - KREASIBALL',
+        'title' => 'Search - PitchTicker',
         'placeholder' => 'Search clubs, players, or leagues...',
         'submit' => 'Search',
         'teams' => 'Clubs',
@@ -54,7 +54,7 @@ return [
     ],
 
     'compare' => [
-        'title' => 'Compare Players - KREASIBALL',
+        'title' => 'Compare Players - PitchTicker',
         'kicker' => 'Head-to-Head',
         'heading' => 'Compare Players',
         'submit' => 'Compare',
@@ -90,7 +90,7 @@ return [
     ],
 
     'portal' => [
-        'title' => 'KREASIBALL - Fixtures, Live Scores & Standings Hub',
+        'title' => 'PitchTicker - Fixtures, Live Scores & Standings Hub',
         'kicker' => 'MATCHDAY PORTAL',
         'realtime_db' => 'Real-time Football Database',
         'choose_league' => 'Choose a football league',
@@ -247,7 +247,7 @@ return [
 
     'player' => [
         'not_found' => 'Player data not found.',
-        'title' => ':name - KREASIBALL',
+        'title' => ':name - PitchTicker',
         'fallback_title' => 'Player Profile',
         'back' => '← Back',
         'compare' => 'Compare',

@@ -2,7 +2,7 @@
 
 return [
 
-    'title' => 'Berita Sepak Bola - KREASIBALL',
+    'title' => 'Berita Sepak Bola - PitchTicker',
     'kicker' => 'LIVE FEED',
     'heading' => 'Berita Sepak Bola Terkini',
     'subheading' => 'Kabar transfer, hasil pertandingan, dan sorotan dari lapangan hijau — diperbarui langsung dari sumber.',

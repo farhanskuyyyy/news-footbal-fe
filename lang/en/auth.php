@@ -2,7 +2,7 @@
 
 return [
 
-    'title' => 'Admin Login - KREASIBALL',
+    'title' => 'Admin Login - PitchTicker',
     'kicker' => 'Admin Panel',
     'heading' => 'Sign in to the Dashboard',
     'email' => 'Email',

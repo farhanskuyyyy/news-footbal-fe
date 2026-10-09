@@ -1,11 +1,11 @@
-# Laravel FE — Portal Berita & Upload Service
+# PitchTicker — Football & News
 
-Frontend Laravel (Blade murni) yang menampilkan berita dari backend Go (Echo) serta fitur upload gambar dengan event dispatcher ke RabbitMQ.
+Frontend Laravel/Blade untuk jadwal, live score, portal liga, profil tim/pemain, transfer, dan berita dari backend Go. CMS scraper dan upload gambar tetap memakai integrasi existing.
 
 ## Arsitektur
 
 - **Backend (Go News API):** Berjalan di port `8082` — `GET /health`, `GET /news`, `GET /news/{id}`.
-- **Frontend (Laravel 13):** Blade + Tailwind (CDN).
+- **Frontend (Laravel 13):** Blade + Tailwind 4/Vite 8, Alpine 3, dan Instrument Sans yang dibundle lokal.
 - **RabbitMQ Message Broker:** Mengirim metadata upload gambar (`image_upload_queue`) dari Laravel ke Go Consumer backend.
 - **Grafana Monitoring:** Berjalan via Docker Compose di port `3001`.
 
@@ -13,9 +13,17 @@ Frontend Laravel (Blade murni) yang menampilkan berita dari backend Go (Echo) se
 
 | Route | Method | Deskripsi |
 |---|---|---|
-| `/` | `GET` | Daftar berita (title, source, tanggal, deskripsi terpotong) + pagination |
+| `/` | `GET` | Dashboard pertandingan, liga, berita, klasemen, dan top skor |
+| `/football/live` | `GET` | Pertandingan live dengan refresh manual |
+| `/football/matches` | `GET` | Jadwal menurut tanggal, AJAX/history dengan fallback GET |
+| `/football/` | `GET` | Liga, musim, klasemen, fixtures, tim, top skor, transfer, bracket |
+| `/football/fixtures/{id}` | `GET` | Detail pertandingan dan prepare/retry bila belum tersedia |
+| `/football/teams/{id}`, `/football/players/{id}` | `GET` | Profil tim dan pemain |
+| `/football/search`, `/football/compare`, `/football/transfers` | `GET` | Pencarian, perbandingan, transfer |
+| `/berita` | `GET` | Daftar berita dengan pagination |
 | `/berita/{id}` | `GET` | Detail berita + link ke sumber asli |
-| `/refresh` | `POST` | Trigger backend fetch ulang dari NewsAPI & clear cache FE |
+| `/berita/refresh` | `POST` | Trigger backend fetch ulang dari NewsAPI & clear cache FE |
+| `/login`, `/admin` | `GET` | Login dan CMS scraper (admin membutuhkan auth) |
 | `/upload` | `GET` | Halaman form upload gambar |
 | `/upload` | `POST` | Upload file gambar ke storage local & publish event ke RabbitMQ |
 
@@ -37,10 +45,26 @@ composer install
 cp .env.example .env
 php artisan key:generate
 php artisan storage:link  # symlink storage public
+npm ci --ignore-scripts
+npm run build
 make run                  # atau: php artisan serve
 ```
 
 Buka [http://localhost:8000/upload](http://localhost:8000/upload) untuk mencoba fitur upload gambar. Setiap kali gambar di-upload, Laravel akan mengirimkan event payload JSON ke queue `image_upload_queue` di RabbitMQ.
+
+## Tampilan PitchTicker dan preview fixture
+
+Warna dan typography berada di `resources/css/app.css`; light adalah default dan dark disimpan melalui `pitchticker-theme`. Semua halaman, termasuk CMS, memakai layout bersama. Logo liga/tim dan isi berita tetap berasal dari backend; tidak ada data pertandingan produksi yang dibuat di frontend.
+
+Untuk preview lokal tanpa backend live, setelah build:
+
+```sh
+rtk proxy php -S 127.0.0.1:8099 -t public tests/preview.php
+```
+
+Router ini hanya berjalan di PHP development server melalui loopback, memblokir request HTTP yang tidak difake, dan memakai database in-memory. `/admin` di preview memakai user fixture untuk pemeriksaan visual; mekanisme ini tidak masuk image produksi. Semua isi preview diberi label test fixture. Gunakan `?preview_state=empty`, `error`, `long`, atau `running` untuk state tambahan; `/football/fixtures/999` menguji prepare gagal/retry.
+
+Asset produksi dibuat dalam Node stage Docker lalu disalin ke image PHP; CI juga membuild asset sebelum PHPUnit. Build dapat mengunduh font dari Bunny, tetapi runtime browser tidak membutuhkan CDN CSS/JS/font. Detail hasil pemeriksaan ada di [rebranding-verification.md](../rebranding-verification.md).
 
 ## Konfigurasi
 
@@ -57,7 +81,7 @@ Buka [http://localhost:8000/upload](http://localhost:8000/upload) untuk mencoba 
 ## Test & Lint
 
 ```bash
-make test   # PHPUnit test suite (14 passing tests)
+make test   # PHPUnit dengan environment terisolasi dan HTTP fake
 make lint   # Pint check
 make fix    # Pint fix
 ```

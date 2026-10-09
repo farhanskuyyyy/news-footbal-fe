@@ -1,5 +1,12 @@
 # Production image: PHP-FPM + Nginx in one container (serversideup base).
-# No Node stage needed — the app is plain Blade with Tailwind via CDN.
+FROM node:22-alpine AS assets
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci --ignore-scripts
+COPY vite.config.js ./
+COPY resources ./resources
+RUN npm run build
+
 FROM serversideup/php:8.3-fpm-nginx
 
 # Stateless container: no database — file-based session/cache, logs to stderr.
@@ -22,6 +29,7 @@ USER www-data
 RUN composer install --no-dev --no-scripts --no-interaction --prefer-dist
 
 COPY --chown=www-data:www-data . .
+COPY --from=assets --chown=www-data:www-data /app/public/build ./public/build
 RUN composer dump-autoload --optimize \
     && php artisan package:discover --ansi
 

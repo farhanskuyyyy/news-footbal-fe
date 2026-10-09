@@ -1,197 +1,71 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-ink text-white selection:bg-primary selection:text-white">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-canvas text-foreground">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@yield('title', 'KREASIBALL — '.__('common.brand.tagline'))</title>
-
-    <!-- Fonts: DM Sans for headings, Inter for body -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Tailwind CSS & Alpine.js CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    @php $pageTitle = trim($__env->yieldContent('title', __('common.brand.tagline'))); @endphp
+    <title>{{ str_contains($pageTitle, 'PitchTicker') ? $pageTitle : $pageTitle.' · PitchTicker' }}</title>
+    <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'system-ui', 'sans-serif'],
-                        display: ['"DM Sans"', 'Inter', 'sans-serif'],
-                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
-                    },
-                    colors: {
-                        primary: '#8B1E2D',
-                        accent: '#E63946',
-                        gold: '#F4D35E',
-                        steel: '#457B9D',
-                        ink: '#000000',
-                        surface: '#111111',
-                        line: '#333333',
-                        body: '#999999',
-                        muted: '#6b7280',
-                    },
-                    maxWidth: {
-                        page: '1200px',
-                    },
-                },
-            },
-        }
+        try { document.documentElement.dataset.theme = localStorage.getItem('pitchticker-theme') === 'dark' ? 'dark' : 'light'; }
+        catch { document.documentElement.dataset.theme = 'light'; }
     </script>
-
-    <style>
-        body { font-family: 'Inter', system-ui, sans-serif; }
-        h1, h2, h3, h4 { font-family: 'DM Sans', Inter, sans-serif; }
-        [x-cloak] { display: none !important; }
-        /* Small uppercase eyebrow above section headings */
-        .kicker { letter-spacing: 0.18em; }
-        /* Tailwind preflight makes every svg display:block, which drops an inline
-           icon onto its own line. Icons sit next to their label instead. */
-        .icon { display: inline-block; vertical-align: -0.125em; flex-shrink: 0; }
-    </style>
-
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @fonts
 </head>
-<body class="flex min-h-full flex-col bg-ink text-white antialiased">
-
-    {{-- Top Broadcast Navigation --}}
-    <header x-data="{ mobileOpen: false }" class="sticky top-0 z-50 border-b border-line bg-ink">
-        <div class="mx-auto flex w-full max-w-page items-center justify-between px-4 sm:px-6 py-4">
-            <div class="flex items-center gap-8">
-                {{-- Logo / Crest --}}
-                <a href="{{ route('home') }}" class="flex items-center gap-2.5 group">
-                    <div class="flex h-9 w-9 items-center justify-center rounded-lg ">
-                        <svg viewBox="0 0 24 24" fill="none" class="icon h-5 w-5 text-white">
-                            <circle cx="12" cy="12" r="9" fill="currentColor" opacity="0.15"/>
-                            <path d="M12 3l1.9 1.4-.7 2.2h-2.4l-.7-2.2L12 3zM4.8 8.6l2.3.1.7 2.2-1.9 1.4-1.9-1.4.8-2.3zm14.4 0l.8 2.3-1.9 1.4-1.9-1.4.7-2.2 2.3-.1zM8.2 18.4l-.7-2.2 1.9-1.4 1.9 1.4-.7 2.2H8.2zm7.6 0h-2.4l-.7-2.2 1.9-1.4 1.9 1.4-.7 2.2z" fill="currentColor"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <span class="flex items-center gap-2 font-display text-lg font-bold tracking-tight text-white">
-                            KREASI<span class="text-accent">BALL</span>
-                            <span class="rounded-lg border border-line px-1.5 py-0.5 text-xs font-medium uppercase tracking-widest text-body">PRO</span>
-                        </span>
-                    </div>
-                </a>
-
-                {{-- Nav Links (underline active-state, inline SVG icons) --}}
-                <nav class="hidden lg:flex items-center gap-1 text-sm font-semibold">
-                    @php
-                        $navItems = [
-                            ['route' => 'home', 'match' => ['home'], 'label' => __('common.nav.home'),
-                             'icon' => '<path d="M4 11.5L12 4l8 7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 10v9h12v-9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>'],
-                            ['route' => 'football.index', 'match' => ['football.index', 'football.team', 'football.fixture', 'football.player'], 'label' => __('common.nav.portal'),
-                             'icon' => '<circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.6"/><path d="M12 6.5l3.5 2.6-1.3 4.1h-4.4L8 9.1 12 6.5z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>'],
-                            ['route' => 'football.live', 'match' => ['football.live'], 'label' => __('common.nav.live'), 'live' => true,
-                             'icon' => '<circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.6"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>'],
-                            ['route' => 'football.matchday', 'match' => ['football.matchday'], 'label' => __('common.nav.schedule'),
-                             'icon' => '<rect x="4" y="5.5" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M4 9.5h16M8 3.5v4M16 3.5v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>'],
-                            ['route' => 'football.transfers', 'match' => ['football.transfers'], 'label' => __('common.nav.transfers'),
-                             'icon' => '<path d="M4 8h13m0 0l-3-3m3 3l-3 3M20 16H7m0 0l3-3m-3 3l3 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>'],
-                            ['route' => 'news.index', 'match' => ['news.*'], 'label' => __('common.nav.news'),
-                             'icon' => '<rect x="4" y="5" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M7.5 9h6M7.5 12h6M7.5 15h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>'],
-                        ];
-                    @endphp
-                    @foreach($navItems as $n)
-                        @php $active = request()->routeIs(...$n['match']); @endphp
-                        <a href="{{ route($n['route']) }}"
-                           class="group flex items-center gap-2 px-3 py-2 text-sm transition-colors {{ $active ? 'font-semibold text-white' : 'text-body hover:text-white' }}">
-                            @if(!empty($n['live']))
-                                <span class="h-2 w-2 rounded-full bg-accent"></span>
-                            @else
-                                <svg viewBox="0 0 24 24" fill="none" class="icon h-4 w-4 {{ $active ? 'text-accent' : 'text-muted group-hover:text-body' }}">{!! $n['icon'] !!}</svg>
-                            @endif
-                            <span class="whitespace-nowrap">{{ $n['label'] }}</span>
-                        </a>
-                    @endforeach
-                </nav>
-            </div>
-
-            {{-- Search + Live Status --}}
-            <div class="flex items-center gap-3 text-xs font-medium">
-                {{-- Language switcher (session-backed, keeps the current URL) --}}
-                <div x-data="{ open: false }" class="relative">
-                    <button @click="open = !open" @click.outside="open = false" type="button"
-                            aria-label="{{ __('common.locale.label') }}"
-                            class="flex h-9 items-center gap-1.5 rounded-lg border border-line px-3 text-xs font-medium uppercase tracking-wider text-body transition-colors hover:text-white">
-                        <svg viewBox="0 0 24 24" fill="none" class="icon h-3.5 w-3.5"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 12h17M12 3.5c2.2 2.4 3.3 5.4 3.3 8.5s-1.1 6.1-3.3 8.5c-2.2-2.4-3.3-5.4-3.3-8.5S9.8 5.9 12 3.5z" stroke="currentColor" stroke-width="1.4"/></svg>
-                        {{ app()->getLocale() }}
-                    </button>
-                    <div x-show="open" x-cloak x-transition.opacity
-                         class="absolute right-0 z-50 mt-2 w-44 overflow-hidden rounded-xl border border-line bg-surface py-1">
-                        @foreach(\App\Http\Middleware\SetLocale::SUPPORTED as $code => $native)
-                            <a href="{{ route('locale.switch', $code) }}"
-                               class="flex items-center justify-between gap-2 px-3.5 py-2 text-xs transition-colors {{ app()->getLocale() === $code ? 'font-semibold text-accent' : 'text-body hover:text-white' }}">
-                                {{ $native }}
-                                <span class="font-mono text-xs uppercase text-muted">{{ $code }}</span>
-                            </a>
-                        @endforeach
-                    </div>
-                </div>
-
-                <a href="{{ route('football.search') }}" title="{{ __('common.nav.search_title') }}"
-                   class="flex h-9 w-9 items-center justify-center rounded-lg border border-line text-body transition-colors hover:text-white">
-                    <svg viewBox="0 0 24 24" fill="none" class="icon h-4 w-4"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M20 20l-3.5-3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-                </a>
-                @auth
-                    <a href="{{ route('admin.dashboard') }}" title="{{ __('common.nav.admin_panel') }}"
-                       class="flex h-9 w-9 items-center justify-center rounded-lg border border-line text-accent transition-colors hover:text-white">
-                        <svg viewBox="0 0 24 24" fill="none" class="icon h-4 w-4"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z" stroke="currentColor" stroke-width="1.6"/><path d="M19.4 15a1.7 1.7 0 00.3 1.9l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-2.9 1.2V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-2.9-1.2l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00-1.2-2.9H2a2 2 0 110-4h.1a1.7 1.7 0 001.2-2.9l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.9.3H8a1.7 1.7 0 001-1.6V2a2 2 0 114 0v.1a1.7 1.7 0 001 1.6 1.7 1.7 0 001.9-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.9V8a1.7 1.7 0 001.6 1H22a2 2 0 110 4h-.1a1.7 1.7 0 00-1.6 1z" stroke="currentColor" stroke-width="1.2"/></svg>
-                    </a>
-                @endauth
-                <div class="hidden items-center gap-2 rounded-lg border border-line px-3 py-1.5 sm:flex">
-                    <span class="h-2 w-2 rounded-full "></span>
-                    <span class="whitespace-nowrap font-mono text-xs tracking-wider text-body">{{ __('common.nav.live_data') }}</span>
-                </div>
-
-                {{-- Mobile hamburger --}}
-                <button @click="mobileOpen = !mobileOpen" aria-label="{{ __('common.nav.menu') }}"
-                        class="flex h-9 w-9 items-center justify-center rounded-lg border border-line text-body transition-colors hover:text-white lg:hidden">
-                    <svg x-show="!mobileOpen" viewBox="0 0 24 24" fill="none" class="h-5 w-5"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-                    <svg x-show="mobileOpen" x-cloak viewBox="0 0 24 24" fill="none" class="h-5 w-5"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-                </button>
-            </div>
-        </div>
-        {{-- Mobile menu panel --}}
-        <div x-show="mobileOpen" x-cloak class="border-t border-line bg-ink px-4 py-3 lg:hidden">
-            <nav class="flex flex-col gap-1 text-sm font-semibold">
-                @foreach($navItems as $n)
-                    @php $mActive = request()->routeIs(...$n['match']); @endphp
-                    <a href="{{ route($n['route']) }}"
-                       class="flex items-center gap-3 rounded-lg px-3.5 py-2.5 transition-colors {{ $mActive ? 'bg-surface text-white' : 'text-body hover:text-white' }}">
-                        @if(!empty($n['live']))
-                            <span class="h-2 w-2 rounded-full bg-accent"></span>
-                        @else
-                            <svg viewBox="0 0 24 24" fill="none" class="icon h-4 w-4 {{ $mActive ? 'text-accent' : 'text-muted' }}">{!! $n['icon'] !!}</svg>
-                        @endif
-                        {{ $n['label'] }}
-                    </a>
+<body class="flex min-h-full flex-col bg-canvas text-foreground antialiased">
+    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-surface focus:p-3">{{ __('common.nav.skip') }}</a>
+    @php
+        $navItems = [
+            ['home', ['home'], __('common.nav.home')],
+            ['football.live', ['football.live'], __('common.nav.live')],
+            ['football.matchday', ['football.matchday'], __('common.nav.schedule')],
+            ['football.index', ['football.index', 'football.team', 'football.player', 'football.fixture'], __('common.nav.portal')],
+            ['football.transfers', ['football.transfers'], __('common.nav.transfers')],
+            ['news.index', ['news.*'], __('common.nav.news')],
+        ];
+    @endphp
+    <header x-data="{ mobileOpen: false }" @keydown.escape.window="mobileOpen = false" class="sticky top-0 z-50 border-b border-divider bg-surface">
+        <div class="mx-auto flex max-w-page flex-wrap items-center justify-between gap-2 px-4 py-3 sm:px-6">
+            <a href="{{ route('home') }}" class="flex min-h-11 items-center gap-2 text-xl font-bold tracking-tight" aria-label="PitchTicker — {{ __('common.nav.home') }}">
+                <svg viewBox="0 0 32 32" class="h-8 w-8" aria-hidden="true"><rect width="32" height="32" rx="6" fill="#14532D"/><path d="M9 8v16M9 8h9a5 5 0 0 1 0 10H9" fill="none" stroke="#FFFFFF" stroke-width="3"/><path d="M21 23h5" stroke="#E6B94A" stroke-width="3"/></svg>
+                <span>PitchTicker</span>
+            </a>
+            <nav aria-label="{{ __('common.nav.menu') }}" class="hidden items-center gap-1 xl:flex">
+                @foreach($navItems as [$route, $matches, $label])
+                    <a href="{{ route($route) }}" @if(request()->routeIs(...$matches)) aria-current="page" @endif class="flex min-h-11 items-center border-b-2 px-3 text-sm font-semibold {{ request()->routeIs(...$matches) ? 'border-link text-link' : 'border-transparent text-muted hover:text-foreground' }}">{{ $label }}</a>
                 @endforeach
             </nav>
+            <div class="flex items-center gap-1 sm:gap-2">
+                @auth <a href="{{ route('admin.dashboard') }}" aria-label="{{ __('common.nav.admin_panel') }}" class="flex h-11 w-11 items-center justify-center rounded-lg hover:bg-canvas"><x-icon name="user" class="h-5 w-5" /></a> @endauth
+                <a href="{{ route('football.search') }}" aria-label="{{ __('common.nav.search_title') }}" class="flex h-11 w-11 items-center justify-center rounded-lg hover:bg-canvas"><svg viewBox="0 0 24 24" fill="none" class="h-5 w-5" aria-hidden="true"><circle cx="10" cy="10" r="6" stroke="currentColor" stroke-width="1.8"/><path d="m15 15 5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></a>
+                <button type="button" data-theme-toggle aria-label="{{ __('common.nav.theme') }}" aria-pressed="false" class="flex h-11 w-11 items-center justify-center rounded-lg hover:bg-canvas"><svg viewBox="0 0 24 24" fill="none" class="h-5 w-5" aria-hidden="true"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg></button>
+                <a href="{{ route('locale.switch', app()->getLocale() === 'id' ? 'en' : 'id') }}" aria-label="{{ __('common.locale.label') }}: {{ app()->getLocale() === 'id' ? 'English' : 'Bahasa Indonesia' }}" class="hidden min-h-11 items-center px-2 text-sm font-semibold sm:flex">{{ strtoupper(app()->getLocale()) }}</a>
+                <button type="button" @click="mobileOpen = !mobileOpen" :aria-expanded="mobileOpen" aria-controls="mobile-navigation" aria-label="{{ __('common.nav.menu') }}" class="flex h-11 w-11 items-center justify-center rounded-lg xl:hidden"><svg viewBox="0 0 24 24" fill="none" class="h-5 w-5" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+            </div>
         </div>
-
+        <nav id="mobile-navigation" x-show="mobileOpen" x-cloak aria-label="{{ __('common.nav.menu') }}" class="border-t border-divider px-4 py-2 xl:hidden">
+            @foreach($navItems as [$route, $matches, $label])
+                <a href="{{ route($route) }}" @if(request()->routeIs(...$matches)) aria-current="page" @endif class="flex min-h-11 items-center rounded-lg px-3 text-sm {{ request()->routeIs(...$matches) ? 'bg-canvas font-semibold text-link' : 'text-foreground' }}">{{ $label }}</a>
+            @endforeach
+            <a href="{{ route('locale.switch', app()->getLocale() === 'id' ? 'en' : 'id') }}" class="flex min-h-11 items-center px-3 text-sm">{{ app()->getLocale() === 'id' ? 'English' : 'Bahasa Indonesia' }}</a>
+        </nav>
     </header>
-
-    {{-- Main App View Container --}}
-    <main class="mx-auto w-full max-w-page flex-1 px-4 sm:px-6 py-16">
+    <noscript><nav aria-label="{{ __('common.nav.menu') }}" class="mx-auto flex w-full max-w-page flex-wrap gap-3 px-4 py-3">@foreach($navItems as [$route, $matches, $label])<a href="{{ route($route) }}" class="flex min-h-11 items-center text-sm text-link">{{ $label }}</a>@endforeach</nav></noscript>
+    <main id="main" tabindex="-1" class="mx-auto w-full max-w-page flex-1 px-4 py-6 sm:px-6">
+        @if($previewMode ?? false)<p class="mb-4 rounded-lg border border-control bg-surface p-3 text-sm">Local preview · Test fixtures · No production data</p>@endif
+        @if(($footballUnavailable ?? false) && !request()->routeIs('football.matchday'))<p role="alert" class="mb-4 rounded-lg border border-danger bg-surface p-3 text-sm text-danger">{{ __('common.empty.unavailable') }}</p>@endif
         @yield('content')
     </main>
-
-    {{-- Footer --}}
-    <footer class="border-t border-line bg-ink py-10 text-xs text-body">
-        {{-- Pitch center-line motif --}}
-        <div class="mx-auto w-full max-w-page px-4 sm:px-6">
-            <div class="flex flex-col items-center justify-between gap-4 sm:flex-row">
-                <div class="flex items-center gap-2">
-                    <span class="font-semibold text-white">{{ __('common.footer.portal') }}</span>
-                    <span class="text-muted">/</span>
-                    <span>{{ __('common.footer.powered_by') }}</span>
-                </div>
-                <span>{{ __('common.footer.rights', ['year' => date('Y')]) }}</span>
+    <footer class="mt-8 border-t border-divider py-6 text-xs text-muted">
+        <div class="mx-auto flex max-w-page flex-wrap items-center justify-between gap-4 px-4 sm:px-6">
+            <span>PitchTicker · {{ __('common.footer.rights', ['year' => date('Y')]) }}</span>
+            <div class="flex flex-wrap gap-4">
+                <a href="{{ route('football.compare') }}" class="inline-flex min-h-11 items-center hover:text-link">{{ __('common.nav.compare') }}</a>
+                <a href="{{ route('upload.create') }}" class="inline-flex min-h-11 items-center hover:text-link">{{ __('common.nav.upload') }}</a>
+                @auth <a href="{{ route('admin.dashboard') }}" class="inline-flex min-h-11 items-center hover:text-link">{{ __('common.nav.admin_panel') }}</a> @else <a href="{{ route('login') }}" class="inline-flex min-h-11 items-center hover:text-link">{{ __('auth.heading') }}</a> @endauth
             </div>
         </div>
     </footer>
-
 </body>
 </html>

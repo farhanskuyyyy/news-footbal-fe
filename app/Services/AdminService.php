@@ -17,6 +17,8 @@ class AdminService
 
     protected int $timeout;
 
+    public bool $unavailable = false;
+
     /** Allowed bulk scrape jobs → backend endpoint path. */
     public const JOBS = [
         'core' => 'scrape/core',
@@ -139,9 +141,14 @@ class AdminService
                 ->acceptJson()
                 ->get("{$this->baseUrl}/sportmonks/{$path}");
 
+            if (! $response->successful()) {
+                $this->unavailable = true;
+            }
+
             return $response->successful() ? ($response->json() ?? []) : [];
         } catch (ConnectionException|RequestException $e) {
             Log::warning("Admin GET /sportmonks/{$path} failed", ['error' => $e->getMessage()]);
+            $this->unavailable = true;
 
             return [];
         }

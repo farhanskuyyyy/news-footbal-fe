@@ -129,11 +129,15 @@ class FootballController extends Controller
         ));
     }
 
-    public function fixtureDetail(int $id): View
+    public function fixtureDetail(int $id): View|Response
     {
         $data = $this->footballService->getFixtureDetail($id);
 
         if (! $data) {
+            if ($this->footballService->unavailable) {
+                return response()->view('football.unavailable', [], 503);
+            }
+
             // Fixture not in DB yet — show a loading page that triggers an
             // on-demand scrape (see prepareFixture), then reloads.
             return view('football.fixture_loading', ['fixtureId' => $id]);
@@ -195,11 +199,13 @@ class FootballController extends Controller
 
     public function matchday(Request $request): View|Response
     {
-        $date = $request->query('date', date('Y-m-d'));
+        $today = now('Asia/Jakarta')->format('Y-m-d');
+        $date = $request->query('date', $today);
+        $date = is_string($date) ? $date : $today;
         // Guard the date format; fall back to today on anything unexpected.
         $d = \DateTime::createFromFormat('Y-m-d', $date);
         if (! $d || $d->format('Y-m-d') !== $date) {
-            $date = date('Y-m-d');
+            $date = $today;
         }
 
         // CMS-enabled leagues (status = true) are listed before the rest.
@@ -237,12 +243,15 @@ class FootballController extends Controller
         ]);
     }
 
-    public function teamDetail(int $id, Request $request): View
+    public function teamDetail(int $id, Request $request): View|Response
     {
         $seasonId = $request->integer('season_id') ?: null;
         $data = $this->footballService->getTeamDetail($id, $seasonId);
 
         if (! $data) {
+            if ($this->footballService->unavailable) {
+                return response()->view('football.unavailable', [], 503);
+            }
             abort(404, __('football.team.not_found'));
         }
 
@@ -284,11 +293,14 @@ class FootballController extends Controller
         ]);
     }
 
-    public function playerDetail(int $id): View
+    public function playerDetail(int $id): View|Response
     {
         $data = $this->footballService->getPlayerDetail($id);
 
         if (! $data) {
+            if ($this->footballService->unavailable) {
+                return response()->view('football.unavailable', [], 503);
+            }
             abort(404, __('football.player.not_found'));
         }
 

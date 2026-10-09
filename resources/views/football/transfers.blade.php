@@ -7,8 +7,8 @@
         {{-- Header --}}
         <div class="relative overflow-hidden rounded-xl border border-line bg-surface p-6 sm:p-8">
             <div class="relative z-10">
-                <span class="kicker mb-3 block text-xs font-bold uppercase text-primary">{{ __('football.transfers.kicker') }}</span>
-                <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">{{ __('football.transfers.heading') }}</h1>
+                <span class="kicker mb-3 block text-xs font-bold uppercase text-link">{{ __('football.transfers.kicker') }}</span>
+                <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">{{ __('football.transfers.heading') }}</h1>
                 <p class="mt-1.5 text-xs sm:text-sm text-body">{{ __('football.transfers.subheading') }}</p>
             </div>
         </div>
@@ -21,7 +21,7 @@
             </div>
         @else
             <div class="rounded-xl border border-dashed border-line bg-surface p-12 text-center">
-                <p class="text-base font-bold text-white">{{ __('football.transfers.empty') }}</p>
+                <p class="text-base font-bold text-foreground">{{ __('football.transfers.empty') }}</p>
                 <p class="mt-1 text-xs text-muted">{{ __('football.transfers.empty_hint') }}</p>
             </div>
         @endif

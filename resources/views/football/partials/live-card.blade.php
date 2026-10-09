@@ -1,94 +1,36 @@
-{{-- Renders one raw Sportmonks fixture (from livescores/fixtures-by-date proxy).
-     Expects $f = a Sportmonks fixture array with participants, scores, state, league. --}}
 @php
     $participants = $f['participants'] ?? [];
-    $home = collect($participants)->first(fn ($p) => ($p['meta']['location'] ?? '') === 'home') ?? ($participants[0] ?? null);
-    $away = collect($participants)->first(fn ($p) => ($p['meta']['location'] ?? '') === 'away') ?? ($participants[1] ?? null);
-
-    // Current score by participant location
-    $scores = $f['scores'] ?? [];
-    $curHome = collect($scores)->first(fn ($s) => ($s['description'] ?? '') === 'CURRENT' && ($s['score']['participant'] ?? '') === 'home');
-    $curAway = collect($scores)->first(fn ($s) => ($s['description'] ?? '') === 'CURRENT' && ($s['score']['participant'] ?? '') === 'away');
-    $homeGoals = $curHome['score']['goals'] ?? null;
-    $awayGoals = $curAway['score']['goals'] ?? null;
-    $hasScore = ($homeGoals !== null && $awayGoals !== null);
-
+    $home = $f['home_team'] ?? collect($participants)->first(fn ($p) => ($p['meta']['location'] ?? '') === 'home') ?? ($participants[0] ?? []);
+    $away = $f['away_team'] ?? collect($participants)->first(fn ($p) => ($p['meta']['location'] ?? '') === 'away') ?? ($participants[1] ?? []);
+    $scores = collect($f['scores'] ?? []);
+    $homeGoals = $f['current_home_score'] ?? $scores->first(fn ($s) => ($s['description'] ?? '') === 'CURRENT' && ($s['score']['participant'] ?? '') === 'home')['score']['goals'] ?? null;
+    $awayGoals = $f['current_away_score'] ?? $scores->first(fn ($s) => ($s['description'] ?? '') === 'CURRENT' && ($s['score']['participant'] ?? '') === 'away')['score']['goals'] ?? null;
+    $hasScore = $homeGoals !== null && $awayGoals !== null;
     $stateCode = $f['state']['short_name'] ?? $f['state']['state'] ?? '';
-    // Live short_names as the `states` table stores them — '1H'/'2H'/'LIVE' are not real codes.
     $isLive = in_array($stateCode, ['1st', '2nd', 'HT', 'BRK', 'et', 'ETB', '2et', 'PEN', 'PENB']);
-    // "FTP" is Sportmonks' after-penalties code; "FT_PEN" does not exist.
     $isFinished = in_array($stateCode, ['FT', 'AET', 'FTP']);
-    // Winner, once the match is over and the score is not level. A drawn league
-    // match simply has no winner, so neither side is marked.
     $homeWon = $isFinished && $hasScore && $homeGoals > $awayGoals;
     $awayWon = $isFinished && $hasScore && $awayGoals > $homeGoals;
-
-    $leagueName = $f['league']['name'] ?? null;
-    $leagueLogo = $f['league']['image_path'] ?? null;
-
-    // Sportmonks starting_at is UTC — convert to WIB (Asia/Jakarta).
-    $kick = !empty($f['starting_at'])
-        ? \Illuminate\Support\Carbon::parse($f['starting_at'], 'UTC')->setTimezone('Asia/Jakarta')
-        : null;
+    $kick = !empty($f['starting_at']) ? \Illuminate\Support\Carbon::parse($f['starting_at'], 'UTC')->setTimezone('Asia/Jakarta') : null;
+    $names = explode(' vs ', $f['name'] ?? '');
+    $homeName = $home['name'] ?? ($names[0] ?: __('football.card.home'));
+    $awayName = $away['name'] ?? ($names[1] ?? __('football.card.away'));
 @endphp
-
-<a href="{{ route('football.fixture', $f['id']) }}"
-   class="group block rounded-xl border border-line bg-surface p-4 transition-all hover:border-line hover:bg-surface">
-    {{-- Meta row --}}
-    <div class="mb-3 flex items-center justify-between border-b border-line pb-2.5 text-xs">
-        <div class="flex items-center gap-2 min-w-0">
-            @if($leagueLogo)
-                <img src="{{ $leagueLogo }}" alt="" class="h-4 w-4 object-contain">
-            @endif
-            <span class="truncate text-body font-medium">{{ $leagueName ?? __('football.card.match') }}</span>
-        </div>
-        <span class="font-mono font-bold text-xs uppercase tracking-wider px-2 py-0.5 rounded-lg
- {{ $isLive ? 'text-white' : ($isFinished ? 'bg-surface text-white border border-line' : 'text-steel border border-line') }}">
-            {{ $stateCode ?: 'NS' }}
-        </span>
+<a href="{{ route('football.fixture', $f['id']) }}" data-match-row data-match-search="{{ $homeName }} {{ $awayName }} {{ $f['league']['name'] ?? '' }}" class="match-row border-b border-divider px-3 py-3 last:border-b-0 hover:bg-canvas">
+    <div class="text-center text-xs tabular-nums {{ $isLive ? 'font-semibold text-danger' : 'text-muted' }}">
+        <span class="block">{{ $stateCode ?: 'NS' }}</span>
+        @if($kick)<time datetime="{{ $kick->toIso8601String() }}" title="{{ $kick->format('d M Y H:i') }} WIB" class="mt-1 block">{{ $kick->format('H:i') }} WIB</time>@endif
     </div>
-
-    {{-- Teams + score --}}
-    <div class="flex items-center justify-between gap-3">
-        <div class="flex flex-1 items-center gap-2.5 min-w-0">
-            @if(!empty($home['image_path']))
-                <img src="{{ $home['image_path'] }}" alt="{{ $home['name'] ?? '' }}" class="h-8 w-8 object-contain">
-            @else
-                <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-surface text-xs"><x-icon name="shield" class="h-4 w-4" /></div>
-            @endif
-            <span class="truncate text-sm transition-colors group-hover:text-accent {{ $awayWon ? 'font-medium text-body line-through decoration-line' : 'font-bold text-white' }}">{{ $home['name'] ?? __('football.card.home') }}</span>
-            @if($homeWon)
-                <x-icon name="check" class="h-3.5 w-3.5 shrink-0 text-accent" />
-            @endif
-        </div>
-
-        <div class="flex-shrink-0 rounded-xl border border-line bg-ink px-3 py-1.5 font-mono min-w-[64px] text-center">
-            @if($hasScore)
-                <span class="text-lg font-bold {{ $isLive ? 'text-accent' : 'text-white' }}">{{ $homeGoals }} - {{ $awayGoals }}</span>
-            @else
-                <span class="text-xs font-bold text-body">{{ $kick ? $kick->format('H:i') : 'VS' }}</span>
-            @endif
-        </div>
-
-        <div class="flex flex-1 items-center justify-end gap-2.5 min-w-0 text-right">
-            @if($awayWon)
-                <x-icon name="check" class="h-3.5 w-3.5 shrink-0 text-accent" />
-            @endif
-            <span class="truncate text-sm transition-colors group-hover:text-accent {{ $homeWon ? 'font-medium text-body line-through decoration-line' : 'font-bold text-white' }}">{{ $away['name'] ?? __('football.card.away') }}</span>
-            @if(!empty($away['image_path']))
-                <img src="{{ $away['image_path'] }}" alt="{{ $away['name'] ?? '' }}" class="h-8 w-8 object-contain">
-            @else
-                <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-surface text-xs"><x-icon name="shield" class="h-4 w-4" /></div>
-            @endif
-        </div>
+    <div class="min-w-0 space-y-2 text-sm">
+        @foreach([$home, $away] as $team)
+            <div class="flex min-w-0 items-center gap-2">
+                @if(!empty($team['image_path']))<img src="{{ $team['image_path'] }}" alt="" loading="lazy" class="h-5 w-5 shrink-0 object-contain">@else<x-icon name="shield" class="h-5 w-5 text-muted" />@endif
+                <span class="truncate {{ ($loop->first && $homeWon) || (!$loop->first && $awayWon) ? 'font-semibold' : 'font-medium' }}">{{ $loop->first ? $homeName : $awayName }}</span>
+            </div>
+        @endforeach
     </div>
-
-    {{-- Kick-off date/time in WIB. Shown for finished matches too, so a list
-         ordered by date can actually be read as one. --}}
-    @if($kick)
-        <div class="mt-2.5 flex items-center justify-center gap-1.5 border-t border-line pt-2 text-xs text-muted">
-            <svg viewBox="0 0 24 24" fill="none" class="icon h-3.5 w-3.5"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            <span class="font-mono">{{ $kick->locale(app()->getLocale())->translatedFormat('D, d M Y • H:i') }} WIB</span>
-        </div>
-    @endif
+    <div class="space-y-2 text-right text-sm font-semibold tabular-nums {{ $isLive ? 'text-danger' : 'text-foreground' }}" aria-label="{{ $hasScore ? $homeGoals.' - '.$awayGoals : __('common.empty.no_data') }}">
+        <span class="block">{{ $hasScore ? $homeGoals : '—' }}</span>
+        <span class="block">{{ $hasScore ? $awayGoals : '—' }}</span>
+    </div>
 </a>

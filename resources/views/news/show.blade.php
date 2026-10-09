@@ -7,7 +7,7 @@
 
         {{-- Back link --}}
         <a href="{{ route('news.index') }}"
-           class="inline-flex items-center gap-1.5 rounded-xl border border-line bg-surface px-3.5 py-2 text-xs font-bold text-body hover:text-accent hover:border-line transition-colors">
+           class="inline-flex items-center gap-1.5 rounded-xl border border-line bg-surface px-3.5 py-2 text-xs font-bold text-body hover:text-link hover:border-line transition-colors">
             <svg viewBox="0 0 24 24" fill="none" class="icon w-4 h-4"><path d="M19 12H5M11 18l-6-6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
             {{ __('news.back') }}
         </a>
@@ -15,7 +15,7 @@
         <article class="rounded-xl border border-line bg-surface p-6 sm:p-8">
             {{-- Meta --}}
             <div class="mb-4 flex flex-wrap items-center gap-3 text-xs">
-                <span class="inline-flex items-center rounded-lg px-2.5 py-1 font-bold uppercase tracking-wider text-xs text-accent border border-line">
+                <span class="inline-flex items-center rounded-lg px-2.5 py-1 font-bold uppercase tracking-wider text-xs text-link border border-line">
                     {{ $item['source'] ?? '—' }}
                 </span>
                 @if (!empty($item['author']))
@@ -27,7 +27,7 @@
                 </time>
             </div>
 
-            <h1 class="mb-6 text-2xl sm:text-4xl font-bold leading-tight tracking-tight text-white">
+            <h1 class="mb-6 text-2xl sm:text-4xl font-bold leading-tight tracking-tight text-foreground">
                 {{ $item['title'] ?? __('news.untitled') }}
             </h1>
 
@@ -40,18 +40,18 @@
             @endif
 
             @if (!empty($item['description']))
-                <p class="mb-5 text-lg leading-relaxed text-white font-medium border-l-2 border-line pl-4">
+                <p class="mb-5 text-lg leading-relaxed text-foreground font-medium border-l-2 border-line pl-4">
                     {{ $item['description'] }}
                 </p>
             @endif
 
             @if (!empty($item['content']))
-                <div class="mb-8 whitespace-pre-line leading-relaxed text-white">{{ $item['content'] }}</div>
+                <div class="mb-8 whitespace-pre-line leading-relaxed text-foreground">{{ $item['content'] }}</div>
             @endif
 
             @if (!empty($item['url']))
                 <a href="{{ $item['url'] }}" target="_blank" rel="noopener noreferrer"
-                   class="inline-flex items-center gap-2 rounded-xl bg-primary hover:bg-accent px-4 py-2.5 text-sm font-bold text-white transition-all">
+                   class="inline-flex items-center gap-2 rounded-xl bg-primary hover:bg-primary-hover px-4 py-2.5 text-sm font-bold text-foreground transition-all">
                     {{ __('news.read_source') }}
                     <svg viewBox="0 0 24 24" fill="none" class="icon w-4 h-4"><path d="M7 17L17 7M17 7H9M17 7v8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </a>

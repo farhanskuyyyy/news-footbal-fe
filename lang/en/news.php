@@ -2,7 +2,7 @@
 
 return [
 
-    'title' => 'Football News - KREASIBALL',
+    'title' => 'Football News - PitchTicker',
     'kicker' => 'LIVE FEED',
     'heading' => 'Latest Football News',
     'subheading' => 'Transfer talk, match results, and highlights from the pitch — pulled straight from the source.',

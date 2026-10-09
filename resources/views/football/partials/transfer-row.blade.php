@@ -33,7 +33,7 @@
             @endif
         </a>
         <div class="min-w-0">
-            <a href="{{ route('football.player', $pl['id'] ?? 0) }}" class="block truncate text-sm font-bold text-white hover:text-accent transition-colors">{{ $pl['display_name'] ?? $pl['name'] ?? __('football.transfers.player') }}</a>
+            <a href="{{ route('football.player', $pl['id'] ?? 0) }}" class="block truncate text-sm font-bold text-foreground hover:text-link transition-colors">{{ $pl['display_name'] ?? $pl['name'] ?? __('football.transfers.player') }}</a>
             <span class="font-mono text-xs text-muted">
                 {{ !empty($tr['date']) ? \Illuminate\Support\Carbon::parse($tr['date'])->locale(app()->getLocale())->translatedFormat('d M Y') : __('football.transfers.official') }}
             </span>
@@ -42,21 +42,21 @@
 
     {{-- From <x-icon name="arrow-right" class="h-4 w-4" /> To --}}
     <div class="flex flex-1 items-center justify-center gap-2.5 text-xs font-bold">
-        <a href="{{ !empty($from['id']) ? route('football.team', $from['id']) : '#' }}" class="flex items-center gap-1.5 rounded-lg bg-ink px-2.5 py-1.5 text-white border border-line hover:border-line transition-colors max-w-[42%] min-w-0">
+        <x-entity-link :href="!empty($from['id']) ? route('football.team', $from['id']) : null" class="flex items-center gap-1.5 rounded-lg bg-ink px-2.5 py-1.5 text-foreground border border-line hover:border-line transition-colors max-w-[42%] min-w-0">
             @if(!empty($from['image_path']))<img src="{{ $from['image_path'] }}" alt="" class="h-4 w-4 object-contain shrink-0">@endif
             <span class="truncate">{{ $from['name'] ?? __('football.transfers.from_club') }}</span>
-        </a>
-        <svg viewBox="0 0 24 24" fill="none" class="icon h-4 w-4 shrink-0 text-accent"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <a href="{{ !empty($to['id']) ? route('football.team', $to['id']) : '#' }}" class="flex items-center gap-1.5 rounded-lg border border-line px-2.5 py-1.5 text-accent transition-colors hover:border-line max-w-[42%] min-w-0">
+        </x-entity-link>
+        <svg viewBox="0 0 24 24" fill="none" class="icon h-4 w-4 shrink-0 text-link"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <x-entity-link :href="!empty($to['id']) ? route('football.team', $to['id']) : null" class="flex items-center gap-1.5 rounded-lg border border-line px-2.5 py-1.5 text-link transition-colors hover:border-line max-w-[42%] min-w-0">
             @if(!empty($to['image_path']))<img src="{{ $to['image_path'] }}" alt="" class="h-4 w-4 object-contain shrink-0">@endif
             <span class="truncate">{{ $to['name'] ?? __('football.transfers.to_club') }}</span>
-        </a>
+        </x-entity-link>
     </div>
 
     {{-- Type + fee --}}
     <div class="flex items-center justify-end gap-2 sm:w-1/5">
         @if($typeName)
-            <span class="rounded-lg px-2 py-0.5 text-xs font-bold uppercase tracking-wider {{ $isLoan ? 'text-steel border border-line' : 'bg-surface text-white border border-line' }}">{{ $typeName }}</span>
+            <span class="rounded-lg px-2 py-0.5 text-xs font-bold uppercase tracking-wider {{ $isLoan ? 'text-steel border border-line' : 'bg-surface text-foreground border border-line' }}">{{ $typeName }}</span>
         @endif
         @if($fee)
             <span class="rounded-lg px-2 py-0.5 font-mono text-xs font-bold text-gold border border-line">{{ $fee }}</span>

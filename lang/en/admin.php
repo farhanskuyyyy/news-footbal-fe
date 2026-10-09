@@ -2,7 +2,7 @@
 
 return [
 
-    'title' => 'Admin Dashboard - KREASIBALL',
+    'title' => 'Admin Dashboard - PitchTicker',
     'kicker' => 'Admin Panel',
     'heading' => 'Manage Scrapers',
     'subheading' => 'Sportmonks & News — trigger, monitor, stop jobs.',

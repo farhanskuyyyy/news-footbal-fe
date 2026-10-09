@@ -2,7 +2,7 @@
 
 return [
 
-    'title' => 'KREASIBALL — Football Portal',
+    'title' => 'PitchTicker — Football Portal',
 
     'hero' => [
         'kicker' => 'Real-time Portal',

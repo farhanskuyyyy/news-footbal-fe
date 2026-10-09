@@ -7,7 +7,7 @@
 
     {{-- Breadcrumb --}}
     <div>
-        <a href="{{ url()->previous() ?? route('football.index') }}" class="text-xs font-bold text-body hover:text-accent transition-colors flex items-center gap-1.5 bg-surface border border-line px-3.5 py-2 rounded-xl inline-flex">
+        <a href="{{ url()->previous() ?? route('football.index') }}" class="text-xs font-bold text-body hover:text-link transition-colors flex items-center gap-1.5 bg-surface border border-line px-3.5 py-2 rounded-xl inline-flex">
             {{ __('football.team.back') }}
         </a>
     </div>
@@ -25,9 +25,9 @@
 
             <div class="flex-1 text-center sm:text-left space-y-3">
                 <div class="flex flex-wrap items-center justify-center sm:justify-start gap-3">
-                    <h1 class="text-2xl sm:text-4xl font-bold text-white tracking-tight">{{ $team['name'] }}</h1>
+                    <h1 class="text-2xl sm:text-4xl font-bold text-foreground tracking-tight">{{ $team['name'] }}</h1>
                     @if(!empty($team['short_code']))
-                        <span class="px-3 py-1 rounded-lg text-xs font-mono font-bold text-accent border border-line uppercase tracking-widest">
+                        <span class="px-3 py-1 rounded-lg text-xs font-mono font-bold text-link border border-line uppercase tracking-widest">
                             {{ $team['short_code'] }}
                         </span>
                     @endif
@@ -35,12 +35,12 @@
 
                 <div class="flex flex-wrap items-center justify-center sm:justify-start gap-5 text-xs text-body font-medium pt-1">
                     @if(!empty($team['founded']))
-                        <span class="flex items-center gap-1.5"><x-icon name="calendar" class="h-4 w-4" /> {{ __('football.team.founded') }} <strong class="text-white">{{ $team['founded'] }}</strong></span>
+                        <span class="flex items-center gap-1.5"><x-icon name="calendar" class="h-4 w-4" /> {{ __('football.team.founded') }} <strong class="text-foreground">{{ $team['founded'] }}</strong></span>
                     @endif
                     @if($venue)
-                        <span class="flex items-center gap-1.5"><x-icon name="location" class="h-4 w-4" /> {{ __('football.team.stadium') }} <strong class="text-white">{{ $venue['name'] }}</strong> ({{ $venue['city_name'] ?? '' }})</span>
+                        <span class="flex items-center gap-1.5"><x-icon name="location" class="h-4 w-4" /> {{ __('football.team.stadium') }} <strong class="text-foreground">{{ $venue['name'] }}</strong> ({{ $venue['city_name'] ?? '' }})</span>
                         @if(!empty($venue['capacity']))
-                            <span class="flex items-center gap-1.5"><x-icon name="users" class="h-4 w-4" /> {{ __('football.team.capacity') }} <strong class="text-white">{{ number_format($venue['capacity']) }}</strong></span>
+                            <span class="flex items-center gap-1.5"><x-icon name="users" class="h-4 w-4" /> {{ __('football.team.capacity') }} <strong class="text-foreground">{{ number_format($venue['capacity']) }}</strong></span>
                         @endif
                     @endif
                 </div>
@@ -60,8 +60,8 @@
                         <div class="flex h-16 w-16 items-center justify-center rounded-xl bg-surface text-2xl border border-line"><x-icon name="coach" class="h-4 w-4" /></div>
                     @endif
                     <div class="min-w-0">
-                        <span class="kicker block text-xs font-bold uppercase text-primary">{{ __('football.team.coach_kicker') }}</span>
-                        <h3 class="text-base font-bold text-white truncate mt-0.5">{{ $coach['display_name'] ?? $coach['name'] ?? __('football.team.coach_fallback') }}</h3>
+                        <span class="kicker block text-xs font-bold uppercase text-link">{{ __('football.team.coach_kicker') }}</span>
+                        <h3 class="text-base font-bold text-foreground truncate mt-0.5">{{ $coach['display_name'] ?? $coach['name'] ?? __('football.team.coach_fallback') }}</h3>
                         @if(!empty($coach['date_of_birth']))
                             <p class="text-xs text-muted font-mono">{{ date_diff(date_create($coach['date_of_birth']), date_create('today'))->y }} {{ __('football.team.years_short') }}</p>
                         @endif
@@ -72,7 +72,7 @@
             {{-- Rivals chips --}}
             @if(!empty($rivals))
                 <div class="bg-surface border border-line rounded-xl p-5 {{ $coach ? 'lg:col-span-2' : 'lg:col-span-3' }}">
-                    <span class="kicker block text-xs font-bold uppercase text-primary mb-3">{{ __('football.team.rivals') }}</span>
+                    <span class="kicker block text-xs font-bold uppercase text-link mb-3">{{ __('football.team.rivals') }}</span>
                     <div class="flex flex-wrap gap-2">
                         @foreach($rivals as $rv)
                             <a href="{{ route('football.team', $rv['id']) }}?season_id={{ $seasonId }}"
@@ -82,7 +82,7 @@
                                 @else
                                     <span class="flex h-6 w-6 items-center justify-center rounded-lg bg-surface text-xs"><x-icon name="shield" class="h-4 w-4" /></span>
                                 @endif
-                                <span class="text-xs font-bold text-white group-hover:text-white transition-colors">{{ $rv['name'] }}</span>
+                                <span class="text-xs font-bold text-foreground group-hover:text-foreground transition-colors">{{ $rv['name'] }}</span>
                             </a>
                         @endforeach
                     </div>
@@ -100,23 +100,23 @@
                 </div>
             @endif
             <div class="flex-1 p-6">
-                <span class="kicker block text-xs font-bold uppercase text-primary mb-2">{{ __('football.team.venue_kicker') }}</span>
-                <h3 class="text-lg font-bold text-white">{{ $venue['name'] ?? '-' }}</h3>
+                <span class="kicker block text-xs font-bold uppercase text-link mb-2">{{ __('football.team.venue_kicker') }}</span>
+                <h3 class="text-lg font-bold text-foreground">{{ $venue['name'] ?? '-' }}</h3>
                 @if(!empty($venue['address']))
                     <p class="text-xs text-body mt-1">{{ $venue['address'] }}</p>
                 @endif
                 <div class="mt-4 grid grid-cols-3 gap-3">
                     <div class="rounded-xl border border-line bg-ink p-3">
                         <span class="block text-xs uppercase font-bold text-muted">{{ __('football.team.city') }}</span>
-                        <span class="text-sm font-semibold text-white truncate block">{{ $venue['city_name'] ?? '-' }}</span>
+                        <span class="text-sm font-semibold text-foreground truncate block">{{ $venue['city_name'] ?? '-' }}</span>
                     </div>
                     <div class="rounded-xl border border-line bg-ink p-3">
                         <span class="block text-xs uppercase font-bold text-muted">{{ __('football.team.capacity_label') }}</span>
-                        <span class="text-sm font-semibold text-white font-mono block">{{ !empty($venue['capacity']) ? number_format($venue['capacity']) : '-' }}</span>
+                        <span class="text-sm font-semibold text-foreground font-mono block">{{ !empty($venue['capacity']) ? number_format($venue['capacity']) : '-' }}</span>
                     </div>
                     <div class="rounded-xl border border-line bg-ink p-3">
                         <span class="block text-xs uppercase font-bold text-muted">{{ __('football.team.surface') }}</span>
-                        <span class="text-sm font-semibold text-white capitalize truncate block">{{ $venue['surface'] ?? '-' }}</span>
+                        <span class="text-sm font-semibold text-foreground capitalize truncate block">{{ $venue['surface'] ?? '-' }}</span>
                     </div>
                 </div>
             </div>
@@ -151,18 +151,18 @@
         <div class="space-y-3">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <span class="flex h-9 w-9 items-center justify-center rounded-xl border border-line text-accent">
+                    <span class="flex h-9 w-9 items-center justify-center rounded-xl border border-line text-link">
                         <svg viewBox="0 0 24 24" fill="none" class="icon h-5 w-5"><path d="M4 7h16M4 12h10M4 17h7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
                     </span>
                     <div>
-                        <span class="kicker block text-xs font-bold uppercase text-primary">{{ __('football.team.performance') }}</span>
-                        <h2 class="text-lg font-bold text-white">{{ __('football.team.recent_results') }}</h2>
+                        <span class="kicker block text-xs font-bold uppercase text-link">{{ __('football.team.performance') }}</span>
+                        <h2 class="text-lg font-bold text-foreground">{{ __('football.team.recent_results') }}</h2>
                     </div>
                 </div>
                 @if(!empty($formStrip))
                     <div class="flex items-center gap-1">
                         @foreach($formStrip as $r)
-                            @php $cls = match($r) { 'W' => 'bg-primary text-white', 'D' => 'bg-line text-white', 'L' => 'bg-accent text-white', default => 'bg-surface' }; @endphp
+                            @php $cls = match($r) { 'W' => 'bg-primary text-on-primary', 'D' => 'bg-canvas text-foreground', 'L' => 'bg-danger-fill text-on-primary', default => 'bg-surface' }; @endphp
                             <span class="flex h-6 w-6 items-center justify-center rounded-lg text-xs font-bold font-mono {{ $cls }}">{{ $r }}</span>
                         @endforeach
                     </div>
@@ -180,12 +180,12 @@
     @if(!empty($upcoming))
         <div class="space-y-3">
             <div class="flex items-center gap-3">
-                <span class="flex h-9 w-9 items-center justify-center rounded-xl border border-line text-accent">
+                <span class="flex h-9 w-9 items-center justify-center rounded-xl border border-line text-link">
                     <svg viewBox="0 0 24 24" fill="none" class="icon h-5 w-5"><rect x="4" y="5.5" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M4 9.5h16M8 3.5v4M16 3.5v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
                 </span>
                 <div>
-                    <span class="kicker block text-xs font-bold uppercase text-primary">{{ __('football.team.schedule') }}</span>
-                    <h2 class="text-lg font-bold text-white">{{ __('football.team.next_matches') }}</h2>
+                    <span class="kicker block text-xs font-bold uppercase text-link">{{ __('football.team.schedule') }}</span>
+                    <h2 class="text-lg font-bold text-foreground">{{ __('football.team.next_matches') }}</h2>
                 </div>
             </div>
             <div class="grid gap-4 md:grid-cols-2">
@@ -200,10 +200,10 @@
     <div class="bg-surface border border-line rounded-xl p-6 sm:p-8 space-y-6">
         <div class="flex items-center justify-between pb-4 border-b border-line">
             <div>
-                <h2 class="text-lg font-bold text-white flex items-center gap-2">{{ __('football.team.squad_heading') }}</h2>
+                <h2 class="text-lg font-bold text-foreground flex items-center gap-2">{{ __('football.team.squad_heading') }}</h2>
                 <p class="text-xs text-body mt-0.5">{{ __('football.team.squad_sub') }}</p>
             </div>
-            <span class="text-xs font-mono font-bold px-3.5 py-1.5 bg-ink text-accent border border-line rounded-xl">
+            <span class="text-xs font-mono font-bold px-3.5 py-1.5 bg-ink text-link border border-line rounded-xl">
                 {{ trans_choice('football.team.players_count', count($players), ['count' => count($players)]) }}
             </span>
         </div>
@@ -232,24 +232,24 @@
                     @endphp
                     <a href="{{ route('football.player', $p['id']) }}" class="group relative p-4 rounded-xl border border-line bg-ink hover:bg-surface hover:border-line hover: transition-all flex items-center gap-3.5">
                         @if($isCaptain)
-                            <span title="{{ __('football.team.captain') }}" class="absolute top-2.5 right-2.5 flex h-5 w-5 items-center justify-center rounded-lg bg-gold text-ink text-xs font-bold shadow">C</span>
+                            <span title="{{ __('football.team.captain') }}" class="absolute top-2.5 right-2.5 flex h-5 w-5 items-center justify-center rounded-lg bg-accent text-on-accent text-xs font-bold">C</span>
                         @endif
 
                         <div class="relative flex-shrink-0">
                             @if(!empty($p['image_path']))
                                 <img src="{{ $p['image_path'] }}" alt="{{ $p['name'] }}" class="w-12 h-12 rounded-lg object-cover border-2 border-line bg-surface group-hover:border-line transition-colors">
                             @else
-                                <div class="w-12 h-12 rounded-lg bg-surface text-white flex items-center justify-center font-bold text-sm border border-line">
+                                <div class="w-12 h-12 rounded-lg bg-surface text-foreground flex items-center justify-center font-bold text-sm border border-line">
                                     <x-icon name="user" class="h-4 w-4" />
                                 </div>
                             @endif
                             @if($jersey !== null)
-                                <span class="absolute -bottom-1 -left-1 flex h-5 min-w-[20px] px-1 items-center justify-center rounded-lg text-white text-xs font-bold font-mono border border-line shadow">{{ $jersey }}</span>
+                                <span class="absolute -bottom-1 -left-1 flex h-5 min-w-[20px] px-1 items-center justify-center rounded-lg text-foreground text-xs font-bold font-mono border border-line shadow">{{ $jersey }}</span>
                             @endif
                         </div>
 
                         <div class="min-w-0 flex-1">
-                            <h4 class="font-semibold text-white text-sm truncate group-hover:text-accent transition-colors">{{ $p['display_name'] ?? $p['name'] }}</h4>
+                            <h4 class="font-semibold text-foreground text-sm truncate group-hover:text-link transition-colors">{{ $p['display_name'] ?? $p['name'] }}</h4>
                             <p class="mt-0.5 flex items-center gap-1.5 truncate text-xs font-medium text-body">
                                 @php
                                     $pid = $p['position_id'] ?? 0;
