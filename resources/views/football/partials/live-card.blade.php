@@ -16,7 +16,7 @@
     $homeName = $home['name'] ?? ($names[0] ?: __('football.card.home'));
     $awayName = $away['name'] ?? ($names[1] ?? __('football.card.away'));
 @endphp
-<a href="{{ route('football.fixture', $f['id']) }}" data-match-row data-match-search="{{ $homeName }} {{ $awayName }} {{ $f['league']['name'] ?? '' }}" class="match-row border-b border-divider px-3 py-3 last:border-b-0 hover:bg-canvas">
+<a href="{{ route('football.fixture', $f['id']) }}" data-match-row data-match-live-state="{{ $isLive ? 'true' : 'false' }}" data-match-search="{{ $homeName }} {{ $awayName }} {{ $f['league']['name'] ?? '' }}" class="match-row border-b border-divider px-3 py-3 last:border-b-0 hover:bg-canvas">
     <div class="text-center text-xs tabular-nums {{ $isLive ? 'font-semibold text-danger' : 'text-muted' }}">
         <span class="block">{{ $stateCode ?: 'NS' }}</span>
         @if($kick)<time datetime="{{ $kick->toIso8601String() }}" title="{{ $kick->format('d M Y H:i') }} WIB" class="mt-1 block">{{ $kick->format('H:i') }} WIB</time>@endif

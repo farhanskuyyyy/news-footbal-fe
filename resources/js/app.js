@@ -8,6 +8,14 @@ const enableMatchFilters = () => document.querySelectorAll('[data-match-filter-c
 enableMatchFilters();
 document.addEventListener('pitchticker:matches', enableMatchFilters);
 
+const leagueDirectory = document.querySelector('.league-directory');
+if (leagueDirectory) {
+    const desktop = window.matchMedia('(min-width: 1200px)');
+    const syncDirectory = () => { leagueDirectory.open = desktop.matches; };
+    syncDirectory();
+    desktop.addEventListener('change', syncDirectory);
+}
+
 document.addEventListener('error', (event) => {
     if (event.target instanceof HTMLImageElement) {
         event.target.dataset.imageFailed = 'true';
@@ -35,11 +43,12 @@ document.querySelector('[data-theme-toggle]')?.addEventListener('click', () => {
 });
 
 document.addEventListener('input', (event) => {
-    if (!event.target.matches('[data-match-filter]')) return;
+    if (!event.target.matches('[data-match-filter], [data-match-live]')) return;
     const root = event.target.closest('[data-match-board]');
-    const query = event.target.value.trim().toLocaleLowerCase();
+    const query = root.querySelector('[data-match-filter]')?.value.trim().toLocaleLowerCase() || '';
+    const liveOnly = root.querySelector('[data-match-live]')?.checked || false;
     root.querySelectorAll('[data-match-row]').forEach(row => {
-        row.hidden = !row.dataset.matchSearch.toLocaleLowerCase().includes(query);
+        row.hidden = !row.dataset.matchSearch.toLocaleLowerCase().includes(query) || (liveOnly && row.dataset.matchLiveState !== 'true');
     });
     root.querySelectorAll('[data-match-group]').forEach(group => {
         group.hidden = !group.querySelector('[data-match-row]:not([hidden])');

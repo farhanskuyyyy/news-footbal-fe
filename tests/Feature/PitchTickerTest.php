@@ -89,6 +89,21 @@ class PitchTickerTest extends TestCase
         $response->assertSee(route('football.fixture', 112));
     }
 
+    public function test_home_combines_live_matches_without_duplicates_or_truncation(): void
+    {
+        $data = require __DIR__.'/../Fixtures/portal.php';
+        $live = array_map(fn ($id) => array_replace($data['fixture'], ['id' => $id, 'state' => ['short_name' => 'HT']]), range(100, 109));
+        Http::fake([
+            '*/sportmonks/fixtures/date/*' => Http::response(['data' => [$data['fixture']]]),
+            '*/sportmonks/livescores/inplay*' => Http::response(['data' => $live]),
+            '*' => Http::response(['data' => []]),
+        ]);
+        $response = $this->get('/')->assertOk();
+        $this->assertSame(10, substr_count($response->getContent(), 'data-match-row'));
+        $this->assertSame(10, substr_count($response->getContent(), 'data-match-live-state="true"'));
+        $response->assertSee(route('football.fixture', 109));
+    }
+
     public function test_admin_status_reports_upstream_failure_without_exposing_a_false_empty_state(): void
     {
         Http::fake(['*' => Http::response([], 503)]);

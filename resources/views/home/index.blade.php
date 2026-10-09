@@ -3,8 +3,9 @@
 @section('content')
 <div class="home-layout">
     <aside class="home-leagues min-w-0">
-        <h2 class="mb-3 text-sm font-semibold">{{ __('common.nav.portal') }}</h2>
-        <nav class="rounded-xl border border-divider bg-surface" aria-label="{{ __('common.nav.portal') }}">
+        <details class="league-directory">
+        <summary class="flex min-h-11 items-center justify-between text-sm font-semibold">{{ __('common.nav.portal') }} <x-icon name="arrow-right" class="directory-arrow h-4 w-4" /></summary>
+        <nav class="border-t border-divider" aria-label="{{ __('common.nav.portal') }}">
             @forelse($leagues as $league)
                 <a href="{{ route('football.index', ['league_id' => $league['id']]) }}" class="flex min-h-11 items-center gap-2 border-b border-divider px-3 py-3 text-sm last:border-b-0 hover:bg-canvas">
                     @if(!empty($league['image_path']))<img src="{{ $league['image_path'] }}" alt="" class="h-5 w-5 object-contain">@endif
@@ -12,34 +13,29 @@
                 </a>
             @empty <p class="p-4 text-sm text-muted">{{ __('common.empty.no_data') }}</p> @endforelse
         </nav>
+        </details>
     </aside>
-    <div class="min-w-0 space-y-6">
+    <div class="home-matches min-w-0">
         <section>
             <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
-                <h1 class="text-xl font-semibold">{{ __('home.today.heading') }}</h1>
+                <h1 class="text-2xl font-bold tracking-tight">{{ __('home.today.heading') }}</h1>
                 <a href="{{ route('football.matchday') }}" class="flex min-h-11 items-center text-sm font-semibold text-link">{{ __('home.today.calendar') }}</a>
             </div>
-            <nav aria-label="{{ __('common.nav.schedule') }}" class="mb-4 flex overflow-x-auto rounded-lg border border-divider bg-surface">
+            <nav aria-label="{{ __('common.nav.schedule') }}" class="mb-4 flex overflow-x-auto border-b border-divider">
                 @foreach([-1, 0, 1] as $offset)
                     @php $day = now('Asia/Jakarta')->addDays($offset); @endphp
                     <a href="{{ route('football.matchday', ['date' => $day->format('Y-m-d')]) }}" class="flex min-h-11 flex-1 items-center justify-center whitespace-nowrap px-3 text-sm {{ $offset === 0 ? 'border-b-2 border-link font-semibold text-link' : 'text-muted' }}">{{ $day->locale(app()->getLocale())->translatedFormat('D, d M') }}</a>
                 @endforeach
             </nav>
-            @include('football.partials.match-groups', ['fixtures' => $today])
+            @include('football.partials.match-groups', ['fixtures' => $matches, 'showLiveFilter' => true, 'showLeagueLinks' => false])
         </section>
-        @if(count($live))
-            <section>
-                <div class="mb-3 flex items-center justify-between gap-3"><h2 class="text-lg font-semibold text-danger">{{ __('home.live.heading') }}</h2><a href="{{ route('football.live') }}" class="flex min-h-11 items-center text-sm text-link">{{ __('home.live.all') }}</a></div>
-                @include('football.partials.match-groups', ['fixtures' => $live])
-            </section>
-        @endif
     </div>
     <aside class="min-w-0 space-y-6">
         <section>
             <div class="mb-3 flex items-center justify-between gap-2"><h2 class="text-sm font-semibold">{{ __('home.news.heading') }}</h2><a href="{{ route('news.index') }}" class="flex min-h-11 items-center text-xs text-link">{{ __('common.actions.all') }}</a></div>
-            <div class="overflow-hidden rounded-xl border border-divider bg-surface">
+            <div class="border-t border-divider">
                 @forelse($news as $item)
-                    <article class="border-b border-divider p-4 last:border-b-0">
+                    <article class="border-b border-divider py-4 last:border-b-0">
                         @if(!empty($item['url_to_image']))<img src="{{ $item['url_to_image'] }}" alt="" loading="lazy" class="mb-3 aspect-video w-full rounded-lg object-cover">@endif
                         <p class="mb-2 text-xs text-muted">{{ $item['source'] ?? '—' }}</p>
                         <h3 class="text-sm font-semibold leading-snug"><a href="{{ route('news.show', $item['id']) }}" class="hover:text-link">{{ $item['title'] ?? __('news.untitled') }}</a></h3>

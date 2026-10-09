@@ -2,6 +2,22 @@
 
 Pola deploy sama dengan backend: push ke `main` → GitHub Actions SSH ke VPS → `git pull` → `docker compose up -d --build`.
 
+## Update PitchTicker
+
+Rebranding membutuhkan asset Vite yang dibuild ke image oleh Node stage di Dockerfile. Pull source saja tidak memperbarui container yang sedang berjalan. Workflow `CI/CD` menjalankan test, build image, lalu deploy otomatis pada push ke `main`; periksa hasil workflow sebelum melakukan update manual.
+
+Jika deploy manual diperlukan, jalankan dari checkout frontend di VPS:
+
+```bash
+git pull --ff-only origin main
+docker compose up -d --build
+docker compose ps
+```
+
+Tidak ada migration/schema database, perubahan backend Go, atau perubahan endpoint upstream dalam rebranding ini. Jangan menjalankan migration/reset database untuk update tampilan. Environment dan koneksi service existing tetap digunakan. Endpoint polling CMS Laravel `/admin/status` menambahkan field boolean `unavailable` untuk menandai kegagalan upstream; field `running` dan `sync` tetap tersedia.
+
+Compose aktual menghubungkan frontend ke `apigo-docker-app-1:8080` pada network external `apigo-docker_default`. Bagian setup gateway di bawah merupakan panduan alternatif untuk instalasi lama; pertahankan konfigurasi jaringan VPS yang sudah bekerja.
+
 Routing production (nginx di host):
 
 ```

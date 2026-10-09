@@ -4,6 +4,7 @@
 
 @section('content')
 <div class="space-y-8" x-data="matchCenter()">
+    <h1 class="sr-only">{{ $fixture['name'] ?? __('football.fixture.fallback') }}</h1>
 
     {{-- Breadcrumb & Back --}}
     <div class="flex items-center justify-between">

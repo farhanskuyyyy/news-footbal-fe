@@ -76,9 +76,20 @@ a[class*='rounded'], nav a { min-height: 44px; }
 button[class*='bg-primary'], a[class*='bg-primary'] { border: 1px solid var(--control-border); }
 .kicker { letter-spacing: normal; text-transform: none; }
 .font-mono { font-family: var(--font-sans); font-variant-numeric: tabular-nums; }
-.home-layout { display: grid; gap: 16px; }
+.home-layout { display: grid; gap: 24px; grid-template-areas: 'matches' 'leagues' 'support'; }
+.home-matches { grid-area: matches; }
+.home-leagues { grid-area: leagues; }
+.home-layout > aside:last-child { grid-area: support; }
+.league-directory { border-block: 1px solid var(--divider); }
+.directory-arrow { transform: rotate(90deg); }
+.league-directory[open] .directory-arrow { transform: rotate(-90deg); }
+.home-matches .match-group { border-radius: 0; border-inline: 0; }
+.home-matches [data-match-board] { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; }
+.home-matches [data-match-board] > * { margin: 0; grid-column: 1 / -1; }
+.home-matches [data-match-board] > label:has([data-match-live]) { grid-column: 2; grid-row: 1; align-self: end; }
+.home-matches [data-match-board] > label:has([data-match-filter]) { grid-column: 1; grid-row: 1; }
 .home-leagues nav { max-height: 132px; overflow-y: auto; }
 .match-row { display: grid; grid-template-columns: 64px minmax(0, 1fr) 36px; gap: 12px; align-items: center; }
-@media (min-width: 768px) { .home-layout { grid-template-columns: minmax(0, 1fr) 280px; } .home-leagues { grid-column: 1 / -1; } }
-@media (min-width: 1200px) { .home-layout { grid-template-columns: 200px minmax(0, 1fr) 280px; } .home-leagues { grid-column: auto; } .home-leagues nav { max-height: none; } }
+@media (min-width: 768px) { .home-layout { grid-template-columns: minmax(0, 1fr) 280px; grid-template-areas: 'matches support' 'leagues support'; align-items: start; } }
+@media (min-width: 1200px) { .home-layout { grid-template-columns: 180px minmax(0, 1fr) 280px; grid-template-areas: 'leagues matches support'; } .home-leagues nav { max-height: none; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } }

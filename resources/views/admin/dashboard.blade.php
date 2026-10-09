@@ -7,10 +7,9 @@
         <p x-show="unavailable" x-cloak role="alert" class="rounded-lg border border-danger bg-surface p-3 text-sm text-danger">{{ __('common.empty.admin_unavailable') }}</p>
 
         {{-- Header --}}
-        <div class="relative overflow-hidden border border-line rounded-xl p-6 sm:p-8 relative overflow-hidden">
+        <div class="border-b border-line pb-5">
             <div class="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <span class="kicker block text-xs font-bold uppercase text-link mb-2">{{ __('admin.kicker') }}</span>
                     <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">{{ __('admin.heading') }}</h1>
                     <p class="text-xs text-body mt-1">{{ __('admin.subheading') }}</p>
                 </div>
@@ -52,12 +51,12 @@
         </div>
 
         {{-- Scrape triggers --}}
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] items-start gap-6">
             <div class="rounded-xl border border-line bg-surface p-6 space-y-4">
                 <h2 class="text-base font-bold text-foreground">{{ __('admin.scraper.heading') }}</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div class="divide-y divide-line">
                     @foreach($jobs as $job)
-                        <form method="POST" action="{{ route('admin.scrape') }}" class="rounded-xl border border-line bg-ink p-3.5">
+                        <form method="POST" action="{{ route('admin.scrape') }}" class="py-3">
                             @csrf
                             <input type="hidden" name="job" value="{{ $job }}">
                             <div class="flex items-center justify-between gap-2">
@@ -85,7 +84,7 @@
             </div>
 
             {{-- News --}}
-            <div class="rounded-xl border border-line bg-surface p-6 space-y-4">
+            <div class="border-t-2 border-line py-4 space-y-3">
                 <h2 class="text-base font-bold text-foreground">{{ __('admin.news.heading') }}</h2>
                 <p class="text-sm text-body">{{ __('admin.news.description') }}</p>
                 <form method="POST" action="{{ route('admin.news.refresh') }}">

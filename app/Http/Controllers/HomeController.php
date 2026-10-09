@@ -25,14 +25,20 @@ class HomeController extends Controller
         // Live is fetched fresh each load (own short cache) — the rest of the
         // dashboard (heavier, slower chain of API calls) is cached as one blob
         // so most page loads are a single cache hit instead of ~6 backend calls.
-        $live = collect($this->football->getLiveInplay())->take(8)->values()->all();
+        $live = $this->football->getLiveInplay();
 
         $rest = Cache::remember('home:pitchticker:dashboard', 120, fn () => $this->buildRest());
         if ($rest['newsUnavailable'] || $rest['footballUnavailable']) {
             Cache::forget('home:pitchticker:dashboard');
         }
 
+        $matches = collect($rest['today'])->keyBy('id');
+        foreach ($live as $fixture) {
+            $matches->put($fixture['id'], array_replace($matches->get($fixture['id'], []), $fixture));
+        }
+
         return view('home.index', [
+            'matches' => $matches->values()->all(),
             'live' => $live,
             'today' => $rest['today'],
             'featuredLeagues' => $rest['featuredLeagues'],
