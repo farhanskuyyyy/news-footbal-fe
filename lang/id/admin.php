@@ -5,7 +5,7 @@ return [
     'title' => 'Admin Dashboard - PitchTicker',
     'kicker' => 'Panel Admin',
     'heading' => 'Kelola Scraper',
-    'subheading' => 'Sportmonks & Berita — trigger, pantau, hentikan job.',
+    'subheading' => 'Sportmonks & Berita: jalankan, pantau, hentikan job.',
 
     'jobs' => [
         'heading' => 'Job Berjalan',
@@ -33,9 +33,9 @@ return [
         'heading' => 'Scrape Football (Pilih Liga & Musim)',
         'description' => 'Kosongkan musim untuk pakai musim aktif liga. Kosongkan liga untuk semua liga aktif.',
         'league' => 'Liga',
-        'all_leagues' => '— Semua liga aktif —',
+        'all_leagues' => 'Semua liga aktif',
         'season' => 'Musim',
-        'current_season' => '— Musim aktif —',
+        'current_season' => 'Musim aktif',
         'season_current_suffix' => ' (aktif)',
     ],
 
@@ -74,10 +74,10 @@ return [
         'league_enabled' => 'Liga diaktifkan.',
         'league_disabled' => 'Liga dinonaktifkan.',
         'league_failed' => 'Gagal mengubah status liga.',
-        'football_running' => 'Job football masih berjalan — hentikan dulu sebelum menjalankan ulang.',
+        'football_running' => 'Job football masih berjalan. Hentikan dulu sebelum menjalankan ulang.',
         'football_started' => 'Scrape football dijalankan (background).',
         'football_failed' => 'Gagal menjalankan scrape football.',
-        'job_running' => "Job ':job' masih berjalan — hentikan dulu sebelum menjalankan ulang.",
+        'job_running' => "Job ':job' masih berjalan. Hentikan dulu sebelum menjalankan ulang.",
         'job_started' => "Job ':job' dijalankan (background).",
         'job_failed' => "Gagal menjalankan job ':job'.",
         'fixture_invalid' => 'Fixture ID tidak valid.',

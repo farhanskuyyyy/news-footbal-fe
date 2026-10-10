@@ -13,7 +13,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @fonts
 </head>
-<body class="flex min-h-full flex-col bg-canvas text-foreground antialiased">
+<body class="public-body flex min-h-full flex-col bg-canvas text-foreground antialiased">
     <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-surface focus:p-3">{{ __('common.nav.skip') }}</a>
     @php
         $navItems = [

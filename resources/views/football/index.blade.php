@@ -81,7 +81,7 @@
             </div>
 
             <div class="bg-surface border border-line rounded-xl p-4 flex min-w-0 flex-wrap items-center gap-2">
-                <div class="w-12 h-12 rounded-xl text-steel flex items-center justify-center text-xl font-bold border border-purple-500/20">
+                <div class="w-12 h-12 rounded-xl text-steel flex items-center justify-center text-xl font-bold border border-line">
                     <x-icon name="swap" class="h-4 w-4" />
                 </div>
                 <div>

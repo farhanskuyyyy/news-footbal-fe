@@ -51,7 +51,7 @@
 
             @if (!empty($item['url']))
                 <a href="{{ $item['url'] }}" target="_blank" rel="noopener noreferrer"
-                   class="inline-flex items-center gap-2 rounded-xl bg-primary hover:bg-primary-hover px-4 py-2.5 text-sm font-bold text-foreground transition-all">
+                   class="inline-flex items-center gap-2 rounded-xl bg-primary hover:bg-primary-hover px-4 py-2.5 text-sm font-bold text-on-primary transition-colors">
                     {{ __('news.read_source') }}
                     <svg viewBox="0 0 24 24" fill="none" class="icon w-4 h-4"><path d="M7 17L17 7M17 7H9M17 7v8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </a>

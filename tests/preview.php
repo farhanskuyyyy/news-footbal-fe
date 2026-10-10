@@ -3,9 +3,12 @@
 use App\Models\User;
 use App\Services\RabbitMQService;
 use Illuminate\Contracts\Http\Kernel;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\View;
 
 // Run with: php -S 127.0.0.1:8099 -t public tests/preview.php
@@ -97,6 +100,23 @@ Http::fake(function ($request) use ($f) {
     return Http::response(['data' => $data]);
 });
 if (str_starts_with($_SERVER['REQUEST_URI'], '/admin')) {
-    Auth::setUser(new User(['id' => 1, 'name' => 'Fixture Admin', 'email' => 'fixture@example.invalid']));
+    $previewDatabase = sys_get_temp_dir().'/pitchticker-cms-preview.sqlite';
+    if (! is_file($previewDatabase)) {
+        touch($previewDatabase);
+        chmod($previewDatabase, 0600);
+    }
+    config(['database.connections.sqlite.database' => $previewDatabase]);
+    if (! Schema::hasTable('users')) {
+        Schema::create('users', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->string('password');
+            $table->rememberToken();
+            $table->timestamps();
+        });
+    }
+    Auth::setUser(User::firstOrCreate(['email' => 'fixture@example.invalid'], ['name' => 'Fixture Admin', 'password' => Hash::make('fixture-preview-password')]));
 }
 $app->handleRequest(Request::capture());

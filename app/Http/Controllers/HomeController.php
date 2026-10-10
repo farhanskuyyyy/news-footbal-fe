@@ -4,32 +4,30 @@ namespace App\Http\Controllers;
 
 use App\Services\FootballPortalService;
 use App\Services\NewsService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 
 class HomeController extends Controller
 {
-    /** Sportmonks type id for the "Goal Topscorer" ranking. */
-    private const GOAL_TOPSCORER_TYPE = 208;
-
-    /** How many enabled leagues get a standings/topscorer card on the home page. */
-    private const MAX_FEATURED_LEAGUES = 6;
-
     public function __construct(
         private readonly FootballPortalService $football,
         private readonly NewsService $news,
     ) {}
 
-    public function index(): View
+    public function index(Request $request): View
     {
         // Live is fetched fresh each load (own short cache) — the rest of the
         // dashboard (heavier, slower chain of API calls) is cached as one blob
         // so most page loads are a single cache hit instead of ~6 backend calls.
         $live = $this->football->getLiveInplay();
 
-        $rest = Cache::remember('home:pitchticker:dashboard', 120, fn () => $this->buildRest());
+        $requestedLeague = filter_var($request->query('standings_league'), FILTER_VALIDATE_INT) ?: 0;
+        $cacheKey = 'home:pitchticker:dashboard:single-league:'.$requestedLeague;
+        $rest = Cache::remember($cacheKey, 120, fn () => $this->buildRest($requestedLeague));
         if ($rest['newsUnavailable'] || $rest['footballUnavailable']) {
-            Cache::forget('home:pitchticker:dashboard');
+            Cache::forget($cacheKey);
         }
 
         $matches = collect($rest['today'])->keyBy('id');
@@ -42,20 +40,41 @@ class HomeController extends Controller
             'live' => $live,
             'today' => $rest['today'],
             'featuredLeagues' => $rest['featuredLeagues'],
+            'selectedStandingsLeagueId' => $rest['selectedStandingsLeagueId'],
             'news' => $rest['news'],
             'leagues' => $rest['leagues'],
             'newsUnavailable' => $rest['newsUnavailable'],
         ]);
     }
 
+    public function standings(Request $request): JsonResponse
+    {
+        $validated = $request->validate(['league_id' => ['required', 'integer', 'min:1']]);
+        $leagues = $this->football->getLeagues(true) ?? [];
+        abort_if($this->football->unavailable, 503);
+        $league = collect($leagues)->firstWhere('id', (int) $validated['league_id']);
+        abort_unless($league, 404);
+        $card = $this->buildLeagueCard($league);
+        abort_if($this->football->unavailable, 503);
+
+        if ($card) {
+            $params = ['league_id' => $league['id'], 'season_id' => $card['season']['id']];
+            $card['links'] = [
+                'standings' => route('football.index', $params + ['tab' => 'standings']),
+                'topscorers' => route('football.index', $params + ['tab' => 'topscorers']),
+            ];
+        }
+
+        return response()->json(['data' => $card]);
+    }
+
     /** Builds the cacheable part of the dashboard (today, featured, news). */
-    private function buildRest(): array
+    private function buildRest(int $requestedLeague): array
     {
         $newsData = $this->news->all();
         $news = collect($newsData ?? [])->take(6)->values()->all();
 
-        // Only CMS-enabled leagues (status = true) feed the standings/topscorer
-        // cards, and their fixtures are pushed to the top of today's list.
+        // Keep the standings picker and fixture priority scoped to enabled leagues.
         $leagues = $this->football->getLeagues(true) ?? [];
         $enabledIds = array_values(array_map(static fn ($l) => (int) $l['id'], $leagues));
 
@@ -65,18 +84,19 @@ class HomeController extends Controller
         );
 
         $featuredLeagues = [];
-        foreach (array_slice($leagues, 0, self::MAX_FEATURED_LEAGUES) as $lg) {
-            $card = $this->buildLeagueCard($lg);
+        $selectedLeague = collect($leagues)->firstWhere('id', $requestedLeague) ?? ($leagues[0] ?? null);
+        if ($selectedLeague) {
+            $card = $this->buildLeagueCard($selectedLeague);
             if ($card) {
                 $featuredLeagues[] = $card;
             }
         }
 
-        return ['today' => $today, 'featuredLeagues' => $featuredLeagues, 'news' => $news, 'leagues' => $leagues, 'newsUnavailable' => $newsData === null, 'footballUnavailable' => $this->football->unavailable];
+        return ['today' => $today, 'featuredLeagues' => $featuredLeagues, 'selectedStandingsLeagueId' => $selectedLeague['id'] ?? null, 'news' => $news, 'leagues' => $leagues, 'newsUnavailable' => $newsData === null, 'footballUnavailable' => $this->football->unavailable];
     }
 
     /**
-     * Standings + goal topscorers for one league's current season, or null when
+     * Standings for one league's current season, or null when
      * the league has no season data yet.
      */
     private function buildLeagueCard(array $league): ?array
@@ -91,13 +111,11 @@ class HomeController extends Controller
 
         $sid = (int) $current['id'];
         $standings = $this->football->getSeasonStandings($sid) ?? [];
-        $ts = $this->football->getSeasonTopscorers($sid, self::GOAL_TOPSCORER_TYPE);
 
         return [
             'league' => $league,
             'season' => $current,
             'standings' => array_slice($standings, 0, 6),
-            'topscorers' => array_slice($ts['data'] ?? [], 0, 5),
         ];
     }
 }

@@ -26,6 +26,14 @@ return [
     ],
 
     'featured' => [
+        'loading' => 'Loading standings',
+        'failed' => 'Standings could not be loaded. Please try again.',
+        'retry' => 'Try again',
+        'open_league' => 'Open league',
+        'show_standings' => 'Show standings',
+        'position' => 'Pos',
+        'club' => 'Club',
+        'points' => 'Pts',
         'select_league' => 'Choose a league',
         'standings' => 'Standings',
         'standings_empty' => 'No standings for this season yet.',

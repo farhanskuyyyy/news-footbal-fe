@@ -5,7 +5,7 @@ return [
     'title' => 'Admin Dashboard - PitchTicker',
     'kicker' => 'Admin Panel',
     'heading' => 'Manage Scrapers',
-    'subheading' => 'Sportmonks & News — trigger, monitor, stop jobs.',
+    'subheading' => 'Sportmonks & News: trigger, monitor, stop jobs.',
 
     'jobs' => [
         'heading' => 'Running Jobs',
@@ -33,9 +33,9 @@ return [
         'heading' => 'Scrape Football (Pick League & Season)',
         'description' => 'Leave the season empty to use the league current season. Leave the league empty for all enabled leagues.',
         'league' => 'League',
-        'all_leagues' => '— All enabled leagues —',
+        'all_leagues' => 'All enabled leagues',
         'season' => 'Season',
-        'current_season' => '— Current season —',
+        'current_season' => 'Current season',
         'season_current_suffix' => ' (current)',
     ],
 
@@ -74,10 +74,10 @@ return [
         'league_enabled' => 'League enabled.',
         'league_disabled' => 'League disabled.',
         'league_failed' => 'Failed to change the league status.',
-        'football_running' => 'The football job is still running — stop it before starting a new run.',
+        'football_running' => 'The football job is still running. Stop it before starting a new run.',
         'football_started' => 'Football scrape started (background).',
         'football_failed' => 'Failed to start the football scrape.',
-        'job_running' => "Job ':job' is still running — stop it before starting a new run.",
+        'job_running' => "Job ':job' is still running. Stop it before starting a new run.",
         'job_started' => "Job ':job' started (background).",
         'job_failed' => "Failed to start job ':job'.",
         'fixture_invalid' => 'Invalid fixture ID.',

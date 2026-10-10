@@ -1,12 +1,31 @@
 import Alpine from 'alpinejs';
+import { registerCms, enableCmsNavigation } from './cms';
+import { registerHomeStandings } from './home-standings';
 
 window.Alpine = Alpine;
+registerCms(Alpine);
+registerHomeStandings(Alpine);
 Alpine.start();
-document.querySelector('[data-theme-toggle]')?.setAttribute('aria-pressed', String(document.documentElement.dataset.theme === 'dark'));
+enableCmsNavigation();
+const syncThemeControls = () => document.querySelectorAll('[data-theme-toggle]').forEach(button => {
+    button.hidden = false;
+    button.setAttribute('aria-pressed', String(document.documentElement.dataset.theme === 'dark'));
+});
+syncThemeControls();
 
 const enableMatchFilters = () => document.querySelectorAll('[data-match-filter-control]').forEach(label => { label.hidden = false; });
 enableMatchFilters();
 document.addEventListener('pitchticker:matches', enableMatchFilters);
+
+document.addEventListener('change', (event) => {
+    if (!event.target.matches('[data-league-select]')) return;
+    const image = event.target.closest('[data-league-picker]').querySelector('img');
+    const source = event.target.selectedOptions[0]?.dataset.image;
+    delete image.dataset.imageFailed;
+    image.hidden = !source;
+    if (source) image.src = source;
+    else image.removeAttribute('src');
+});
 
 const leagueDirectory = document.querySelector('.league-directory');
 if (leagueDirectory) {
@@ -35,12 +54,12 @@ document.querySelectorAll('img').forEach(img => {
     }
 });
 
-document.querySelector('[data-theme-toggle]')?.addEventListener('click', () => {
+document.querySelectorAll('[data-theme-toggle]').forEach(button => button.addEventListener('click', () => {
     const dark = document.documentElement.dataset.theme !== 'dark';
     document.documentElement.dataset.theme = dark ? 'dark' : 'light';
-    document.querySelector('[data-theme-toggle]').setAttribute('aria-pressed', String(dark));
+    syncThemeControls();
     try { localStorage.setItem('pitchticker-theme', dark ? 'dark' : 'light'); } catch {}
-});
+}));
 
 document.addEventListener('input', (event) => {
     if (!event.target.matches('[data-match-filter], [data-match-live]')) return;

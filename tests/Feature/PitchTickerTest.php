@@ -111,4 +111,65 @@ class PitchTickerTest extends TestCase
         $this->actingAs($user)->get('/admin/status')->assertOk()->assertJsonPath('unavailable', true);
         $this->get('/admin')->assertOk()->assertSee(__('common.empty.admin_unavailable'));
     }
+
+    public function test_home_standings_only_load_the_selected_league_and_keep_separate_cached_results(): void
+    {
+        Http::fake([
+            '*/portal/leagues?*' => Http::response(['data' => [['id' => 1, 'name' => 'First league'], ['id' => 2, 'name' => 'Second league']]]),
+            '*/portal/leagues/1/seasons*' => Http::response(['data' => [['id' => 11, 'name' => 'First season', 'is_current' => true]]]),
+            '*/portal/leagues/2/seasons*' => Http::response(['data' => [['id' => 22, 'name' => 'Second season', 'is_current' => true]]]),
+            '*/portal/seasons/11/standings*' => Http::response(['data' => [['position' => 1, 'team' => ['name' => 'First club'], 'points' => 7]]]),
+            '*/portal/seasons/22/standings*' => Http::response(['data' => [['position' => 1, 'team' => ['name' => 'Second club'], 'points' => 9]]]),
+            '*' => Http::response(['data' => []]),
+        ]);
+
+        $this->get('/?standings_league=2')->assertOk()->assertSee('Second club')->assertDontSee('First club')->assertSee('data-standings-league="2"', false);
+        Http::assertNotSent(fn ($request) => str_contains($request->url(), '/leagues/1/seasons'));
+        Http::assertNotSent(fn ($request) => str_contains($request->url(), '/topscorers'));
+
+        $this->get('/')->assertOk()->assertSee('First club')->assertDontSee('Second club');
+        $this->get('/?standings_league=2')->assertOk()->assertSee('Second club')->assertDontSee('First club');
+        $this->get('/?standings_league=999')->assertOk()->assertSee('First club');
+        $this->get('/?standings_league[]=2')->assertOk()->assertSee('First club');
+    }
+
+    public function test_home_keeps_the_league_picker_when_a_selected_league_has_no_season(): void
+    {
+        Http::fake([
+            '*/portal/leagues?*' => Http::response(['data' => [['id' => 1, 'name' => 'League without season']]]),
+            '*' => Http::response(['data' => []]),
+        ]);
+        $this->get('/')->assertOk()->assertSee('id="standings-league"', false)->assertSee(__('home.featured.standings_empty'))->assertDontSee('data-standings-league="1"', false);
+    }
+
+    public function test_standings_json_only_fetches_the_selected_league_without_homepage_data(): void
+    {
+        Http::fake([
+            '*/portal/leagues?*' => Http::response(['data' => [['id' => 2, 'name' => 'Selected league']]]),
+            '*/portal/leagues/2/seasons*' => Http::response(['data' => [['id' => 22, 'name' => 'Current season', 'is_current' => true]]]),
+            '*/portal/seasons/22/standings*' => Http::response(['data' => [['position' => 1, 'team' => ['name' => 'Selected club'], 'points' => 0]]]),
+        ]);
+        $this->getJson('/home/standings?league_id=2')->assertOk()
+            ->assertJsonPath('data.league.id', 2)
+            ->assertJsonPath('data.standings.0.points', 0)
+            ->assertJsonPath('data.links.standings', route('football.index', ['league_id' => 2, 'season_id' => 22, 'tab' => 'standings']));
+        Http::assertSentCount(3);
+    }
+
+    public function test_standings_json_validates_selection_and_distinguishes_missing_data_from_failure(): void
+    {
+        Http::fake([
+            '*/portal/leagues?*' => Http::response(['data' => [['id' => 1, 'name' => 'Enabled league']]]),
+            '*/portal/leagues/1/seasons*' => Http::response(['data' => []]),
+        ]);
+        $this->getJson('/home/standings?league_id[]=1')->assertUnprocessable();
+        $this->getJson('/home/standings?league_id=999')->assertNotFound();
+        $this->getJson('/home/standings?league_id=1')->assertOk()->assertJsonPath('data', null);
+    }
+
+    public function test_standings_json_reports_upstream_failure(): void
+    {
+        Http::fake(['*' => Http::response([], 503)]);
+        $this->getJson('/home/standings?league_id=1')->assertServiceUnavailable();
+    }
 }

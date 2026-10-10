@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FootballController;
 use App\Http\Controllers\HomeController;
@@ -11,6 +12,7 @@ use Illuminate\Support\Facades\Route;
 
 // Homepage = football dashboard
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/home/standings', [HomeController::class, 'standings'])->name('home.standings');
 
 // News moved under /berita
 Route::get('/berita', [NewsController::class, 'index'])->name('news.index');
@@ -49,6 +51,12 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // Admin panel (auth-protected)
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
+    Route::get('/scrapers', [AdminController::class, 'scrapers'])->name('scrapers');
+    Route::get('/leagues', [AdminController::class, 'leagues'])->name('leagues.index');
+    Route::get('/sync', [AdminController::class, 'sync'])->name('sync');
+    Route::get('/news', [AdminController::class, 'newsIndex'])->name('news.index');
+    Route::get('/news/{id}', [AdminController::class, 'newsShow'])->whereNumber('id')->name('news.show');
+    Route::resource('users', AdminUserController::class)->except('show');
     Route::get('/status', [AdminController::class, 'status'])->name('status');
     Route::post('/scrape', [AdminController::class, 'trigger'])->name('scrape');
     Route::post('/scrape/football', [AdminController::class, 'scrapeFootball'])->name('scrape.football');

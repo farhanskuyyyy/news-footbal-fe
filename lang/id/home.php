@@ -26,6 +26,14 @@ return [
     ],
 
     'featured' => [
+        'loading' => 'Memuat klasemen',
+        'failed' => 'Klasemen gagal dimuat. Silakan coba lagi.',
+        'retry' => 'Coba lagi',
+        'open_league' => 'Buka liga',
+        'show_standings' => 'Lihat klasemen',
+        'position' => 'Pos',
+        'club' => 'Klub',
+        'points' => 'Poin',
         'select_league' => 'Pilih liga',
         'standings' => 'Klasemen',
         'standings_empty' => 'Klasemen belum tersedia untuk musim ini.',
