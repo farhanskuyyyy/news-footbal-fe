@@ -9,9 +9,12 @@ use App\Http\Controllers\ImageUploadController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\NewsController;
+use App\Http\Controllers\SeoController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', LandingController::class)->name('landing');
+Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('seo.sitemap');
+Route::get('/robots.txt', [SeoController::class, 'robots'])->name('seo.robots');
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::get('/home/standings', [HomeController::class, 'standings'])->name('home.standings');
 

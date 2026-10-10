@@ -13,7 +13,8 @@ Frontend Laravel/Blade untuk jadwal, live score, portal liga, profil tim/pemain,
 
 | Route | Method | Deskripsi |
 |---|---|---|
-| `/` | `GET` | Dashboard pertandingan, liga, berita, klasemen, dan top skor |
+| `/` | `GET` | Landing page PitchTicker |
+| `/home` | `GET` | Dashboard pertandingan, liga, berita, klasemen, dan top skor |
 | `/football/live` | `GET` | Pertandingan live dengan refresh manual |
 | `/football/matches` | `GET` | Jadwal menurut tanggal, AJAX/history dengan fallback GET |
 | `/football/` | `GET` | Liga, musim, klasemen, fixtures, tim, top skor, transfer, bracket |
@@ -71,6 +72,8 @@ Router ini hanya berjalan di PHP development server melalui loopback dan memblok
 Asset produksi dibuat dalam Node stage Docker lalu disalin ke image PHP; CI juga membuild asset sebelum PHPUnit. Build dapat mengunduh font dari Bunny, tetapi runtime browser tidak membutuhkan CDN CSS/JS/font. Detail hasil pemeriksaan ada di [rebranding-verification.md](../rebranding-verification.md).
 
 ## Konfigurasi
+
+SEO publik menggunakan canonical `https://pitchticker.kreasifarhan.id` (override `SEO_URL`), metadata per halaman, JSON-LD, `/sitemap.xml` dan `/robots.txt`. Token HTML Search Console dapat diisi melalui `GOOGLE_SITE_VERIFICATION`. Langkah aktivasi dan batasan indexing ada di [docs/seo.md](docs/seo.md).
 
 CMS tersedia setelah login pada `/admin`, dengan menu Ringkasan, Pengguna, Berita, Liga, Scraper, dan Status sinkronisasi. Semua route CMS membutuhkan autentikasi. Model akses existing dipertahankan: semua akun terdaftar memiliki akses penuh ke CMS, belum ada pembagian role.
 

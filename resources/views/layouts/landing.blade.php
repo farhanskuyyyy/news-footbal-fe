@@ -3,8 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>PitchTicker · {{ __('landing.title') }}</title>
-    <meta name="description" content="{{ __('landing.description') }}">
+    @include('partials.seo', ['seoView' => 'landing.index'])
     <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
     <script>try { document.documentElement.dataset.theme = localStorage.getItem('pitchticker-theme') === 'dark' ? 'dark' : 'light'; } catch { document.documentElement.dataset.theme = 'light'; }</script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])

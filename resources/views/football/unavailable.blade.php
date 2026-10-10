@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('seo_view', 'football.unavailable')
 @section('title', __('common.empty.unavailable'))
 @section('content')
 <section class="mx-auto max-w-xl rounded-xl border border-divider bg-surface p-6">

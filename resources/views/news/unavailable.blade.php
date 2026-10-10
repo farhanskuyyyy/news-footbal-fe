@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('seo_view', 'news.unavailable')
 
 @section('title', __('news.unavailable_title'))
 

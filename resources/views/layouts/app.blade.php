@@ -3,8 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    @php $pageTitle = trim($__env->yieldContent('title', __('common.brand.tagline'))); @endphp
-    <title>{{ str_contains($pageTitle, 'PitchTicker') ? $pageTitle : $pageTitle.' · PitchTicker' }}</title>
+    @include('partials.seo', ['seoView' => trim($__env->yieldContent('seo_view'))])
     <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
     <script>
         try { document.documentElement.dataset.theme = localStorage.getItem('pitchticker-theme') === 'dark' ? 'dark' : 'light'; }

@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('seo_view', 'football.fixture_loading')
 
 @section('title', __('football.loading.title'))
 
