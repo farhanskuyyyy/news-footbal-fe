@@ -6,12 +6,13 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FootballController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ImageUploadController;
+use App\Http\Controllers\LandingController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\NewsController;
 use Illuminate\Support\Facades\Route;
 
-// Homepage = football dashboard
-Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/', LandingController::class)->name('landing');
+Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::get('/home/standings', [HomeController::class, 'standings'])->name('home.standings');
 
 // News moved under /berita

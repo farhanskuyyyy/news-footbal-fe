@@ -61,6 +61,7 @@
         <div class="mx-auto flex max-w-page flex-wrap items-center justify-between gap-4 px-4 sm:px-6">
             <span>PitchTicker · {{ __('common.footer.rights', ['year' => date('Y')]) }}</span>
             <div class="flex flex-wrap gap-4">
+                <a href="{{ route('landing') }}" class="inline-flex min-h-11 items-center hover:text-link">{{ __('landing.about') }}</a>
                 <a href="{{ route('football.compare') }}" class="inline-flex min-h-11 items-center hover:text-link">{{ __('common.nav.compare') }}</a>
                 <a href="{{ route('upload.create') }}" class="inline-flex min-h-11 items-center hover:text-link">{{ __('common.nav.upload') }}</a>
                 @auth <a href="{{ route('admin.dashboard') }}" class="inline-flex min-h-11 items-center hover:text-link">{{ __('common.nav.admin_panel') }}</a> @else <a href="{{ route('login') }}" class="inline-flex min-h-11 items-center hover:text-link">{{ __('auth.heading') }}</a> @endauth

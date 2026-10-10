@@ -54,6 +54,10 @@ Buka [http://localhost:8000/upload](http://localhost:8000/upload) untuk mencoba 
 
 ## Tampilan PitchTicker dan preview fixture
 
+`/` selalu menampilkan landing page; dashboard pertandingan berada di `/home`. Link About PitchTicker membuka `/`. Tidak ada auto redirect atau cookie untuk mengingat kunjungan sebelumnya.
+
+Landing tersedia dalam English (default) dan Bahasa Indonesia, memakai data kompetisi existing dan ilustrasi umpan sepak bola yang diberi label. Animasi berjalan otomatis, dapat dijeda, dan berhenti pada pengaturan reduced motion. Tidak ada perubahan database atau API Go.
+
 Warna dan typography berada di `resources/css/app.css`; light adalah default dan dark disimpan melalui `pitchticker-theme`. Halaman publik memakai `layouts.app`; CMS memakai `layouts.admin` dengan sidebar tersendiri. Logo liga/tim dan isi berita tetap berasal dari backend; tidak ada data pertandingan produksi yang dibuat di frontend.
 
 Untuk preview lokal tanpa backend live, setelah build:

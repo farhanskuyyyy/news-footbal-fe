@@ -84,7 +84,7 @@ class PitchTickerTest extends TestCase
             '*/sportmonks/fixtures/date/*' => Http::response(['data' => $fixtures]),
             '*' => Http::response(['data' => []]),
         ]);
-        $response = $this->get('/')->assertOk()->assertSee('PitchTicker');
+        $response = $this->get('/home')->assertOk()->assertSee('PitchTicker');
         $this->assertSame(13, substr_count($response->getContent(), 'data-match-row'));
         $response->assertSee(route('football.fixture', 112));
     }
@@ -98,7 +98,7 @@ class PitchTickerTest extends TestCase
             '*/sportmonks/livescores/inplay*' => Http::response(['data' => $live]),
             '*' => Http::response(['data' => []]),
         ]);
-        $response = $this->get('/')->assertOk();
+        $response = $this->get('/home')->assertOk();
         $this->assertSame(10, substr_count($response->getContent(), 'data-match-row'));
         $this->assertSame(10, substr_count($response->getContent(), 'data-match-live-state="true"'));
         $response->assertSee(route('football.fixture', 109));
@@ -123,14 +123,14 @@ class PitchTickerTest extends TestCase
             '*' => Http::response(['data' => []]),
         ]);
 
-        $this->get('/?standings_league=2')->assertOk()->assertSee('Second club')->assertDontSee('First club')->assertSee('data-standings-league="2"', false);
+        $this->get('/home?standings_league=2')->assertOk()->assertSee('Second club')->assertDontSee('First club')->assertSee('data-standings-league="2"', false);
         Http::assertNotSent(fn ($request) => str_contains($request->url(), '/leagues/1/seasons'));
         Http::assertNotSent(fn ($request) => str_contains($request->url(), '/topscorers'));
 
-        $this->get('/')->assertOk()->assertSee('First club')->assertDontSee('Second club');
-        $this->get('/?standings_league=2')->assertOk()->assertSee('Second club')->assertDontSee('First club');
-        $this->get('/?standings_league=999')->assertOk()->assertSee('First club');
-        $this->get('/?standings_league[]=2')->assertOk()->assertSee('First club');
+        $this->get('/home')->assertOk()->assertSee('First club')->assertDontSee('Second club');
+        $this->get('/home?standings_league=2')->assertOk()->assertSee('Second club')->assertDontSee('First club');
+        $this->get('/home?standings_league=999')->assertOk()->assertSee('First club');
+        $this->get('/home?standings_league[]=2')->assertOk()->assertSee('First club');
     }
 
     public function test_home_keeps_the_league_picker_when_a_selected_league_has_no_season(): void
@@ -139,7 +139,7 @@ class PitchTickerTest extends TestCase
             '*/portal/leagues?*' => Http::response(['data' => [['id' => 1, 'name' => 'League without season']]]),
             '*' => Http::response(['data' => []]),
         ]);
-        $this->get('/')->assertOk()->assertSee('id="standings-league"', false)->assertSee(__('home.featured.standings_empty'))->assertDontSee('data-standings-league="1"', false);
+        $this->get('/home')->assertOk()->assertSee('id="standings-league"', false)->assertSee(__('home.featured.standings_empty'))->assertDontSee('data-standings-league="1"', false);
     }
 
     public function test_standings_json_only_fetches_the_selected_league_without_homepage_data(): void
